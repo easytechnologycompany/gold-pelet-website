@@ -77,6 +77,29 @@ html[dir="rtl"] {
   --font-body: 'Cairo', 'Segoe UI', sans-serif;
 }
 
+/* Several tables have no translation column (timeline milestones, cert
+   names/descriptions, news items, product spec chips, one-off site-content
+   blocks) and always render in English, even on an Arabic/Kurdish (RTL)
+   page. Left as plain text, the browser's bidi algorithm inherits the
+   page's RTL base direction and reorders/right-aligns that English content
+   incorrectly — trailing punctuation jumps to the front, long lines can
+   overflow past the container edge. unicode-bidi: plaintext makes each of
+   these elements detect its own direction from its actual content instead
+   of inheriting the ancestor's dir, which fixes both problems and is a
+   no-op in LTR languages. */
+html[dir="rtl"] .timeline-item .year,
+html[dir="rtl"] .timeline-item h3,
+html[dir="rtl"] .timeline-item p,
+html[dir="rtl"] .cert-badge strong,
+html[dir="rtl"] .cert-badge span,
+html[dir="rtl"] .news-card h3,
+html[dir="rtl"] .news-card p,
+html[dir="rtl"] .news-card .date,
+html[dir="rtl"] .chip,
+html[dir="rtl"] [data-content-key] {
+  unicode-bidi: plaintext;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
