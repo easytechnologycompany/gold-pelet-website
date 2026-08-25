@@ -5,10 +5,15 @@
 // static content rather than breaking — this is progressive enhancement,
 // not a hard dependency.
 //
-// API_BASE is the one line that changes when the backend is deployed
-// somewhere other than localhost (same convention as ApiConstants.baseUrl
-// in the Flutter apps elsewhere in this workspace).
-const API_BASE = 'https://backend-production-cfda.up.railway.app/api/v1';
+// Local dev (this file served from localhost) always talks to the local
+// backend; anywhere else (GitHub Pages, a future custom domain) talks to
+// the deployed Railway backend. Without this split, local dev silently
+// depended on the deployed backend's uploads existing — which they may
+// not (e.g. right after a deploy that hasn't been given real assets yet).
+const isLocalDev = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_BASE = isLocalDev
+  ? 'http://localhost:8090/api/v1'
+  : 'https://backend-production-cfda.up.railway.app/api/v1';
 const API_ORIGIN = API_BASE.replace(/\/api\/v1$/, '');
 
 function mediaURL(path) {
