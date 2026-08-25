@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold Pelet Admin</title>
+<script>
+  // No landing page of its own — send the visitor straight to whichever
+  // page is actually useful to them, same token check every other admin
+  // page already uses (see js/api.js's getToken/TOKEN_KEY).
+  var token = localStorage.getItem('gp_admin_token');
+  window.location.replace(token ? 'dashboard.html' : 'login.html');
+</script>
+</head>
+<body></body>
+</html>

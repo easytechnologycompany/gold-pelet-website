@@ -1,0 +1,558 @@
+// Gold Pelet Admin — language switcher (English / Turkish). Mirrors the
+// public site's data-i18n / applyTranslations mechanism (js/i18n.js in
+// chips-company-website) so both apps share the same pattern, but this is
+// a separate, admin-only dictionary — the admin UI has its own strings
+// (nav labels, page headers, CRUD chrome) that don't exist on the public
+// site. Scope: shared chrome (sidebar, page headers, login, generic CRUD
+// table/modal text) is fully translated; per-resource field labels inside
+// each page's own config (e.g. "Moisture %") stay English for now.
+const ADMIN_LANG_KEY = 'gp_admin_lang';
+
+const ADMIN_TRANSLATIONS = {
+  en: {
+    'nav.overview': 'Overview',
+    'nav.group.visuals': 'Visuals & Branding',
+    'nav.branding': 'Branding & Logo',
+    'nav.heroes': 'Page Heroes',
+    'nav.siteImages': 'Site Images',
+    'nav.group.content': 'Content & Text',
+    'nav.content': 'Site Content',
+    'nav.stats': 'Stats',
+    'nav.timeline': 'About Timeline',
+    'nav.certifications': 'Certifications',
+    'nav.group.catalog': 'Catalog',
+    'nav.categories': 'Categories',
+    'nav.products': 'Products',
+    'nav.group.news': 'News',
+    'nav.news': 'Events & News',
+    'nav.group.leads': 'Leads',
+    'nav.enquiries': 'Enquiries',
+    'sidebar.signOut': 'Sign Out',
+    'sidebar.admin': 'Admin',
+
+    'page.dashboard.title': 'Overview',
+    'page.dashboard.desc': "A snapshot of what's on the live site right now.",
+    'page.dashboard.recentEnquiries': 'Recent Enquiries',
+    'page.dashboard.recentEnquiriesDesc': 'The 5 most recent RFQ / contact-form submissions.',
+    'page.dashboard.newEnquiries': 'New Enquiries',
+    'page.dashboard.products': 'Products',
+    'page.dashboard.newsItems': 'News Items',
+    'page.dashboard.certifications': 'Certifications',
+    'page.dashboard.noEnquiries': 'No enquiries yet.',
+    'page.dashboard.company': 'Company',
+    'page.dashboard.contact': 'Contact',
+    'page.dashboard.product': 'Product',
+    'page.dashboard.status': 'Status',
+    'page.dashboard.received': 'Received',
+
+    'page.branding.title': 'Branding & Logo',
+    'page.branding.desc': 'Brand colors and logo used across the public site.',
+    'page.heroes.title': 'Page Heroes',
+    'page.heroes.desc': 'The banner at the top of each public page — image, eyebrow, heading and subheading.',
+    'page.siteImages.title': 'Site Images',
+    'page.siteImages.desc': 'Photos used across the Manufacturing Story and other split-image sections. Upload a replacement for any slot below — changes go live immediately.',
+    'page.content.title': 'Site Content',
+    'page.content.desc': 'One-off text blocks used across the public site.',
+    'page.stats.title': 'Stats',
+    'page.stats.desc': 'The animated stat cards shown on the homepage.',
+    'page.timeline.title': 'About Timeline',
+    'page.timeline.desc': 'Milestones shown on the About page.',
+    'page.certifications.title': 'Certifications',
+    'page.certifications.desc': 'Certification badges shown across the site.',
+    'page.categories.title': 'Categories',
+    'page.categories.desc': 'Product categories shown on the Products page.',
+    'page.products.title': 'Products',
+    'page.products.desc': 'The full product catalog.',
+    'page.products.addBtn': '+ Add Product',
+    'page.products.addTitle': 'Add Product',
+    'page.products.editTitle': 'Edit Product',
+    'page.products.colProduct': 'Product',
+    'page.products.colFeatured': 'Featured',
+    'page.products.colOrder': 'Order',
+    'page.news.title': 'Events & News',
+    'page.news.desc': 'Cards shown on the Events & News page.',
+    'page.enquiries.title': 'Enquiries',
+    'page.enquiries.desc': 'RFQ and contact-form submissions from the public site.',
+
+    'login.title': 'Admin Dashboard',
+    'login.sub': 'Sign in to manage the Gold Pelet website.',
+    'login.email': 'Email',
+    'login.password': 'Password',
+    'login.signIn': 'Sign In',
+    'login.signingIn': 'Signing in…',
+    'login.failed': 'Sign in failed.',
+    'login.unreachable': 'Could not reach the server. Is the backend running?',
+
+    'crud.loading': 'Loading…',
+    'crud.failedToLoad': 'Failed to load.',
+    'crud.empty': 'Nothing here yet — add the first one.',
+    'crud.actions': 'Actions',
+    'crud.edit': 'Edit',
+    'crud.delete': 'Delete',
+    'crud.cancel': 'Cancel',
+    'crud.save': 'Save',
+
+    'upload.label.default': 'Upload Image',
+    'upload.label.logo': 'Upload Logo',
+    'upload.label.hero': 'Upload Hero Image',
+    'upload.label.rawImage': 'Upload Raw / Pellet Image',
+    'upload.label.friedImage': 'Upload Fried / Cooked Image',
+    'upload.label.photo': 'Upload Photo',
+    'upload.dragDrop': 'Drag & drop or click to browse',
+    'upload.accepted': 'Accepted',
+    'upload.maxSize': 'Max {size}',
+    'upload.change': 'Change',
+    'upload.remove': 'Remove',
+    'upload.uploading': 'Uploading…',
+    'upload.errorType': 'Unsupported file type',
+    'upload.errorSize': 'File is larger than {size}',
+    'crud.add': '+ Add',
+    'crud.yes': 'Yes',
+    'crud.active': 'Active',
+    'crud.hidden': 'Hidden',
+    'crud.featured': 'Featured',
+    'crud.status': 'Status',
+    'crud.deleteConfirm': "Delete this {item}? This can't be undone.",
+    'confirm.deleteTitle': 'Delete {item}?',
+    'confirm.deleteMessage': 'This action cannot be undone.',
+    'resource.enquiry': 'Enquiry',
+
+    'content.viewPage': 'View Page',
+    'content.about.title': 'Story Section',
+    'content.about.desc': 'Main company story displayed on the About page.',
+    'content.unsavedChanges': 'Unsaved changes',
+    'content.allSaved': 'All changes saved',
+    'content.saving': 'Saving…',
+    'content.changesSaved': 'Changes saved',
+    'content.saveError': 'Unable to save changes — your edits are still here.',
+    'content.savedToast': 'Site content updated successfully.',
+    'content.saveErrorToast': 'Unable to save changes. Please try again.',
+    'content.saveBtn': 'Save Changes',
+    'content.discardBtn': 'Discard',
+    'content.discardTitle': 'Discard changes?',
+    'content.discardMessage': 'Your unsaved edits will be lost.',
+    'content.discardConfirm': 'Discard',
+    'content.discardCancel': 'Keep Editing',
+    'content.leaveWarning': 'You have unsaved changes. Leave anyway?',
+    'crud.created': '{item} created.',
+    'crud.updated': '{item} updated.',
+    'crud.deleted': '{item} deleted.',
+
+    'enquiries.allStatuses': 'All statuses',
+    'enquiries.new': 'New',
+    'enquiries.contacted': 'Contacted',
+    'enquiries.won': 'Won',
+    'enquiries.lost': 'Lost',
+    'enquiries.detailTitle': 'Enquiry Detail',
+    'enquiries.company': 'Company',
+    'enquiries.contact': 'Contact',
+    'enquiries.country': 'Country',
+    'enquiries.productInterest': 'Product interest',
+    'enquiries.estimatedVolume': 'Estimated volume',
+    'enquiries.message': 'Message',
+    'enquiries.received': 'Received',
+    'enquiries.view': 'View',
+    'enquiries.updateStatus': 'Update Status',
+    'enquiries.statusUpdated': 'Status updated.',
+    'enquiries.deleted': 'Enquiry deleted.',
+    'enquiries.deleteConfirm': "Delete this enquiry? This can't be undone.",
+
+    'toast.saved': 'Saved.',
+    'toast.brandingFailedLoad': 'Failed to load branding.',
+    'toast.brandingSaved': 'Branding saved.',
+    'toast.logoUpdated': 'Logo updated.',
+    'toast.logoSaveFailed': 'Uploaded, but failed to save — try again.',
+    'toast.heroFailedLoad': 'Failed to load hero.',
+    'toast.heroSaved': 'Hero saved.',
+    'toast.imageUploadedApply': 'Image uploaded — click Save to apply it to this page.',
+    'toast.contentFailedLoad': 'Failed to load content.',
+    'toast.siteImagesFailedLoad': 'Failed to load site images.',
+    'toast.siteImageUpdated': 'Image updated.',
+
+    'field.sortOrder': 'Sort order',
+    'field.visibleOnSite': 'Visible on the live site',
+    'field.name': 'Name',
+    'field.nameRequired': 'Name *',
+    'field.description': 'Description',
+    'field.order': 'Order',
+    'field.label': 'Label',
+    'field.icon': 'Icon',
+    'field.iconKey': 'Icon key',
+    'field.title': 'Title',
+    'field.slug': 'Slug',
+    'field.slugRequired': 'Slug *',
+    'field.value': 'Value',
+    'field.unit': 'Unit',
+    'field.year': 'Year',
+    'field.date': 'Date',
+
+    'resource.stat': 'Stat',
+    'resource.milestone': 'Milestone',
+    'resource.certification': 'Certification',
+    'resource.category': 'Category',
+    'resource.newsItem': 'News Item',
+    'resource.product': 'Product',
+
+    'stats.field.key': 'Key',
+    'stats.field.keyHint': 'Internal identifier, e.g. "years_in_operation" — not shown on the site.',
+    'stats.field.label': 'Label (shown under the number)',
+    'stats.field.unitSuffix': 'Unit suffix (e.g. "+ yrs", "%", "+")',
+
+    'timeline.field.year': 'Year (or "Today")',
+
+    'certifications.field.name': 'Name (e.g. "ISO 22000")',
+    'certifications.field.description': 'Description (e.g. "Food Safety Management")',
+    'certifications.field.iconHint': 'shield-check / shield-tick / circle-check / document-check',
+
+    'categories.field.slugHint': 'Slug (URL-friendly, e.g. "potato")',
+
+    'news.field.dateLabel': 'Date label (e.g. "March 2026" or "Upcoming · March 2026")',
+    'news.field.featuredCheckbox': 'Featured (shown as the large top card)',
+    'news.field.photo': 'Photo',
+    'news.field.photoHint': 'Photo (optional — falls back to a decorative pattern if not set)',
+
+    'products.field.category': 'Category *',
+    'products.field.rawImage': 'Raw / Pellet Image',
+    'products.field.friedImage': 'Fried / Cooked Image',
+    'products.field.currentRaw': 'Current raw image',
+    'products.field.currentFried': 'Current fried image',
+    'products.field.imageHint': 'Both optional — products without a raw or fried photo show a plain icon card / "photo coming soon" state for that side on the public site. Each card shows both states with a toggle.',
+    'products.field.specChips': 'Spec chips (e.g. "Moisture 11–13%", "MOQ 5t")',
+    'products.field.specPlaceholder': 'Type a spec and press Enter',
+    'products.field.specAdd': 'Add',
+    'products.field.featuredCheckbox': 'Featured ("Best Seller" tag)',
+
+    'branding.logoTitle': 'Logo',
+    'branding.currentLogo': 'Current logo',
+    'branding.logoShownHint': 'Shown in the header and footer of every page.',
+    'branding.logoUploadHint': 'JPG, PNG, WEBP or SVG, up to 8MB. Uploading replaces the logo immediately.',
+    'branding.colorsTitle': 'Colors',
+    'branding.primary': 'Primary (green)',
+    'branding.primaryDark': 'Primary Dark',
+    'branding.primaryLight': 'Primary Light',
+    'branding.accentNavy': 'Accent (navy)',
+    'branding.saveColors': 'Save Colors',
+
+    'heroes.pageLabel': 'Page',
+    'heroes.pageOption.home': 'Home',
+    'heroes.pageOption.products': 'Products',
+    'heroes.pageOption.services': 'Services',
+    'heroes.pageOption.about': 'About Us',
+    'heroes.pageOption.news': 'Events & News',
+    'heroes.pageOption.contact': 'Contact Us',
+    'heroes.currentImage': 'Current hero image',
+    'heroes.uploadHint': 'JPG, PNG or WEBP, up to 8MB.',
+    'heroes.eyebrowLabel': 'Eyebrow (small label above the heading)',
+    'heroes.headingLabel': 'Heading',
+    'heroes.subheadingLabel': 'Subheading',
+
+    'content.group.global': 'Global (footer, contact details)',
+    'content.group.about': 'About Page',
+    'content.group.home': 'Home Page',
+    'content.group.contact': 'Contact Page',
+  },
+  tr: {
+    'nav.overview': 'Genel Bakış',
+    'nav.group.visuals': 'Görseller ve Marka',
+    'nav.branding': 'Marka ve Logo',
+    'nav.heroes': 'Sayfa Kapak Görselleri',
+    'nav.siteImages': 'Site Görselleri',
+    'nav.group.content': 'İçerik ve Metin',
+    'nav.content': 'Site İçeriği',
+    'nav.stats': 'İstatistikler',
+    'nav.timeline': 'Hakkımızda Zaman Çizelgesi',
+    'nav.certifications': 'Sertifikalar',
+    'nav.group.catalog': 'Katalog',
+    'nav.categories': 'Kategoriler',
+    'nav.products': 'Ürünler',
+    'nav.group.news': 'Haberler',
+    'nav.news': 'Etkinlikler ve Haberler',
+    'nav.group.leads': 'Talepler',
+    'nav.enquiries': 'Talepler',
+    'sidebar.signOut': 'Çıkış Yap',
+    'sidebar.admin': 'Yönetici',
+
+    'page.dashboard.title': 'Genel Bakış',
+    'page.dashboard.desc': 'Canlı sitede şu anda neler olduğuna dair bir özet.',
+    'page.dashboard.recentEnquiries': 'Son Talepler',
+    'page.dashboard.recentEnquiriesDesc': 'En son 5 teklif / iletişim formu gönderimi.',
+    'page.dashboard.newEnquiries': 'Yeni Talepler',
+    'page.dashboard.products': 'Ürünler',
+    'page.dashboard.newsItems': 'Haber Öğeleri',
+    'page.dashboard.certifications': 'Sertifikalar',
+    'page.dashboard.noEnquiries': 'Henüz talep yok.',
+    'page.dashboard.company': 'Şirket',
+    'page.dashboard.contact': 'İletişim',
+    'page.dashboard.product': 'Ürün',
+    'page.dashboard.status': 'Durum',
+    'page.dashboard.received': 'Alınma Tarihi',
+
+    'page.branding.title': 'Marka ve Logo',
+    'page.branding.desc': 'Genel sitede kullanılan marka renkleri ve logo.',
+    'page.heroes.title': 'Sayfa Kapak Görselleri',
+    'page.heroes.desc': 'Her genel sayfanın üstündeki banner — görsel, üst etiket, başlık ve alt başlık.',
+    'page.siteImages.title': 'Site Görselleri',
+    'page.siteImages.desc': 'Üretim Hikayesi ve diğer bölünmüş görsel bölümlerinde kullanılan fotoğraflar. Aşağıdaki herhangi bir alan için yeni bir görsel yükleyin — değişiklikler hemen yayına girer.',
+    'page.content.title': 'Site İçeriği',
+    'page.content.desc': 'Genel sitede kullanılan tek seferlik metin blokları.',
+    'page.stats.title': 'İstatistikler',
+    'page.stats.desc': 'Ana sayfada gösterilen animasyonlu istatistik kartları.',
+    'page.timeline.title': 'Hakkımızda Zaman Çizelgesi',
+    'page.timeline.desc': 'Hakkımızda sayfasında gösterilen kilometre taşları.',
+    'page.certifications.title': 'Sertifikalar',
+    'page.certifications.desc': 'Sitede gösterilen sertifika rozetleri.',
+    'page.categories.title': 'Kategoriler',
+    'page.categories.desc': 'Ürünler sayfasında gösterilen ürün kategorileri.',
+    'page.products.title': 'Ürünler',
+    'page.products.desc': 'Tam ürün kataloğu.',
+    'page.products.addBtn': '+ Ürün Ekle',
+    'page.products.addTitle': 'Ürün Ekle',
+    'page.products.editTitle': 'Ürünü Düzenle',
+    'page.products.colProduct': 'Ürün',
+    'page.products.colFeatured': 'Öne Çıkan',
+    'page.products.colOrder': 'Sıra',
+    'page.news.title': 'Etkinlikler ve Haberler',
+    'page.news.desc': 'Etkinlikler ve Haberler sayfasında gösterilen kartlar.',
+    'page.enquiries.title': 'Talepler',
+    'page.enquiries.desc': 'Genel siteden gelen teklif ve iletişim formu gönderimleri.',
+
+    'login.title': 'Yönetici Paneli',
+    'login.sub': 'Gold Pelet web sitesini yönetmek için giriş yapın.',
+    'login.email': 'E-posta',
+    'login.password': 'Şifre',
+    'login.signIn': 'Giriş Yap',
+    'login.signingIn': 'Giriş yapılıyor…',
+    'login.failed': 'Giriş başarısız.',
+    'login.unreachable': 'Sunucuya ulaşılamadı. Sunucu çalışıyor mu?',
+
+    'crud.loading': 'Yükleniyor…',
+    'crud.failedToLoad': 'Yüklenemedi.',
+    'crud.empty': 'Henüz bir şey yok — ilkini ekleyin.',
+    'crud.actions': 'İşlemler',
+    'crud.edit': 'Düzenle',
+    'crud.delete': 'Sil',
+    'crud.cancel': 'İptal',
+    'crud.save': 'Kaydet',
+
+    'upload.label.default': 'Görsel Yükle',
+    'upload.label.logo': 'Logo Yükle',
+    'upload.label.hero': 'Kapak Görseli Yükle',
+    'upload.label.rawImage': 'Ham / Pelet Görseli Yükle',
+    'upload.label.friedImage': 'Kızartılmış / Pişmiş Görseli Yükle',
+    'upload.label.photo': 'Fotoğraf Yükle',
+    'upload.dragDrop': 'Sürükleyip bırakın ya da göz atmak için tıklayın',
+    'upload.accepted': 'Kabul edilen',
+    'upload.maxSize': 'Maks. {size}',
+    'upload.change': 'Değiştir',
+    'upload.remove': 'Kaldır',
+    'upload.uploading': 'Yükleniyor…',
+    'upload.errorType': 'Desteklenmeyen dosya türü',
+    'upload.errorSize': 'Dosya {size} sınırından büyük',
+    'crud.add': '+ Ekle',
+    'crud.yes': 'Evet',
+    'crud.active': 'Aktif',
+    'crud.hidden': 'Gizli',
+    'crud.featured': 'Öne Çıkan',
+    'crud.status': 'Durum',
+    'crud.deleteConfirm': 'Bu {item} silinsin mi? Bu işlem geri alınamaz.',
+    'confirm.deleteTitle': '{item} silinsin mi?',
+    'confirm.deleteMessage': 'Bu işlem geri alınamaz.',
+    'resource.enquiry': 'Talep',
+
+    'content.viewPage': 'Sayfayı Görüntüle',
+    'content.about.title': 'Hikaye Bölümü',
+    'content.about.desc': 'Hakkımızda sayfasında gösterilen şirket hikayesi.',
+    'content.unsavedChanges': 'Kaydedilmemiş değişiklikler',
+    'content.allSaved': 'Tüm değişiklikler kaydedildi',
+    'content.saving': 'Kaydediliyor…',
+    'content.changesSaved': 'Değişiklikler kaydedildi',
+    'content.saveError': 'Değişiklikler kaydedilemedi — düzenlemeleriniz hâlâ burada.',
+    'content.savedToast': 'Site içeriği başarıyla güncellendi.',
+    'content.saveErrorToast': 'Değişiklikler kaydedilemedi. Lütfen tekrar deneyin.',
+    'content.saveBtn': 'Değişiklikleri Kaydet',
+    'content.discardBtn': 'Vazgeç',
+    'content.discardTitle': 'Değişiklikler vazgeçilsin mi?',
+    'content.discardMessage': 'Kaydedilmemiş düzenlemeleriniz kaybolacak.',
+    'content.discardConfirm': 'Vazgeç',
+    'content.discardCancel': 'Düzenlemeye Devam Et',
+    'content.leaveWarning': 'Kaydedilmemiş değişiklikleriniz var. Yine de çıkılsın mı?',
+    'crud.created': '{item} oluşturuldu.',
+    'crud.updated': '{item} güncellendi.',
+    'crud.deleted': '{item} silindi.',
+
+    'enquiries.allStatuses': 'Tüm durumlar',
+    'enquiries.new': 'Yeni',
+    'enquiries.contacted': 'İletişime Geçildi',
+    'enquiries.won': 'Kazanıldı',
+    'enquiries.lost': 'Kaybedildi',
+    'enquiries.detailTitle': 'Talep Detayı',
+    'enquiries.company': 'Şirket',
+    'enquiries.contact': 'İletişim',
+    'enquiries.country': 'Ülke',
+    'enquiries.productInterest': 'İlgilenilen ürün',
+    'enquiries.estimatedVolume': 'Tahmini hacim',
+    'enquiries.message': 'Mesaj',
+    'enquiries.received': 'Alınma Tarihi',
+    'enquiries.view': 'Görüntüle',
+    'enquiries.updateStatus': 'Durumu Güncelle',
+    'enquiries.statusUpdated': 'Durum güncellendi.',
+    'enquiries.deleted': 'Talep silindi.',
+    'enquiries.deleteConfirm': 'Bu talep silinsin mi? Bu işlem geri alınamaz.',
+
+    'toast.saved': 'Kaydedildi.',
+    'toast.brandingFailedLoad': 'Marka bilgileri yüklenemedi.',
+    'toast.brandingSaved': 'Marka kaydedildi.',
+    'toast.logoUpdated': 'Logo güncellendi.',
+    'toast.logoSaveFailed': 'Yüklendi, ancak kaydedilemedi — tekrar deneyin.',
+    'toast.heroFailedLoad': 'Kapak görseli yüklenemedi.',
+    'toast.heroSaved': 'Kapak görseli kaydedildi.',
+    'toast.imageUploadedApply': 'Görsel yüklendi — bu sayfaya uygulamak için Kaydet\'e tıklayın.',
+    'toast.contentFailedLoad': 'İçerik yüklenemedi.',
+    'toast.siteImagesFailedLoad': 'Site görselleri yüklenemedi.',
+    'toast.siteImageUpdated': 'Görsel güncellendi.',
+
+    'field.sortOrder': 'Sıralama',
+    'field.visibleOnSite': 'Canlı sitede görünür',
+    'field.name': 'Ad',
+    'field.nameRequired': 'Ad *',
+    'field.description': 'Açıklama',
+    'field.order': 'Sıra',
+    'field.label': 'Etiket',
+    'field.icon': 'Simge',
+    'field.iconKey': 'Simge anahtarı',
+    'field.title': 'Başlık',
+    'field.slug': 'Slug',
+    'field.slugRequired': 'Slug *',
+    'field.value': 'Değer',
+    'field.unit': 'Birim',
+    'field.year': 'Yıl',
+    'field.date': 'Tarih',
+
+    'resource.stat': 'İstatistik',
+    'resource.milestone': 'Kilometre Taşı',
+    'resource.certification': 'Sertifika',
+    'resource.category': 'Kategori',
+    'resource.newsItem': 'Haber Öğesi',
+    'resource.product': 'Ürün',
+
+    'stats.field.key': 'Anahtar',
+    'stats.field.keyHint': 'Dahili tanımlayıcı, örn. "years_in_operation" — sitede gösterilmez.',
+    'stats.field.label': 'Etiket (sayının altında gösterilir)',
+    'stats.field.unitSuffix': 'Birim eki (örn. "+ yıl", "%", "+")',
+
+    'timeline.field.year': 'Yıl (veya "Bugün")',
+
+    'certifications.field.name': 'Ad (örn. "ISO 22000")',
+    'certifications.field.description': 'Açıklama (örn. "Gıda Güvenliği Yönetimi")',
+    'certifications.field.iconHint': 'shield-check / shield-tick / circle-check / document-check',
+
+    'categories.field.slugHint': 'Slug (URL uyumlu, örn. "potato")',
+
+    'news.field.dateLabel': 'Tarih etiketi (örn. "Mart 2026" veya "Yakında · Mart 2026")',
+    'news.field.featuredCheckbox': 'Öne çıkan (büyük üst kart olarak gösterilir)',
+    'news.field.photo': 'Fotoğraf',
+    'news.field.photoHint': 'Fotoğraf (isteğe bağlı — ayarlanmazsa dekoratif bir desene döner)',
+
+    'products.field.category': 'Kategori *',
+    'products.field.rawImage': 'Ham / Pelet Görseli',
+    'products.field.friedImage': 'Kızartılmış / Pişmiş Görseli',
+    'products.field.currentRaw': 'Mevcut ham görsel',
+    'products.field.currentFried': 'Mevcut kızartılmış görsel',
+    'products.field.imageHint': 'İkisi de isteğe bağlıdır — ham veya kızartılmış fotoğrafı olmayan ürünler, genel sitede o taraf için düz bir simge kartı / "fotoğraf yakında" durumu gösterir. Her kart her iki durumu da bir geçiş düğmesiyle gösterir.',
+    'products.field.specChips': 'Özellik etiketleri (örn. "Nem %11–13", "MOQ 5t")',
+    'products.field.specPlaceholder': 'Bir özellik yazın ve Enter\'a basın',
+    'products.field.specAdd': 'Ekle',
+    'products.field.featuredCheckbox': 'Öne çıkan ("Çok Satan" etiketi)',
+
+    'branding.logoTitle': 'Logo',
+    'branding.currentLogo': 'Mevcut logo',
+    'branding.logoShownHint': 'Her sayfanın üst ve alt kısmında gösterilir.',
+    'branding.logoUploadHint': 'JPG, PNG, WEBP veya SVG, 8MB\'a kadar. Yükleme, logoyu hemen değiştirir.',
+    'branding.colorsTitle': 'Renkler',
+    'branding.primary': 'Ana Renk (yeşil)',
+    'branding.primaryDark': 'Ana Renk Koyu',
+    'branding.primaryLight': 'Ana Renk Açık',
+    'branding.accentNavy': 'Vurgu (lacivert)',
+    'branding.saveColors': 'Renkleri Kaydet',
+
+    'heroes.pageLabel': 'Sayfa',
+    'heroes.pageOption.home': 'Ana Sayfa',
+    'heroes.pageOption.products': 'Ürünler',
+    'heroes.pageOption.services': 'Hizmetler',
+    'heroes.pageOption.about': 'Hakkımızda',
+    'heroes.pageOption.news': 'Etkinlikler ve Haberler',
+    'heroes.pageOption.contact': 'İletişim',
+    'heroes.currentImage': 'Mevcut kapak görseli',
+    'heroes.uploadHint': 'JPG, PNG veya WEBP, 8MB\'a kadar.',
+    'heroes.eyebrowLabel': 'Üst etiket (başlığın üstündeki küçük etiket)',
+    'heroes.headingLabel': 'Başlık',
+    'heroes.subheadingLabel': 'Alt başlık',
+
+    'content.group.global': 'Genel (alt bilgi, iletişim bilgileri)',
+    'content.group.about': 'Hakkımızda Sayfası',
+    'content.group.home': 'Ana Sayfa',
+    'content.group.contact': 'İletişim Sayfası',
+  },
+};
+
+function adminLang() {
+  return localStorage.getItem(ADMIN_LANG_KEY) || 'en';
+}
+
+/** Looks up `key` in the active admin language, with {placeholder} substitution. */
+function t(key, vars) {
+  const lang = adminLang();
+  let str = (ADMIN_TRANSLATIONS[lang] && ADMIN_TRANSLATIONS[lang][key]) || ADMIN_TRANSLATIONS.en[key] || key;
+  if (vars) {
+    Object.keys(vars).forEach((k) => {
+      str = str.replace(`{${k}}`, vars[k]);
+    });
+  }
+  return str;
+}
+// Explicit for clarity/robustness — other modules (js/upload-field.js)
+// call this as window.t() rather than assuming the global scope.
+window.t = t;
+
+/** Sweeps every [data-i18n] element on the page and sets its text. */
+function applyAdminTranslations(lang) {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder));
+  });
+  document.querySelectorAll('[data-lang-switch]').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.langSwitch === lang);
+  });
+}
+
+// Reloads rather than re-rendering in place: several pages (any CRUD list,
+// the dashboard's enquiries table) build their DOM from JS at load time
+// using the active language, so a live re-render would need every page to
+// duplicate that logic. A reload is simpler and keeps every page correct.
+function setAdminLang(lang) {
+  localStorage.setItem(ADMIN_LANG_KEY, lang);
+  window.location.reload();
+}
+
+/** Injects the EN/TR toggle into every element with data-lang-switch-mount. */
+function mountLangSwitcher() {
+  document.querySelectorAll('[data-lang-switch-mount]').forEach((mount) => {
+    mount.innerHTML = `
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-switch="en">EN</button>
+        <button type="button" data-lang-switch="tr">TR</button>
+      </div>
+    `;
+    mount.querySelectorAll('[data-lang-switch]').forEach((btn) => {
+      btn.addEventListener('click', () => setAdminLang(btn.dataset.langSwitch));
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  mountLangSwitcher();
+  applyAdminTranslations(adminLang());
+});

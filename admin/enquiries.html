@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enquiries — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" class="active" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.enquiries.title">Enquiries</h1>
+        <p data-i18n="page.enquiries.desc">RFQ and contact-form submissions from the live site.</p>
+      </div>
+      <select id="status-filter" style="padding:9px 14px;border-radius:6px;border:1.5px solid var(--line);">
+        <option value="" data-i18n="enquiries.allStatuses">All statuses</option>
+        <option value="new" data-i18n="enquiries.new">New</option>
+        <option value="contacted" data-i18n="enquiries.contacted">Contacted</option>
+        <option value="won" data-i18n="enquiries.won">Won</option>
+        <option value="lost" data-i18n="enquiries.lost">Lost</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th data-i18n="page.dashboard.company">Company</th>
+            <th data-i18n="page.dashboard.contact">Contact</th>
+            <th data-i18n="enquiries.country">Country</th>
+            <th data-i18n="page.dashboard.product">Product</th>
+            <th data-i18n="page.dashboard.received">Received</th>
+            <th data-i18n="page.dashboard.status">Status</th>
+            <th class="col-actions" data-i18n="crud.actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"><tr><td colspan="7" data-i18n="crud.loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 data-i18n="enquiries.detailTitle">Enquiry Detail</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <div id="detail-body"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn--danger" id="delete-btn" data-i18n="crud.delete">Delete</button>
+      <select id="status-select" style="padding:9px 14px;border-radius:6px;border:1.5px solid var(--line);">
+        <option value="new" data-i18n="enquiries.new">New</option>
+        <option value="contacted" data-i18n="enquiries.contacted">Contacted</option>
+        <option value="won" data-i18n="enquiries.won">Won</option>
+        <option value="lost" data-i18n="enquiries.lost">Lost</option>
+      </select>
+      <button type="button" class="btn btn--primary" id="save-status-btn" data-i18n="enquiries.updateStatus">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/confirm-dialog.js"></script>
+<script>
+  requireAuth();
+
+  let currentId = null;
+  const modal = document.getElementById('modal-backdrop');
+  const statusFilter = document.getElementById('status-filter');
+
+  const statusBadge = (status) => `<span class="badge badge--status-${status}">${t(`enquiries.${status}`)}</span>`;
+
+  async function load() {
+    const query = statusFilter.value ? `?status=${statusFilter.value}` : '';
+    const res = await apiFetch(`/admin/enquiries${query}`);
+    const tbody = document.getElementById('tbody');
+    if (!res.ok) {
+      tbody.innerHTML = `<tr><td colspan="7">${t('crud.failedToLoad')}</td></tr>`;
+      return;
+    }
+    const { data } = await res.json();
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">${t('page.dashboard.noEnquiries')}</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data
+      .map(
+        (e) => `<tr>
+          <td>${e.company_name}</td>
+          <td>${e.contact_name}</td>
+          <td>${e.country}</td>
+          <td>${e.product_interest || '—'}</td>
+          <td>${new Date(e.created_at).toLocaleDateString()}</td>
+          <td>${statusBadge(e.status)}</td>
+          <td class="col-actions"><button class="btn btn--outline btn--sm" data-view="${e.id}">${t('enquiries.view')}</button></td>
+        </tr>`
+      )
+      .join('');
+    tbody.querySelectorAll('[data-view]').forEach((btn) =>
+      btn.addEventListener('click', () => openDetail(data.find((e) => e.id === btn.dataset.view)))
+    );
+  }
+
+  function openDetail(enquiry) {
+    currentId = enquiry.id;
+    document.getElementById('detail-body').innerHTML = `
+      <div class="field"><label>${t('enquiries.company')}</label><p>${enquiry.company_name}</p></div>
+      <div class="field"><label>${t('enquiries.contact')}</label><p>${enquiry.contact_name} — <a href="mailto:${enquiry.email}">${enquiry.email}</a>${enquiry.phone ? ' — ' + enquiry.phone : ''}</p></div>
+      <div class="field"><label>${t('enquiries.country')}</label><p>${enquiry.country}</p></div>
+      <div class="field"><label>${t('enquiries.productInterest')}</label><p>${enquiry.product_interest || '—'}</p></div>
+      <div class="field"><label>${t('enquiries.estimatedVolume')}</label><p>${enquiry.estimated_volume || '—'}</p></div>
+      <div class="field"><label>${t('enquiries.message')}</label><p style="white-space:pre-wrap;">${enquiry.message}</p></div>
+      <div class="field"><label>${t('enquiries.received')}</label><p>${new Date(enquiry.created_at).toLocaleString()}</p></div>
+    `;
+    document.getElementById('status-select').value = enquiry.status;
+    modal.classList.add('open');
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    currentId = null;
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  document.getElementById('save-status-btn').addEventListener('click', async () => {
+    const status = document.getElementById('status-select').value;
+    const res = await apiFetch(`/admin/enquiries/${currentId}/status`, { method: 'PATCH', body: { status } });
+    if (res.ok) {
+      showToast(t('enquiries.statusUpdated'));
+      closeModal();
+      load();
+    } else {
+      showToast(await apiErrorMessage(res), 'error');
+    }
+  });
+
+  document.getElementById('delete-btn').addEventListener('click', async () => {
+    const ok = await confirmDeleteDialog(t('resource.enquiry').toLowerCase());
+    if (!ok) return;
+    const res = await apiFetch(`/admin/enquiries/${currentId}`, { method: 'DELETE' });
+    if (res.ok) {
+      showToast(t('enquiries.deleted'));
+      closeModal();
+      load();
+    } else {
+      showToast(await apiErrorMessage(res), 'error');
+    }
+  });
+
+  statusFilter.addEventListener('change', load);
+  load();
+</script>
+</body>
+</html>

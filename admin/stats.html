@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stats — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" class="active" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.stats.title">Stats</h1>
+        <p data-i18n="page.stats.desc">The animated stat cards shown on the Home and About pages.</p>
+      </div>
+      <button class="btn btn--primary" id="crud-add-btn">+ Add Stat</button>
+    </div>
+
+    <div class="card">
+      <table class="data-table">
+        <thead id="crud-thead"></thead>
+        <tbody id="crud-tbody"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="crud-modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="crud-modal-title">Add Stat</h3>
+      <button class="modal-close" id="crud-modal-close">&times;</button>
+    </div>
+    <form id="crud-form">
+      <div class="modal-actions">
+        <button type="button" class="btn btn--outline" id="crud-modal-cancel" data-i18n="crud.cancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" data-i18n="crud.save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/confirm-dialog.js"></script>
+<script src="js/crud.js"></script>
+<script>
+  initCrudPage({
+    endpoint: 'stats',
+    titleSingular: t('resource.stat'),
+    columns: [
+      { key: 'label', label: t('field.label') },
+      { key: 'value_number', label: t('field.value') },
+      { key: 'unit_suffix', label: t('field.unit') },
+      { key: 'sort_order', label: t('field.order') },
+      { key: 'is_active', label: t('crud.status'), render: (i) => i.is_active ? `<span class="badge badge--active">${t('crud.active')}</span>` : `<span class="badge badge--inactive">${t('crud.hidden')}</span>` },
+    ],
+    fields: [
+      { name: 'stat_key', label: t('stats.field.key'), type: 'text', required: true, hint: t('stats.field.keyHint') },
+      { name: 'label', label: t('stats.field.label'), type: 'text', required: true },
+      { name: 'value_number', label: t('field.value'), type: 'number', required: true, step: '0.01' },
+      { name: 'unit_suffix', label: t('stats.field.unitSuffix'), type: 'text' },
+      { name: 'sort_order', label: t('field.sortOrder'), type: 'number' },
+      { name: 'is_active', label: t('field.visibleOnSite'), type: 'checkbox' },
+    ],
+    defaults: { is_active: true, sort_order: 0 },
+  });
+</script>
+</body>
+</html>

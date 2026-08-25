@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branding — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" class="active" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.branding.title">Branding &amp; Logo</h1>
+        <p data-i18n="page.branding.desc">Brand colors and logo used across every page of the live site.</p>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:640px;">
+      <h3 style="margin-bottom:16px;" data-i18n="branding.logoTitle">Logo</h3>
+      <div class="current-image" id="logo-preview-wrap" style="display:none;">
+        <img id="logo-preview" src="" alt="Current logo">
+        <div>
+          <div style="font-weight:600;font-size:0.9rem;" data-i18n="branding.currentLogo">Current logo</div>
+          <div style="color:var(--ink-500);font-size:0.82rem;" data-i18n="branding.logoShownHint">Shown in the header and footer of every page.</div>
+        </div>
+      </div>
+      <input type="file" id="logo-file" accept=".jpg,.jpeg,.png,.webp,.svg" data-upload-label-key="upload.label.logo" data-max-size-mb="8">
+      <p class="field-hint" style="margin-top:8px;" data-i18n="branding.logoUploadHint">JPG, PNG, WEBP or SVG, up to 8MB. Uploading replaces the logo immediately.</p>
+    </div>
+
+    <div class="card" style="max-width:640px;margin-top:16px;">
+      <h3 style="margin-bottom:16px;" data-i18n="branding.colorsTitle">Colors</h3>
+      <form id="branding-form">
+        <div class="field-row">
+          <div class="field">
+            <label for="primary_hex" data-i18n="branding.primary">Primary (green)</label>
+            <input type="color" id="primary_hex" name="primary_hex">
+          </div>
+          <div class="field">
+            <label for="primary_dark_hex" data-i18n="branding.primaryDark">Primary Dark</label>
+            <input type="color" id="primary_dark_hex" name="primary_dark_hex">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="primary_light_hex" data-i18n="branding.primaryLight">Primary Light</label>
+            <input type="color" id="primary_light_hex" name="primary_light_hex">
+          </div>
+          <div class="field">
+            <label for="accent_navy_hex" data-i18n="branding.accentNavy">Accent (navy)</label>
+            <input type="color" id="accent_navy_hex" name="accent_navy_hex">
+          </div>
+        </div>
+        <button type="submit" class="btn btn--primary" data-i18n="branding.saveColors">Save Colors</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/upload-field.js"></script>
+<script>
+  requireAuth();
+
+  const form = document.getElementById('branding-form');
+  const logoPreviewWrap = document.getElementById('logo-preview-wrap');
+  const logoPreview = document.getElementById('logo-preview');
+  const logoFileInput = document.getElementById('logo-file');
+
+  async function load() {
+    const res = await apiFetch('/admin/branding');
+    if (!res.ok) {
+      showToast(t('toast.brandingFailedLoad'), 'error');
+      return;
+    }
+    const branding = await res.json();
+    ['primary_hex', 'primary_dark_hex', 'primary_light_hex', 'accent_navy_hex'].forEach((key) => {
+      document.getElementById(key).value = branding[key] || '#000000';
+    });
+    if (branding.logo_url) {
+      logoPreview.src = mediaURL(branding.logo_url);
+      logoPreviewWrap.style.display = 'flex';
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      primary_hex: document.getElementById('primary_hex').value,
+      primary_dark_hex: document.getElementById('primary_dark_hex').value,
+      primary_light_hex: document.getElementById('primary_light_hex').value,
+      accent_navy_hex: document.getElementById('accent_navy_hex').value,
+      logo_url: logoPreview.src ? new URL(logoPreview.src).pathname : '',
+    };
+    const res = await apiFetch('/admin/branding', { method: 'PUT', body: payload });
+    if (res.ok) {
+      showToast(t('toast.brandingSaved'));
+    } else {
+      showToast(await apiErrorMessage(res), 'error');
+    }
+  });
+
+  logoFileInput.addEventListener('change', async () => {
+    const file = logoFileInput.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await apiFetch('/admin/media/upload', { method: 'POST', body: formData });
+    if (!res.ok) {
+      showToast(await apiErrorMessage(res), 'error');
+      return;
+    }
+    const asset = await res.json();
+    logoPreview.src = mediaURL(asset.url);
+    logoPreviewWrap.style.display = 'flex';
+
+    // Persist immediately so a logo change doesn't get lost if colors aren't saved too.
+    const brandingRes = await apiFetch('/admin/branding');
+    const branding = await brandingRes.json();
+    branding.logo_url = asset.url;
+    const saveRes = await apiFetch('/admin/branding', { method: 'PUT', body: branding });
+    showToast(saveRes.ok ? t('toast.logoUpdated') : t('toast.logoSaveFailed'), saveRes.ok ? 'success' : 'error');
+  });
+
+  load();
+</script>
+</body>
+</html>

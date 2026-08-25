@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Content — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" class="active" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.content.title">Site Content</h1>
+        <p data-i18n="page.content.desc">One-off text blocks — footer blurb, about-story paragraphs, contact details.</p>
+      </div>
+    </div>
+
+    <div id="content-editor"></div>
+
+    <div class="save-bar" id="save-bar" role="status" aria-live="polite">
+      <div class="save-bar-status" id="save-bar-status"></div>
+      <div class="save-bar-actions">
+        <button type="button" class="btn btn--outline" id="discard-btn" data-i18n="content.discardBtn">Discard</button>
+        <button type="button" class="btn btn--primary" id="save-changes-btn" data-i18n="content.saveBtn">Save Changes</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/confirm-dialog.js"></script>
+<script>
+  requireAuth();
+
+  // The admin dashboard and the public site are two separate deployments
+  // (Railway vs. GitHub Pages/localhost:8123) — mirrors the same
+  // local-vs-deployed split chips-company-website/js/cms.js uses for its
+  // own API_BASE, just inverted (there we point at the backend; here we
+  // point at the public site).
+  const PUBLIC_SITE_BASE = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? 'http://localhost:8123'
+    : 'https://easytechnologycompany.github.io/gold-pelet-website';
+
+  // Only content_key "page" groups that map 1:1 to one real public page
+  // get a "View Page" link — "global" content (footer/contact info)
+  // appears on every page, so there's no single URL to send the admin to.
+  const PAGE_URLS = { about: 'about.html', home: 'index.html', contact: 'contact.html' };
+
+  const pageTitles = {
+    global: t('content.group.global'),
+    about: t('content.about.title'),
+    home: t('content.group.home'),
+    contact: t('content.group.contact'),
+  };
+  const pageDescriptions = {
+    about: t('content.about.desc'),
+  };
+
+  const HEADING_MAX_LEN = 140;
+  const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  const editor = document.getElementById('content-editor');
+  const saveBar = document.getElementById('save-bar');
+  const saveBarStatus = document.getElementById('save-bar-status');
+  const saveBtn = document.getElementById('save-changes-btn');
+  const discardBtn = document.getElementById('discard-btn');
+
+  let fields = [];
+  let savedValues = {}; // content_key -> last-saved value (baseline for dirty-tracking)
+  const dirtyKeys = new Set();
+  let saving = false;
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // Headings get a single-line input + a soft character count (nothing is
+  // enforced/truncated — just a visual nudge); short factual fields
+  // (email/phone/website) also get a single-line input; everything else
+  // (paragraphs, the address) gets an auto-resizing textarea.
+  function fieldKind(key) {
+    if (/heading$/.test(key)) return 'heading';
+    if (/(email|phone_primary|phone_secondary|phone_mobile|website)$/.test(key)) return 'short';
+    return 'paragraph';
+  }
+
+  function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+    el.classList.toggle('is-tall', el.scrollHeight >= 320);
+  }
+
+  function renderSkeletonCard() {
+    return `
+      <div class="card skeleton-card" aria-hidden="true">
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-line label"></div>
+        <div class="skeleton-line field"></div>
+        <div class="skeleton-line label"></div>
+        <div class="skeleton-line field"></div>
+      </div>
+    `;
+  }
+
+  function fieldTemplate(item) {
+    const kind = fieldKind(item.content_key);
+    const value = item.content_value || '';
+    const countHtml = kind === 'heading'
+      ? `<span class="content-char-count" data-char-count>${value.length} / ${HEADING_MAX_LEN}</span>`
+      : '';
+    const control = kind === 'paragraph'
+      ? `<textarea id="cf-${item.content_key}" data-content-key="${item.content_key}" rows="2">${escapeHtml(value)}</textarea>`
+      : `<input type="text" id="cf-${item.content_key}" data-content-key="${item.content_key}" value="${escapeHtml(value)}">`;
+    return `
+      <div class="content-field" data-field-key="${item.content_key}">
+        <div class="content-field-label-row">
+          <label for="cf-${item.content_key}">${escapeHtml(item.label)}</label>
+          ${countHtml}
+        </div>
+        ${control}
+      </div>
+    `;
+  }
+
+  function cardTemplate(page, items) {
+    const title = pageTitles[page] || page;
+    const desc = pageDescriptions[page] || '';
+    const viewUrl = PAGE_URLS[page] ? `${PUBLIC_SITE_BASE}/${PAGE_URLS[page]}` : null;
+    return `
+      <div class="card">
+        <div class="content-card-head">
+          <div class="content-card-head-row">
+            <div>
+              <h3>${title}</h3>
+              ${desc ? `<p>${desc}</p>` : ''}
+            </div>
+            ${viewUrl ? `<a href="${viewUrl}" target="_blank" rel="noopener" class="btn btn--outline btn--sm">${t('content.viewPage')} ↗</a>` : ''}
+          </div>
+        </div>
+        ${items.map(fieldTemplate).join('')}
+      </div>
+    `;
+  }
+
+  function renderCards() {
+    const grouped = {};
+    fields.forEach((item) => (grouped[item.page] ||= []).push(item));
+
+    editor.innerHTML = Object.entries(grouped).map(([page, items]) => cardTemplate(page, items)).join('');
+
+    editor.querySelectorAll('textarea[data-content-key]').forEach(autoResizeTextarea);
+    editor.querySelectorAll('[data-content-key]').forEach((el) => {
+      el.addEventListener('input', () => onFieldInput(el));
+    });
+  }
+
+  function onFieldInput(el) {
+    const key = el.dataset.contentKey;
+    if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
+
+    const countEl = el.closest('.content-field').querySelector('[data-char-count]');
+    if (countEl) {
+      countEl.textContent = `${el.value.length} / ${HEADING_MAX_LEN}`;
+      countEl.classList.toggle('is-over', el.value.length > HEADING_MAX_LEN);
+    }
+
+    if (el.value !== savedValues[key]) dirtyKeys.add(key);
+    else dirtyKeys.delete(key);
+    refreshSaveBar();
+  }
+
+  function refreshSaveBar(state) {
+    if (!state) state = dirtyKeys.size > 0 ? 'dirty' : 'clean';
+    saveBar.classList.remove('is-saved', 'is-error');
+
+    if (state === 'clean') {
+      saveBar.classList.remove('is-visible');
+      return;
+    }
+    saveBar.classList.add('is-visible');
+
+    if (state === 'dirty') {
+      saveBarStatus.innerHTML = `<span class="dot"></span> ${t('content.unsavedChanges')}`;
+      saveBtn.disabled = false;
+      discardBtn.disabled = false;
+    } else if (state === 'saving') {
+      saveBarStatus.innerHTML = `<span class="dot"></span> ${t('content.saving')}`;
+      saveBtn.disabled = true;
+      discardBtn.disabled = true;
+    } else if (state === 'saved') {
+      saveBar.classList.add('is-saved');
+      saveBarStatus.innerHTML = `${CHECK_ICON} ${t('content.changesSaved')}`;
+      saveBtn.disabled = false;
+      discardBtn.disabled = false;
+    } else if (state === 'error') {
+      saveBar.classList.add('is-error');
+      saveBarStatus.textContent = t('content.saveError');
+      saveBtn.disabled = false;
+      discardBtn.disabled = false;
+    }
+  }
+
+  async function load() {
+    editor.innerHTML = renderSkeletonCard() + renderSkeletonCard();
+    const res = await apiFetch('/admin/content');
+    if (!res.ok) {
+      editor.innerHTML = `<div class="card"><div class="empty-state">${t('toast.contentFailedLoad')}</div></div>`;
+      return;
+    }
+    const { data } = await res.json();
+    fields = data;
+    savedValues = {};
+    data.forEach((item) => { savedValues[item.content_key] = item.content_value; });
+    dirtyKeys.clear();
+    renderCards();
+    refreshSaveBar('clean');
+  }
+
+  saveBtn.addEventListener('click', async () => {
+    if (saving || dirtyKeys.size === 0) return;
+    saving = true;
+    refreshSaveBar('saving');
+
+    const keys = Array.from(dirtyKeys);
+    const results = await Promise.all(
+      keys.map(async (key) => {
+        const el = editor.querySelector(`[data-content-key="${CSS.escape(key)}"]`);
+        const res = await apiFetch(`/admin/content/${encodeURIComponent(key)}`, {
+          method: 'PUT',
+          body: { content_value: el.value },
+        });
+        return { key, value: el.value, ok: res.ok };
+      })
+    );
+    saving = false;
+
+    // Only keys that actually succeeded move their baseline forward and
+    // drop out of "dirty" — a failed key stays dirty (and its typed value
+    // stays exactly as the admin left it) so nothing is ever silently lost.
+    results.filter((r) => r.ok).forEach((r) => {
+      savedValues[r.key] = r.value;
+      dirtyKeys.delete(r.key);
+    });
+    const failed = results.filter((r) => !r.ok);
+
+    if (failed.length === 0) {
+      refreshSaveBar('saved');
+      showToast(t('content.savedToast'));
+      setTimeout(() => {
+        if (dirtyKeys.size === 0) refreshSaveBar('clean');
+      }, 2200);
+    } else {
+      refreshSaveBar('error');
+      showToast(t('content.saveErrorToast'), 'error');
+    }
+  });
+
+  discardBtn.addEventListener('click', async () => {
+    if (dirtyKeys.size === 0) return;
+    const ok = await confirmDialog({
+      title: t('content.discardTitle'),
+      message: t('content.discardMessage'),
+      confirmLabel: t('content.discardConfirm'),
+      cancelLabel: t('content.discardCancel'),
+      danger: true,
+    });
+    if (!ok) return;
+
+    dirtyKeys.forEach((key) => {
+      const el = editor.querySelector(`[data-content-key="${CSS.escape(key)}"]`);
+      if (!el) return;
+      el.value = savedValues[key];
+      if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
+      const countEl = el.closest('.content-field').querySelector('[data-char-count]');
+      if (countEl) {
+        countEl.textContent = `${el.value.length} / ${HEADING_MAX_LEN}`;
+        countEl.classList.remove('is-over');
+      }
+    });
+    dirtyKeys.clear();
+    refreshSaveBar('clean');
+  });
+
+  // Standard native warning — fires on refresh, tab close, or navigating
+  // to another site entirely; in-app link clicks (e.g. the sidebar) are a
+  // real navigation too, so this covers "leaves the page" in every sense
+  // a plain content-editing page can intercept.
+  window.addEventListener('beforeunload', (e) => {
+    if (dirtyKeys.size > 0) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  load();
+</script>
+</body>
+</html>

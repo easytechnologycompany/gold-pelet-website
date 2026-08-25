@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Images — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+  .image-card { display: flex; flex-direction: column; gap: 10px; }
+  .image-card > img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 8px; background: #eee; }
+  .image-card .label { font-weight: 600; font-size: 0.92rem; }
+  .image-card .key { font-size: 0.78rem; color: #888; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" class="active" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.siteImages.title">Site Images</h1>
+        <p data-i18n="page.siteImages.desc">Photos used across the Manufacturing Story and other split-image sections. Upload a replacement for any slot below — changes go live immediately.</p>
+      </div>
+    </div>
+
+    <div class="image-grid" id="image-grid"></div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/upload-field.js"></script>
+<script>
+  requireAuth();
+
+  const grid = document.getElementById('image-grid');
+
+  function cardHTML(img) {
+    return `
+      <div class="card image-card" data-key="${img.image_key}">
+        <img src="${mediaURL(img.image_url)}" alt="${img.label}">
+        <div class="label">${img.label}</div>
+        <div class="key">${img.image_key}</div>
+        <input type="file" accept=".jpg,.jpeg,.png,.webp" data-upload data-upload-label="${img.label}" data-max-size-mb="8">
+      </div>
+    `;
+  }
+
+  async function load() {
+    const res = await apiFetch('/admin/site-images');
+    if (!res.ok) {
+      showToast(t('toast.siteImagesFailedLoad'), 'error');
+      return;
+    }
+    const { data } = await res.json();
+    grid.innerHTML = data.map(cardHTML).join('');
+    window.enhanceFileInputs && window.enhanceFileInputs(grid);
+
+    grid.querySelectorAll('[data-upload]').forEach((input) => {
+      input.addEventListener('change', async () => {
+        const file = input.files[0];
+        if (!file) return;
+        const card = input.closest('.image-card');
+        const key = card.dataset.key;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        const uploadRes = await apiFetch('/admin/media/upload', { method: 'POST', body: formData });
+        if (!uploadRes.ok) {
+          showToast(await apiErrorMessage(uploadRes), 'error');
+          return;
+        }
+        const asset = await uploadRes.json();
+
+        const saveRes = await apiFetch(`/admin/site-images/${key}`, {
+          method: 'PUT',
+          body: { image_url: asset.url },
+        });
+        if (!saveRes.ok) {
+          showToast(await apiErrorMessage(saveRes), 'error');
+          return;
+        }
+        card.querySelector('img').src = mediaURL(asset.url);
+        showToast(t('toast.siteImageUpdated'));
+      });
+    });
+  }
+
+  load();
+</script>
+</body>
+</html>

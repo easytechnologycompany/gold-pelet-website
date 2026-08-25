@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="active" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.dashboard.title">Overview</h1>
+        <p data-i18n="page.dashboard.desc">A snapshot of what's on the live site right now.</p>
+      </div>
+    </div>
+
+    <div class="stat-grid" id="overview-stats">
+      <div class="stat-tile"><div class="num">—</div><div class="label" data-i18n="page.dashboard.newEnquiries">New Enquiries</div></div>
+      <div class="stat-tile"><div class="num">—</div><div class="label" data-i18n="page.dashboard.products">Products</div></div>
+      <div class="stat-tile"><div class="num">—</div><div class="label" data-i18n="page.dashboard.newsItems">News Items</div></div>
+      <div class="stat-tile"><div class="num">—</div><div class="label" data-i18n="page.dashboard.certifications">Certifications</div></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:6px;" data-i18n="page.dashboard.recentEnquiries">Recent Enquiries</h3>
+      <p style="color:var(--ink-500);font-size:0.88rem;margin-bottom:16px;" data-i18n="page.dashboard.recentEnquiriesDesc">The 5 most recent RFQ / contact-form submissions.</p>
+      <table class="data-table">
+        <thead><tr>
+          <th data-i18n="page.dashboard.company">Company</th>
+          <th data-i18n="page.dashboard.contact">Contact</th>
+          <th data-i18n="page.dashboard.product">Product</th>
+          <th data-i18n="page.dashboard.status">Status</th>
+          <th data-i18n="page.dashboard.received">Received</th>
+        </tr></thead>
+        <tbody id="recent-enquiries"><tr><td colspan="5" data-i18n="crud.loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script>
+  requireAuth();
+
+  const statusBadge = (status) =>
+    `<span class="badge badge--status-${status}">${t(`enquiries.${status}`)}</span>`;
+
+  async function loadOverview() {
+    const [enquiriesRes, productsRes, newsRes, certsRes] = await Promise.all([
+      apiFetch('/admin/enquiries?status=new'),
+      apiFetch('/admin/products'),
+      apiFetch('/admin/news'),
+      apiFetch('/admin/certifications'),
+    ]);
+
+    const tiles = document.querySelectorAll('#overview-stats .stat-tile .num');
+    if (enquiriesRes.ok) tiles[0].textContent = (await enquiriesRes.json()).data.length;
+    if (productsRes.ok) tiles[1].textContent = (await productsRes.json()).data.length;
+    if (newsRes.ok) tiles[2].textContent = (await newsRes.json()).data.length;
+    if (certsRes.ok) tiles[3].textContent = (await certsRes.json()).data.length;
+
+    const allEnquiriesRes = await apiFetch('/admin/enquiries');
+    const body = document.getElementById('recent-enquiries');
+    if (!allEnquiriesRes.ok) {
+      body.innerHTML = `<tr><td colspan="5">${t('crud.failedToLoad')}</td></tr>`;
+      return;
+    }
+    const { data } = await allEnquiriesRes.json();
+    if (!data.length) {
+      body.innerHTML = `<tr><td colspan="5"><div class="empty-state">${t('page.dashboard.noEnquiries')}</div></td></tr>`;
+      return;
+    }
+    body.innerHTML = data
+      .slice(0, 5)
+      .map(
+        (e) => `<tr>
+          <td>${e.company_name}</td>
+          <td>${e.contact_name}</td>
+          <td>${e.product_interest || '—'}</td>
+          <td>${statusBadge(e.status)}</td>
+          <td>${new Date(e.created_at).toLocaleDateString()}</td>
+        </tr>`
+      )
+      .join('');
+  }
+
+  loadOverview();
+</script>
+</body>
+</html>

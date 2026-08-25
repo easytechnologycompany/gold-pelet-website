@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — Gold Pelet Admin</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="img/logo-light.png" alt="Gold Pelet"> <span data-i18n="sidebar.admin">Admin</span></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-i18n="nav.overview">Overview</a>
+      <div class="group-label" data-i18n="nav.group.visuals">Visuals &amp; Branding</div>
+      <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
+      <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
+      <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
+      <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
+      <a href="stats.html" data-i18n="nav.stats">Stats</a>
+      <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
+      <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
+      <div class="group-label" data-i18n="nav.group.catalog">Catalog</div>
+      <a href="categories.html" data-i18n="nav.categories">Categories</a>
+      <a href="products.html" class="active" data-i18n="nav.products">Products</a>
+      <div class="group-label" data-i18n="nav.group.news">News</div>
+      <a href="news.html" data-i18n="nav.news">Events &amp; News</a>
+      <div class="group-label" data-i18n="nav.group.leads">Leads</div>
+      <a href="enquiries.html" data-i18n="nav.enquiries">Enquiries</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div data-lang-switch-mount></div>
+      <button data-logout data-i18n="sidebar.signOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 data-i18n="page.products.title">Products</h1>
+        <p data-i18n="page.products.desc">Catalog items — grouped by category, with spec chips shown on each product card.</p>
+      </div>
+      <button class="btn btn--primary" id="add-btn" data-i18n="page.products.addBtn">+ Add Product</button>
+    </div>
+
+    <div class="card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th data-i18n="page.products.colProduct">Product</th>
+            <th data-i18n="nav.categories">Category</th>
+            <th data-i18n="page.products.colFeatured">Featured</th>
+            <th data-i18n="page.products.colOrder">Order</th>
+            <th data-i18n="page.dashboard.status">Status</th>
+            <th class="col-actions" data-i18n="crud.actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"><tr><td colspan="6" data-i18n="crud.loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title" data-i18n="page.products.addTitle">Add Product</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <form id="product-form">
+      <div class="field">
+        <label for="category_id" data-i18n="products.field.category">Category *</label>
+        <select id="category_id" name="category_id" required></select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="name" data-i18n="field.nameRequired">Name *</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="field">
+          <label for="slug" data-i18n="field.slugRequired">Slug *</label>
+          <input type="text" id="slug" name="slug" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="description" data-i18n="field.description">Description</label>
+        <textarea id="description" name="description"></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label data-i18n="products.field.rawImage">Raw / Pellet Image</label>
+          <div class="current-image" id="raw-image-preview-wrap" style="display:none;">
+            <img id="raw-image-preview" src="" alt="Raw pellet">
+            <div style="font-weight:600;font-size:0.9rem;" data-i18n="products.field.currentRaw">Current raw image</div>
+          </div>
+          <input type="file" id="raw-image-file" accept=".jpg,.jpeg,.png,.webp" data-upload-label-key="upload.label.rawImage" data-max-size-mb="8">
+        </div>
+        <div class="field">
+          <label data-i18n="products.field.friedImage">Fried / Cooked Image</label>
+          <div class="current-image" id="fried-image-preview-wrap" style="display:none;">
+            <img id="fried-image-preview" src="" alt="Fried product">
+            <div style="font-weight:600;font-size:0.9rem;" data-i18n="products.field.currentFried">Current fried image</div>
+          </div>
+          <input type="file" id="fried-image-file" accept=".jpg,.jpeg,.png,.webp" data-upload-label-key="upload.label.friedImage" data-max-size-mb="8">
+        </div>
+      </div>
+      <p class="field-hint" style="margin:8px 0 16px;" data-i18n="products.field.imageHint">Both optional — products without a raw or fried photo show a plain icon card / "photo coming soon" state for that side on the public site. Each card shows both states with a toggle.</p>
+
+      <div class="field">
+        <label data-i18n="products.field.specChips">Spec chips (e.g. "Moisture 11–13%", "MOQ 5t")</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="spec-input" placeholder="Type a spec and press Enter" data-i18n-placeholder="products.field.specPlaceholder">
+          <button type="button" class="btn btn--outline btn--sm" id="spec-add-btn" data-i18n="products.field.specAdd">Add</button>
+        </div>
+        <div class="spec-chip-list" id="spec-list"></div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="sort_order" data-i18n="field.sortOrder">Sort order</label>
+          <input type="number" id="sort_order" name="sort_order">
+        </div>
+        <div class="field field-checkbox" style="align-self:center;">
+          <input type="checkbox" id="is_featured" name="is_featured">
+          <label for="is_featured" data-i18n="products.field.featuredCheckbox">Featured ("Best Seller" tag)</label>
+        </div>
+      </div>
+      <div class="field field-checkbox">
+        <input type="checkbox" id="is_active" name="is_active">
+        <label for="is_active" data-i18n="field.visibleOnSite">Visible on the live site</label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn--outline" id="modal-cancel" data-i18n="crud.cancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" data-i18n="crud.save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/upload-field.js"></script>
+<script src="js/confirm-dialog.js"></script>
+<script>
+  requireAuth();
+
+  let categories = [];
+  let products = [];
+  let specs = [];
+  let editingId = null;
+  let currentRawImageUrl = '';
+  let currentFriedImageUrl = '';
+
+  const modal = document.getElementById('modal-backdrop');
+  const form = document.getElementById('product-form');
+  const specList = document.getElementById('spec-list');
+  const specInput = document.getElementById('spec-input');
+  const rawImagePreview = document.getElementById('raw-image-preview');
+  const rawImagePreviewWrap = document.getElementById('raw-image-preview-wrap');
+  const friedImagePreview = document.getElementById('fried-image-preview');
+  const friedImagePreviewWrap = document.getElementById('fried-image-preview-wrap');
+
+  function renderSpecs() {
+    specList.innerHTML = specs
+      .map((s, i) => `<span class="spec-chip">${s}<button type="button" data-remove="${i}">&times;</button></span>`)
+      .join('');
+    specList.querySelectorAll('[data-remove]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        specs.splice(Number(btn.dataset.remove), 1);
+        renderSpecs();
+      })
+    );
+  }
+  function addSpecFromInput() {
+    const value = specInput.value.trim();
+    if (!value) return;
+    specs.push(value);
+    specInput.value = '';
+    renderSpecs();
+  }
+  document.getElementById('spec-add-btn').addEventListener('click', addSpecFromInput);
+  specInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addSpecFromInput();
+    }
+  });
+
+  async function loadCategories() {
+    const res = await apiFetch('/admin/categories');
+    const { data } = await res.json();
+    categories = data;
+    const select = document.getElementById('category_id');
+    select.innerHTML = categories.map((c) => `<option value="${c.id}">${c.name}</option>`).join('');
+  }
+
+  function categoryName(id) {
+    return categories.find((c) => c.id === id)?.name || '—';
+  }
+
+  async function loadProducts() {
+    const res = await apiFetch('/admin/products');
+    const tbody = document.getElementById('tbody');
+    if (!res.ok) {
+      tbody.innerHTML = `<tr><td colspan="6">${t('crud.failedToLoad')}</td></tr>`;
+      return;
+    }
+    const { data } = await res.json();
+    products = data;
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">${t('crud.empty')}</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data
+      .map(
+        (p) => `<tr>
+          <td>${p.name}</td>
+          <td>${categoryName(p.category_id)}</td>
+          <td>${p.is_featured ? t('crud.yes') : ''}</td>
+          <td>${p.sort_order}</td>
+          <td>${p.is_active ? `<span class="badge badge--active">${t('crud.active')}</span>` : `<span class="badge badge--inactive">${t('crud.hidden')}</span>`}</td>
+          <td class="col-actions">
+            <div class="row-actions">
+              <button class="btn btn--outline btn--sm" data-edit="${p.id}">${t('crud.edit')}</button>
+              <button class="btn btn--danger btn--sm" data-delete="${p.id}">${t('crud.delete')}</button>
+            </div>
+          </td>
+        </tr>`
+      )
+      .join('');
+    tbody.querySelectorAll('[data-edit]').forEach((btn) =>
+      btn.addEventListener('click', () => openModal(products.find((p) => p.id === btn.dataset.edit)))
+    );
+    tbody.querySelectorAll('[data-delete]').forEach((btn) =>
+      btn.addEventListener('click', () => handleDelete(btn.dataset.delete))
+    );
+  }
+
+  function openModal(product) {
+    editingId = product ? product.id : null;
+    document.getElementById('modal-title').textContent = product ? t('page.products.editTitle') : t('page.products.addTitle');
+    document.getElementById('category_id').value = product?.category_id || categories[0]?.id || '';
+    document.getElementById('name').value = product?.name || '';
+    document.getElementById('slug').value = product?.slug || '';
+    document.getElementById('description').value = product?.description || '';
+    document.getElementById('sort_order').value = product?.sort_order ?? 0;
+    document.getElementById('is_featured').checked = Boolean(product?.is_featured);
+    document.getElementById('is_active').checked = product ? product.is_active : true;
+    specs = (product?.specs || []).map((s) => s.label);
+    renderSpecs();
+    currentRawImageUrl = product?.raw_image_url || '';
+    if (currentRawImageUrl) {
+      rawImagePreview.src = mediaURL(currentRawImageUrl);
+      rawImagePreviewWrap.style.display = 'flex';
+    } else {
+      rawImagePreviewWrap.style.display = 'none';
+    }
+    currentFriedImageUrl = product?.fried_image_url || '';
+    if (currentFriedImageUrl) {
+      friedImagePreview.src = mediaURL(currentFriedImageUrl);
+      friedImagePreviewWrap.style.display = 'flex';
+    } else {
+      friedImagePreviewWrap.style.display = 'none';
+    }
+    modal.classList.add('open');
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    editingId = null;
+  }
+
+  document.getElementById('add-btn').addEventListener('click', () => openModal(null));
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-cancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await apiFetch('/admin/media/upload', { method: 'POST', body: formData });
+    if (!res.ok) {
+      showToast(await apiErrorMessage(res), 'error');
+      return null;
+    }
+    const asset = await res.json();
+    return asset.url;
+  }
+
+  document.getElementById('raw-image-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = await uploadImage(file);
+    if (!url) return;
+    currentRawImageUrl = url;
+    rawImagePreview.src = mediaURL(url);
+    rawImagePreviewWrap.style.display = 'flex';
+  });
+
+  document.getElementById('fried-image-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = await uploadImage(file);
+    if (!url) return;
+    currentFriedImageUrl = url;
+    friedImagePreview.src = mediaURL(url);
+    friedImagePreviewWrap.style.display = 'flex';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      category_id: document.getElementById('category_id').value,
+      name: document.getElementById('name').value,
+      slug: document.getElementById('slug').value,
+      description: document.getElementById('description').value,
+      raw_image_url: currentRawImageUrl,
+      fried_image_url: currentFriedImageUrl,
+      is_featured: document.getElementById('is_featured').checked,
+      sort_order: Number(document.getElementById('sort_order').value) || 0,
+      is_active: document.getElementById('is_active').checked,
+      specs,
+    };
+    const isEdit = Boolean(editingId);
+    const res = await apiFetch(isEdit ? `/admin/products/${editingId}` : '/admin/products', {
+      method: isEdit ? 'PUT' : 'POST',
+      body: payload,
+    });
+    if (res.ok) {
+      showToast(t(isEdit ? 'crud.updated' : 'crud.created', { item: t('resource.product') }));
+      closeModal();
+      loadProducts();
+    } else {
+      showToast(await apiErrorMessage(res), 'error');
+    }
+  });
+
+  async function handleDelete(id) {
+    const ok = await confirmDeleteDialog(t('resource.product').toLowerCase());
+    if (!ok) return;
+    const res = await apiFetch(`/admin/products/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      showToast(t('crud.deleted', { item: t('resource.product') }));
+      loadProducts();
+    } else {
+      showToast(await apiErrorMessage(res), 'error');
+    }
+  }
+
+  (async () => {
+    await loadCategories();
+    await loadProducts();
+  })();
+</script>
+</body>
+</html>
