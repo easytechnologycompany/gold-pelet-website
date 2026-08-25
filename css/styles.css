@@ -98,6 +98,15 @@ html[dir="rtl"] .news-card .date,
 html[dir="rtl"] .chip,
 html[dir="rtl"] [data-content-key] {
   unicode-bidi: plaintext;
+  /* unicode-bidi: plaintext also resolves text-align:start using the
+     content's OWN detected direction (LTR here), which would otherwise
+     flip these to left-aligned — inconsistent against the Arabic/Kurdish
+     headings and eyebrows around them, which stay right-aligned. Force
+     the physical side back to match the surrounding RTL layout; this is
+     independent of unicode-bidi and doesn't reintroduce the reordering
+     or overflow bug, since that came from direction detection, not
+     alignment. */
+  text-align: right;
 }
 
 * { box-sizing: border-box; }
