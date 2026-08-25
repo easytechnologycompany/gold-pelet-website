@@ -15,6 +15,12 @@
   --green-100: #E7EEE1;
   --navy-600: #0B4363;
   --navy-400: #2E6E93;
+  /* Lighter than navy-400 specifically so it stays ≥4.5:1 against the
+     dark green surfaces it accents on (hero, footer, stat units) —
+     navy-400 only reaches ~2.25:1 there. Reserve navy-400 for navy-on-light
+     contexts (e.g. the light split-badge card); use navy-300 wherever this
+     hue sits directly on --green-900 or the hero's dark gradient. */
+  --navy-300: #7EB6DD;
   --navy-100: #E1EAEF;
 
   /* ---- Neutrals ---- */
@@ -397,8 +403,8 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   inset: 0;
   background: linear-gradient(115deg, rgba(18,48,31,0.94) 0%, rgba(18,48,31,0.82) 42%, rgba(31,91,58,0.55) 100%);
 }
-.hero .eyebrow { color: var(--navy-400); }
-.hero .eyebrow::before { background: var(--navy-400); }
+.hero .eyebrow { color: var(--navy-300); }
+.hero .eyebrow::before { background: var(--navy-300); }
 .hero h1 { max-width: 15ch; }
 .hero-lede {
   margin-top: var(--space-4);
@@ -426,7 +432,7 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   font-size: clamp(1.7rem, 3vw, 2.3rem);
   color: #fff;
 }
-.stat-num .unit { font-size: 0.55em; font-weight: 700; color: var(--navy-400); margin-left: 2px; }
+.stat-num .unit { font-size: 0.55em; font-weight: 700; color: var(--navy-300); margin-left: 2px; }
 .stat-label {
   margin-top: 4px;
   font-size: 0.82rem;
@@ -444,8 +450,8 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   color: #fff;
   padding: var(--space-8) 0 var(--space-7);
 }
-.page-hero .eyebrow { color: var(--navy-400); }
-.page-hero .eyebrow::before { background: var(--navy-400); }
+.page-hero .eyebrow { color: var(--navy-300); }
+.page-hero .eyebrow::before { background: var(--navy-300); }
 .page-hero p { color: rgba(255,255,255,0.82); max-width: 60ch; margin-top: var(--space-3); font-size: 1.05rem; }
 .page-hero .breadcrumb {
   margin-top: var(--space-5);
@@ -453,7 +459,7 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   color: rgba(255,255,255,0.6);
   font-weight: 600;
 }
-.page-hero .breadcrumb span { color: var(--navy-400); }
+.page-hero .breadcrumb span { color: var(--navy-300); }
 
 /* ============================================================
    Product / category cards
@@ -736,7 +742,12 @@ html[dir="rtl"] .media-toggle[data-active="fried"] .media-toggle-pill { transfor
 }
 @media (max-width: 640px) { .split-badge { position: static; margin-top: var(--space-4); display: inline-block; } }
 html[dir="rtl"] .split-badge { right: auto; left: -22px; }
+/* .split-badge is a light card floated over a photo — .stat-num/.stat-label
+   default to the hero's white-on-dark treatment, which is invisible here
+   and must be overridden for both, not just the number. */
 .split-badge .stat-num { color: var(--green-700); font-size: 1.7rem; }
+.split-badge .stat-num .unit { color: var(--navy-400); }
+.split-badge .stat-label { color: var(--ink-500); }
 .split-content ul { margin-top: var(--space-5); display: grid; gap: var(--space-3); }
 .split-content li {
   display: flex;
@@ -1038,7 +1049,12 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
     font-weight: 800;
     font-size: 0.78rem;
     letter-spacing: 0.04em;
-    color: var(--ink-300);
+    /* Upcoming (not-yet-reached) step — ink-300 is a decoration-grade
+       gray (~2.2:1 on --bg) with no WCAG text guarantee; ink-500 is the
+       site's standard muted-but-readable body color (~4.9:1) and keeps
+       this clickable label legible while still reading as de-emphasized
+       next to the is-active/is-done states below. */
+    color: var(--ink-500);
     text-align: left;
     cursor: pointer;
   }
@@ -1053,7 +1069,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   }
   .story-progress-item.is-active { color: var(--green-700); }
   .story-progress-item.is-active::before { background: var(--navy-600); width: 34px; }
-  .story-progress-item.is-done { color: var(--ink-500); }
+  .story-progress-item.is-done { color: var(--ink-700); }
   .story-progress-item.is-done::before { background: var(--green-500); }
   .story-progress-item:focus-visible { outline: 2px solid var(--navy-600); outline-offset: 3px; }
 
@@ -1065,7 +1081,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
     color: var(--navy-600);
     margin-bottom: var(--space-3);
   }
-  .story-step-number span { color: var(--ink-300); font-weight: 700; }
+  .story-step-number span { color: var(--ink-500); font-weight: 700; }
 
   /* min-height is a generous floor, not a cap — .story-step below is only
      top/inline-pinned (no bottom:0), so longer translated copy (Arabic,
@@ -1143,7 +1159,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
     letter-spacing: 0.06em;
     color: var(--navy-600);
   }
-  .story-mobile-item .story-step-number span { color: var(--ink-300); font-weight: 700; }
+  .story-mobile-item .story-step-number span { color: var(--ink-500); font-weight: 700; }
   .story-mobile-item h3 { margin-top: var(--space-2); margin-bottom: var(--space-2); }
   .story-mobile-item p { color: var(--ink-500); }
   .story-mobile-visual {
@@ -1257,7 +1273,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--navy-400);
+  color: var(--navy-300);
   margin-bottom: var(--space-4);
 }
 .footer-col ul { display: grid; gap: var(--space-3); }
@@ -1279,7 +1295,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   border: 1px solid rgba(255,255,255,0.25);
   display: grid; place-items: center;
 }
-.footer-social a:hover { border-color: var(--navy-400); color: var(--navy-400); }
+.footer-social a:hover { border-color: var(--navy-300); color: var(--navy-300); }
 
 /* ---- utility ---- */
 .text-center { text-align: center; }
