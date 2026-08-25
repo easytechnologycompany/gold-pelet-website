@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var l=localStorage.getItem('gp_lang');if(l==='ar'||l==='ku'){document.documentElement.dir='rtl';document.documentElement.lang=l;}else if(l==='tr'){document.documentElement.lang='tr';}}catch(e){}})();</script>
 <title>Gold Pelet — Pellet Snack &amp; Semi-Finished Chips Manufacturer</title>
 <meta name="description" content="Gold Pelet manufactures potato, corn and wheat pellet snacks and semi-finished chips for food brands worldwide, exported to 25+ countries.">
 <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body data-page="home">
 
 <header class="site-header">
   <div class="container">
@@ -16,16 +17,41 @@
     </a>
     <nav class="main-nav" id="main-nav">
       <ul>
-        <li><a href="index.html" aria-current="page">Home</a></li>
-        <li><a href="products.html">Products</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="about.html">About Us</a></li>
-        <li><a href="news.html">Events &amp; News</a></li>
-        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="index.html" aria-current="page" data-i18n="nav.home">Home</a></li>
+        <li><a href="products.html" data-i18n="nav.products">Products</a></li>
+        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+        <li><a href="about.html" data-i18n="nav.about">About Us</a></li>
+        <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
+        <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
       </ul>
     </nav>
     <div class="header-actions">
-      <a href="contact.html" class="btn btn--outline">Get a Quote</a>
+      <div class="lang-switcher" id="lang-switcher">
+        <button type="button" class="lang-switcher-btn" id="lang-switcher-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+          <svg class="lang-globe" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9s1.3-6.5 3.8-9z" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span class="lang-current-code" id="lang-current-code">EN</span>
+          <svg class="lang-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="lang-switcher-menu" id="lang-switcher-menu" role="listbox">
+          <li role="option" data-lang="en" aria-selected="true">
+            <span class="lang-name-row"><span class="lang-code">EN</span><span>English</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="ar" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">AR</span><span>العربية</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="tr" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">TR</span><span>Türkçe</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="ku" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">KU</span><span>کوردی</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+        </ul>
+      </div>
+      <a href="contact.html" class="btn btn--outline" data-i18n="header.cta">Get a Quote</a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-nav"><span></span></button>
     </div>
   </div>
@@ -34,32 +60,32 @@
 <section class="hero">
   <div class="hero-bg" style="background-image:url('assets/img/hero-field.jpg');"></div>
   <div class="container">
-    <p class="eyebrow">Pellet Snack Manufacturer · Est. 1998</p>
-    <h1>From raw grain to ready-to-fry pellets, engineered for scale.</h1>
-    <p class="hero-lede">
+    <p class="eyebrow" data-i18n="home.hero.eyebrow">Pellet Snack Manufacturer · Est. 1998</p>
+    <h1 data-i18n="home.hero.h1">From raw grain to ready-to-fry pellets, engineered for scale.</h1>
+    <p class="hero-lede" data-i18n="home.hero.lede">
       Gold Pelet produces potato, corn and wheat snack pellets and
       semi-finished chips for food brands and co-packers worldwide — built
       on consistent raw materials, validated recipes, and a production line
       that runs to spec every batch.
     </p>
     <div class="hero-actions">
-      <a href="services.html" class="btn btn--navy">Our Solutions</a>
-      <a href="contact.html" class="btn btn--ghost-light">Contact Us</a>
+      <a href="services.html" class="btn btn--navy" data-i18n="home.hero.cta.solutions">Our Solutions</a>
+      <a href="contact.html" class="btn btn--ghost-light" data-i18n="nav.contact">Contact Us</a>
     </div>
     <div class="hero-stats">
-      <div class="stat">
+      <div class="stat" data-stat-key="years_in_operation">
         <div class="stat-num"><span data-count-to="15">0</span><span class="unit">+ yrs</span></div>
         <div class="stat-label">In Production</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="daily_capacity">
         <div class="stat-num"><span data-count-to="50">0</span><span class="unit">+ t/day</span></div>
         <div class="stat-label">Production Capacity</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="export_volume">
         <div class="stat-num"><span data-count-to="60">0</span><span class="unit">%</span></div>
         <div class="stat-label">Export Volume</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="countries_served">
         <div class="stat-num"><span data-count-to="25">0</span><span class="unit">+</span></div>
         <div class="stat-label">Countries Served</div>
       </div>
@@ -67,60 +93,195 @@
   </div>
 </section>
 
+<section class="story-scroll-area" id="field-to-fryer">
+  <div class="story-head container">
+    <div class="section-head">
+      <p class="eyebrow" data-i18n="story.eyebrow">From Field to Fryer</p>
+      <h2 data-i18n="story.title">One continuous line, from raw grain to finished snack.</h2>
+    </div>
+  </div>
+
+  <div class="story-sticky">
+    <div class="container story-grid">
+      <div class="story-panel">
+        <div class="story-progress" role="list" aria-label="Manufacturing stages">
+          <button type="button" class="story-progress-item is-active" data-step="0" role="listitem" aria-current="step" data-i18n="story.steps.raw.title">Raw Materials</button>
+          <button type="button" class="story-progress-item" data-step="1" role="listitem" data-i18n="story.steps.formulation.title">Formulation</button>
+          <button type="button" class="story-progress-item" data-step="2" role="listitem" data-i18n="story.steps.extrusion.title">Extrusion</button>
+          <button type="button" class="story-progress-item" data-step="3" role="listitem" data-i18n="story.steps.drying.title">Drying</button>
+          <button type="button" class="story-progress-item" data-step="4" role="listitem" data-i18n="story.steps.frying.title">Frying &amp; Expansion</button>
+          <button type="button" class="story-progress-item" data-step="5" role="listitem" data-i18n="story.steps.ready.title">Ready for Your Brand</button>
+        </div>
+        <div class="story-steps">
+          <div class="story-step is-active" data-step="0">
+            <div class="story-step-number">01 <span>/ 06</span></div>
+            <h3 data-i18n="story.steps.raw.title">Raw Materials</h3>
+            <p data-i18n="story.steps.raw.description">Selected raw materials — wheat, potato and corn — prepared for production.</p>
+          </div>
+          <div class="story-step" data-step="1">
+            <div class="story-step-number">02 <span>/ 06</span></div>
+            <h3 data-i18n="story.steps.formulation.title">Formulation</h3>
+            <p data-i18n="story.steps.formulation.description">Controlled moisture and ingredient ratios create a repeatable formulation.</p>
+          </div>
+          <div class="story-step" data-step="2">
+            <div class="story-step-number">03 <span>/ 06</span></div>
+            <h3 data-i18n="story.steps.extrusion.title">Extrusion</h3>
+            <p data-i18n="story.steps.extrusion.description">Precision dies create the required pellet geometry.</p>
+          </div>
+          <div class="story-step" data-step="3">
+            <div class="story-step-number">04 <span>/ 06</span></div>
+            <h3 data-i18n="story.steps.drying.title">Drying</h3>
+            <p data-i18n="story.steps.drying.description">Controlled drying stabilizes pellets for storage and transportation.</p>
+          </div>
+          <div class="story-step" data-step="4">
+            <div class="story-step-number">05 <span>/ 06</span></div>
+            <h3 data-i18n="story.steps.frying.title">Frying &amp; Expansion</h3>
+            <p data-i18n="story.steps.frying.description">The pellet expands into its finished, crispy form.</p>
+          </div>
+          <div class="story-step" data-step="5">
+            <div class="story-step-number">06 <span>/ 06</span></div>
+            <h3 data-i18n="story.steps.ready.title">Ready for Your Brand</h3>
+            <p data-i18n="story.steps.ready.description">Ready for seasoning, packaging, private label or your own production.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-visual">
+        <div class="story-visual-layer story-step-raw is-active" data-step="0">
+          <img src="assets/img/wheat-wide.jpg" alt="Raw wheat field, the starting point of the production line" loading="lazy">
+          <div class="story-visual-overlay"></div>
+        </div>
+        <div class="story-visual-layer story-step-formulation" data-step="1">
+          <img src="assets/images/products/wheat-raw.jpg" alt="Wheat grain formulated into a consistent mixture" loading="lazy">
+          <div class="story-visual-overlay"></div>
+          <span class="story-visual-badge">Moisture &amp; ratio controlled</span>
+        </div>
+        <div class="story-visual-layer story-step-extrusion" data-step="2">
+          <img src="assets/images/products/potato-raw.jpg" alt="Raw material formed into pellet shape through extrusion" loading="lazy">
+          <div class="story-visual-overlay"></div>
+          <span class="story-visual-badge">Precision die geometry</span>
+        </div>
+        <div class="story-visual-layer story-step-drying" data-step="3">
+          <img src="assets/images/products/corn-raw.jpg" alt="Pellets stabilized after controlled drying" loading="lazy">
+          <div class="story-visual-overlay"></div>
+          <span class="story-visual-badge">Stabilized for transport</span>
+        </div>
+        <div class="story-visual-layer story-step-frying" data-step="4">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/corn-raw.jpg" alt="Pellet before frying" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/corn-fried.jpg" alt="Pellet expanded into its finished fried form" loading="lazy"></div>
+        </div>
+        <div class="story-visual-layer story-step-ready" data-step="5">
+          <img src="assets/images/products/wheat-fried.jpg" alt="Finished pellet snack, ready for packaging" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-mobile-list container">
+    <div class="story-mobile-item">
+      <div class="story-step-number">01 <span>/ 06</span></div>
+      <div class="story-mobile-visual"><img src="assets/img/wheat-wide.jpg" alt="Raw wheat field, the starting point of the production line" loading="lazy"></div>
+      <h3 data-i18n="story.steps.raw.title">Raw Materials</h3>
+      <p data-i18n="story.steps.raw.description">Selected raw materials — wheat, potato and corn — prepared for production.</p>
+    </div>
+    <div class="story-mobile-item">
+      <div class="story-step-number">02 <span>/ 06</span></div>
+      <div class="story-mobile-visual"><img src="assets/images/products/wheat-raw.jpg" alt="Wheat grain formulated into a consistent mixture" loading="lazy"></div>
+      <h3 data-i18n="story.steps.formulation.title">Formulation</h3>
+      <p data-i18n="story.steps.formulation.description">Controlled moisture and ingredient ratios create a repeatable formulation.</p>
+    </div>
+    <div class="story-mobile-item">
+      <div class="story-step-number">03 <span>/ 06</span></div>
+      <div class="story-mobile-visual"><img src="assets/images/products/potato-raw.jpg" alt="Raw material formed into pellet shape through extrusion" loading="lazy"></div>
+      <h3 data-i18n="story.steps.extrusion.title">Extrusion</h3>
+      <p data-i18n="story.steps.extrusion.description">Precision dies create the required pellet geometry.</p>
+    </div>
+    <div class="story-mobile-item">
+      <div class="story-step-number">04 <span>/ 06</span></div>
+      <div class="story-mobile-visual"><img src="assets/images/products/corn-raw.jpg" alt="Pellets stabilized after controlled drying" loading="lazy"></div>
+      <h3 data-i18n="story.steps.drying.title">Drying</h3>
+      <p data-i18n="story.steps.drying.description">Controlled drying stabilizes pellets for storage and transportation.</p>
+    </div>
+    <div class="story-mobile-item">
+      <div class="story-step-number">05 <span>/ 06</span></div>
+      <div class="story-mobile-visual media">
+        <div class="media-state is-active" data-state="raw"><img src="assets/images/products/corn-raw.jpg" alt="Pellet before frying" loading="lazy"></div>
+        <div class="media-state" data-state="fried"><img src="assets/images/products/corn-fried.jpg" alt="Pellet expanded into its finished fried form" loading="lazy"></div>
+        <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+      </div>
+      <h3 data-i18n="story.steps.frying.title">Frying &amp; Expansion</h3>
+      <p data-i18n="story.steps.frying.description">The pellet expands into its finished, crispy form.</p>
+    </div>
+    <div class="story-mobile-item">
+      <div class="story-step-number">06 <span>/ 06</span></div>
+      <div class="story-mobile-visual"><img src="assets/images/products/wheat-fried.jpg" alt="Finished pellet snack, ready for packaging" loading="lazy"></div>
+      <h3 data-i18n="story.steps.ready.title">Ready for Your Brand</h3>
+      <p data-i18n="story.steps.ready.description">Ready for seasoning, packaging, private label or your own production.</p>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="products">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">Product Range</p>
-      <h2>Pellet snacks, built from the raw material up.</h2>
-      <p>Five core lines, each formulated to a fixed moisture, density and expansion profile so your fryers get a consistent result batch after batch.</p>
+      <p class="eyebrow" data-i18n="home.products.eyebrow">Product Range</p>
+      <h2 data-i18n="home.products.h2">Pellet snacks, built from the raw material up.</h2>
+      <p data-i18n="home.products.lede">Twelve signature shapes across three core lines — wheat, potato and Egyptian 3D corn — each formulated to a fixed moisture, density and expansion profile so your fryers get a consistent result batch after batch.</p>
     </div>
-    <div class="card-grid">
+    <div class="card-grid" data-mount="home-products">
       <article class="product-card">
         <div class="media">
           <span class="tag">Best Seller</span>
-          <img src="assets/img/potatoes.jpg" alt="Raw potatoes, the base ingredient for potato pellet snacks" loading="lazy">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Colorful Wheat Chips — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Colorful Wheat Chips — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
         </div>
         <div class="body">
-          <h3>Potato Pellets</h3>
-          <p>Classic 3D and 2D shapes from pure potato starch, formulated for a light, crisp fry and clean flavor carry.</p>
+          <h3>Colorful Wheat Chips</h3>
+          <p>Multi-color wheat chip pellet, vivid natural color blend, formulated for a light, crisp fry.</p>
           <div class="specs">
-            <span class="chip">2D &amp; 3D shapes</span>
-            <span class="chip">Fry &amp; oven-bake</span>
+            <span class="chip">Multi-color blend</span>
+            <span class="chip">MOQ 5t</span>
           </div>
-          <div class="link-row"><span>View spec sheet</span><span>→</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Colorful%20Wheat%20Chips#quote-form">Request Sample Kit</a>
         </div>
       </article>
       <article class="product-card">
         <div class="media">
-          <img src="assets/img/wheat.jpg" alt="Wheat kernels, the base ingredient for wheat pellet snacks" loading="lazy">
+          <span class="tag">Best Seller</span>
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/potato-raw.jpg" alt="Plain Potatoes — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/potato-fried.jpg" alt="Plain Potatoes — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
         </div>
         <div class="body">
-          <h3>Wheat Pellets</h3>
-          <p>Whole-wheat and refined-flour blends engineered for a lighter bite and higher fiber content on-label.</p>
+          <h3>Plain Potatoes</h3>
+          <p>Classic plain potato pellet, neutral base flavor that takes seasoning evenly.</p>
           <div class="specs">
-            <span class="chip">Whole-grain option</span>
-            <span class="chip">Low oil uptake</span>
+            <span class="chip">Neutral base</span>
+            <span class="chip">MOQ 5t</span>
           </div>
-          <div class="link-row"><span>View spec sheet</span><span>→</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Plain%20Potatoes#quote-form">Request Sample Kit</a>
         </div>
       </article>
       <article class="product-card">
         <div class="media">
-          <img src="assets/img/rice.jpg" alt="Rice grains, used in micro pellet and grain-blend snack lines" loading="lazy">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/corn-raw.jpg" alt="Egyptian 3D Fish — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/corn-fried.jpg" alt="Egyptian 3D Fish — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
         </div>
         <div class="body">
-          <h3>Micro &amp; Grain-Blend Pellets</h3>
-          <p>Fine-cut micro pellets and rice/corn blends for extruded snack applications and co-extrusion fillings.</p>
+          <h3>Egyptian 3D Fish</h3>
+          <p>Egyptian-style 3D fish-shaped corn pellet, high-expansion novelty shape popular across MENA markets.</p>
           <div class="specs">
-            <span class="chip">Sub-5mm sizing</span>
-            <span class="chip">Custom blends</span>
+            <span class="chip">3D fish shape</span>
+            <span class="chip">MOQ 5t</span>
           </div>
-          <div class="link-row"><span>View spec sheet</span><span>→</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Egyptian%203D%20Fish#quote-form">Request Sample Kit</a>
         </div>
       </article>
     </div>
     <div class="text-center mt-7">
-      <a href="products.html" class="btn btn--outline">View Full Product Catalog</a>
+      <a href="products.html" class="btn btn--outline" data-i18n="home.products.viewall">View Full Product Catalog</a>
     </div>
   </div>
 </section>
@@ -129,20 +290,20 @@
   <div class="container">
     <div class="split">
       <div class="split-content">
-        <p class="eyebrow">Manufacturing Capacity</p>
-        <h2>One facility, four production lines, zero bottlenecks.</h2>
-        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;">
+        <p class="eyebrow" data-i18n="home.capacity.eyebrow">Manufacturing Capacity</p>
+        <h2 data-i18n="home.capacity.h2">One facility, four production lines, zero bottlenecks.</h2>
+        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;" data-i18n="home.capacity.p">
           Our plant runs four parallel extrusion lines with in-house drying,
           seasoning and packaging — so a formulation change on one line
           never slows down the others.
         </p>
         <ul>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>4 independent extrusion lines, running 24/6</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>In-house QA lab testing every production batch</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Bulk, bag-in-box and custom private-label packing</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="home.capacity.bullet1">4 independent extrusion lines, running 24/6</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="home.capacity.bullet2">In-house QA lab testing every production batch</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="home.capacity.bullet3">Bulk, bag-in-box and custom private-label packing</span></li>
         </ul>
         <div class="hero-actions" style="margin-top:32px;">
-          <a href="services.html" class="btn btn--primary">See Our Solutions</a>
+          <a href="services.html" class="btn btn--primary" data-i18n="home.capacity.cta">See Our Solutions</a>
         </div>
       </div>
       <div class="split-media">
@@ -159,19 +320,19 @@
 <section class="stats-strip">
   <div class="container">
     <div class="grid">
-      <div class="stat">
+      <div class="stat" data-stat-key="years_in_operation">
         <div class="stat-num"><span data-count-to="15">0</span><span class="unit">+ yrs</span></div>
         <div class="stat-label">In Production</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="export_volume">
         <div class="stat-num"><span data-count-to="60">0</span><span class="unit">%</span></div>
         <div class="stat-label">Export Volume</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="countries_served">
         <div class="stat-num"><span data-count-to="25">0</span><span class="unit">+</span></div>
         <div class="stat-label">Countries Served</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="pellet_formulations">
         <div class="stat-num"><span data-count-to="18">0</span><span class="unit">+</span></div>
         <div class="stat-label">Pellet Formulations</div>
       </div>
@@ -182,10 +343,10 @@
 <section class="section">
   <div class="container">
     <div class="section-head center">
-      <p class="eyebrow">Certifications</p>
-      <h2>Audited, certified, and documented at every stage.</h2>
+      <p class="eyebrow" data-i18n="home.certs.eyebrow">Certifications</p>
+      <h2 data-i18n="home.certs.h2">Audited, certified, and documented at every stage.</h2>
     </div>
-    <div class="cert-strip">
+    <div class="cert-strip" data-mount="certifications">
       <div class="cert-badge">
         <div class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-4z" stroke="currentColor" stroke-width="1.8"/></svg></div>
         <div><strong>ISO 22000</strong><span>Food Safety Management</span></div>
@@ -210,12 +371,12 @@
   <div class="container">
     <div class="cta-banner">
       <div>
-        <h2>Ready to spec a pellet snack line with us?</h2>
-        <p>Send your target shape, flavor carry and volume — our technical team will come back with a formulation and lead time within 3 business days.</p>
+        <h2 data-i18n="home.cta.h2">Ready to spec a pellet snack line with us?</h2>
+        <p data-i18n="home.cta.p">Send your target shape, flavor carry and volume — our technical team will come back with a formulation and lead time within 3 business days.</p>
       </div>
       <div class="cta-actions">
-        <a href="contact.html" class="btn btn--navy">Request a Quote</a>
-        <a href="products.html" class="btn btn--ghost-light">Browse Catalog</a>
+        <a href="contact.html" class="btn btn--navy" data-i18n="home.cta.btn1">Request a Quote</a>
+        <a href="products.html" class="btn btn--ghost-light" data-i18n="home.cta.btn2">Browse Catalog</a>
       </div>
     </div>
   </div>
@@ -228,38 +389,38 @@
         <a href="index.html" class="brand">
           <img src="assets/img/logo.png" alt="Gold Pelet" class="brand-logo">
         </a>
-        <p>Pellet snack and semi-finished chips manufacturer, producing for food brands and co-packers in 25+ countries.</p>
+        <p data-content-key="footer.blurb">Pellet snack and semi-finished chips manufacturer, producing for food brands and co-packers in 25+ countries.</p>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
+        <h4 data-i18n="footer.heading.company">Company</h4>
         <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="news.html">Events &amp; News</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="about.html" data-i18n="nav.about">About Us</a></li>
+          <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+          <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
+          <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Products</h4>
+        <h4 data-i18n="footer.heading.products">Products</h4>
         <ul>
-          <li><a href="products.html#potato">Potato Pellets</a></li>
-          <li><a href="products.html#wheat">Wheat Pellets</a></li>
-          <li><a href="products.html#corn">Corn Pellets</a></li>
-          <li><a href="products.html#micro">Micro Pellets</a></li>
+          <li><a href="products.html#wheat" data-i18n="footer.link.wheat">Wheat Pellets</a></li>
+          <li><a href="products.html#potato" data-i18n="footer.link.potato">Potato Pellets</a></li>
+          <li><a href="products.html#corn" data-i18n="footer.link.corn">Corn &amp; 3D Pellets</a></li>
+          <li><a href="products.html#load-calculator" data-i18n="footer.link.calculator">Load Calculator</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4 data-i18n="footer.heading.contact">Contact</h4>
         <ul>
-          <li><a href="mailto:info@goldpeletcips.com">info@goldpeletcips.com</a></li>
-          <li><a href="tel:+903425030773">+90 342 503 0773</a></li>
-          <li><a href="https://www.goldpeletcips.com" target="_blank" rel="noopener">www.goldpeletcips.com</a></li>
-          <li><span style="opacity:0.85;">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span></li>
+          <li><a href="mailto:info@goldpeletcips.com" data-content-key="contact.email">info@goldpeletcips.com</a></li>
+          <li><a href="tel:+903425030773" data-content-key="contact.phone_primary">+90 342 503 0773</a></li>
+          <li><a href="https://www.goldpeletcips.com" target="_blank" rel="noopener" data-content-key="contact.website">www.goldpeletcips.com</a></li>
+          <li><span style="opacity:0.85;" data-content-key="contact.address">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Gold Pelet. All rights reserved.</span>
+      <span data-i18n="footer.copyright">© 2026 Gold Pelet. All rights reserved.</span>
       <div class="footer-social">
         <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 8.98h4v12H3v-12zm7 0h3.84v1.64h.05c.53-1 1.85-2.05 3.8-2.05 4.06 0 4.81 2.67 4.81 6.14v6.27h-4v-5.56c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.66h-4v-12z"/></svg></a>
         <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 2.1.25 2.6.44a4.8 4.8 0 011.85 1.2 4.8 4.8 0 011.2 1.85c.19.5.39 1.43.44 2.6.06 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.25 2.1-.44 2.6a5.1 5.1 0 01-3.05 3.05c-.5.19-1.43.39-2.6.44-1.25.06-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-2.1-.25-2.6-.44a4.8 4.8 0 01-1.85-1.2 4.8 4.8 0 01-1.2-1.85c-.19-.5-.39-1.43-.44-2.6C2.21 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.25-2.1.44-2.6a4.8 4.8 0 011.2-1.85 4.8 4.8 0 011.85-1.2c.5-.19 1.43-.39 2.6-.44C8.4 2.21 8.8 2.2 12 2.2zm0 3.03a6.77 6.77 0 100 13.54 6.77 6.77 0 000-13.54zm0 2.17a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm6.94-2.4a1.58 1.58 0 11-3.16 0 1.58 1.58 0 013.16 0z"/></svg></a>
@@ -269,5 +430,8 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script src="js/manufacturing-story.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/cms.js"></script>
 </body>
 </html>

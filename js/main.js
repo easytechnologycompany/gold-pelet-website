@@ -1,6 +1,7 @@
 // Chips Co. Industries — shared site behavior:
-// mobile nav toggle, scroll-triggered stat counters, RFQ/contact form
-// validation. No frameworks — kept dependency-free for a static site.
+// mobile nav toggle, scroll-triggered stat counters, scroll-reveal
+// animations, RFQ/contact form validation. No frameworks — kept
+// dependency-free for a static site.
 
 (function () {
   'use strict';
@@ -61,6 +62,98 @@
     );
     counters.forEach((el) => observer.observe(el));
   }
+
+  /* ---------------- Scroll-reveal (fade-in-up) ---------------- */
+  // Card-like and section elements fade up into view as they cross the
+  // viewport. Elements are found by selector rather than a hand-authored
+  // "reveal" class in the HTML, so cms.js can re-run this against freshly
+  // injected product/cert/news/timeline cards after each fetch resolves —
+  // see window.applyScrollReveal below.
+  const REVEAL_SELECTOR = [
+    '.product-card', '.feature-card', '.cert-badge', '.news-card',
+    '.info-card', '.timeline-item', '.calc-card', '.cta-banner',
+    '.section-head', '.split-content', '.split-media',
+    '.stats-strip .stat',
+  ].join(', ');
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealObserver =
+    !prefersReducedMotion && 'IntersectionObserver' in window
+      ? new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+        )
+      : null;
+
+  function applyScrollReveal(root) {
+    const scope = root && root.querySelectorAll ? root : document;
+    const groupCounts = new WeakMap();
+    scope.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+      if (el.dataset.revealApplied) return;
+      el.dataset.revealApplied = '1';
+
+      if (!revealObserver) {
+        el.classList.add('reveal', 'is-visible');
+        return;
+      }
+
+      const index = groupCounts.get(el.parentElement) || 0;
+      groupCounts.set(el.parentElement, index + 1);
+
+      el.classList.add('reveal');
+      el.style.animationDelay = `${Math.min(index, 5) * 70}ms`;
+      revealObserver.observe(el);
+    });
+  }
+
+  applyScrollReveal(document);
+  window.applyScrollReveal = applyScrollReveal;
+
+  /* ---------------- Sample-kit request prefill (contact.html) ---------------- */
+  // Product cards link to contact.html?product=<name>#quote-form. The
+  // #quote-form anchor scrolls there natively; this just pre-selects the
+  // closest product category and drops the product name into the message.
+  const requestedProduct = new URLSearchParams(window.location.search).get('product');
+  if (requestedProduct) {
+    const productSelect = document.getElementById('product');
+    const messageField = document.getElementById('message');
+    if (productSelect) {
+      const lower = requestedProduct.toLowerCase();
+      const category = lower.includes('wheat') ? 'wheat' : lower.includes('potato') ? 'potato' : 'corn';
+      productSelect.value = category;
+    }
+    if (messageField && !messageField.value) {
+      messageField.value = `Requesting a sample kit for: ${requestedProduct}\n\n`;
+    }
+  }
+
+  /* ---------------- Product card raw/fried image toggle ---------------- */
+  // Delegated on document, not per-card, so it works for both the static
+  // fallback markup and cards cms.js injects later via mount.innerHTML.
+  // Real <button> elements mean Tab + Enter/Space already work for free;
+  // this just keeps the sliding pill, aria-pressed and layer state in sync.
+  document.addEventListener('click', (event) => {
+    const btn = event.target.closest('.media-toggle-btn');
+    if (!btn) return;
+    const toggle = btn.closest('.media-toggle');
+    const media = btn.closest('.media');
+    if (!toggle || !media) return;
+    const state = btn.dataset.state;
+    toggle.dataset.active = state;
+    toggle.querySelectorAll('.media-toggle-btn').forEach((b) => {
+      const isActive = b === btn;
+      b.classList.toggle('is-active', isActive);
+      b.setAttribute('aria-pressed', String(isActive));
+    });
+    media.querySelectorAll('.media-state').forEach((s) => s.classList.toggle('is-active', s.dataset.state === state));
+  });
 
   /* ---------------- RFQ / contact form ---------------- */
   // No backend is connected yet — this validates client-side and shows an

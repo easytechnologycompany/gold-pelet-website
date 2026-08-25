@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var l=localStorage.getItem('gp_lang');if(l==='ar'||l==='ku'){document.documentElement.dir='rtl';document.documentElement.lang=l;}else if(l==='tr'){document.documentElement.lang='tr';}}catch(e){}})();</script>
 <title>Product Catalog — Gold Pelet</title>
 <meta name="description" content="Potato, wheat, corn and micro pellet snacks, plus semi-finished chips, manufactured to spec by Gold Pelet.">
 <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body data-page="products">
 
 <header class="site-header">
   <div class="container">
@@ -16,16 +17,41 @@
     </a>
     <nav class="main-nav" id="main-nav">
       <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="products.html" aria-current="page">Products</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="about.html">About Us</a></li>
-        <li><a href="news.html">Events &amp; News</a></li>
-        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="products.html" aria-current="page" data-i18n="nav.products">Products</a></li>
+        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+        <li><a href="about.html" data-i18n="nav.about">About Us</a></li>
+        <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
+        <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
       </ul>
     </nav>
     <div class="header-actions">
-      <a href="contact.html" class="btn btn--outline">Get a Quote</a>
+      <div class="lang-switcher" id="lang-switcher">
+        <button type="button" class="lang-switcher-btn" id="lang-switcher-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+          <svg class="lang-globe" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9s1.3-6.5 3.8-9z" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span class="lang-current-code" id="lang-current-code">EN</span>
+          <svg class="lang-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="lang-switcher-menu" id="lang-switcher-menu" role="listbox">
+          <li role="option" data-lang="en" aria-selected="true">
+            <span class="lang-name-row"><span class="lang-code">EN</span><span>English</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="ar" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">AR</span><span>العربية</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="tr" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">TR</span><span>Türkçe</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="ku" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">KU</span><span>کوردی</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+        </ul>
+      </div>
+      <a href="contact.html" class="btn btn--outline" data-i18n="header.cta">Get a Quote</a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-nav"><span></span></button>
     </div>
   </div>
@@ -35,78 +61,163 @@
   <div class="hero-bg" style="background-image:url('assets/img/wheat-wide.jpg');"></div>
   <div class="container">
     <p class="breadcrumb"><a href="index.html" style="color:inherit;">Home</a> / <span>Products</span></p>
-    <p class="eyebrow">Product Catalog</p>
-    <h1>Five pellet lines. One consistent raw-material standard.</h1>
-    <p>Every formulation below ships with a full spec sheet — moisture content, bulk density, expansion ratio and recommended fry parameters — so your production team can qualify it before the first container arrives.</p>
+    <p class="eyebrow" data-i18n="products.hero.eyebrow">Product Catalog</p>
+    <h1 data-i18n="products.hero.h1">Five pellet lines. One consistent raw-material standard.</h1>
+    <p data-i18n="products.hero.p">Every formulation below ships with a full spec sheet — moisture content, bulk density, expansion ratio and recommended fry parameters — so your production team can qualify it before the first container arrives.</p>
   </div>
 </section>
 
-<section class="section" id="potato">
+<div data-mount="catalog">
+<section class="section" id="wheat">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">01 · Potato-Based</p>
-      <h2>Potato Pellets</h2>
-      <p>Made from pure potato starch, our best-selling line. Available as classic 2D discs, 3D twists and shells, formulated for a light, crisp fry with minimal oil uptake.</p>
-    </div>
-    <div class="card-grid">
-      <article class="product-card">
-        <div class="media"><span class="tag">Best Seller</span><img src="assets/img/potatoes.jpg" alt="Potato pellet raw material — whole potatoes" loading="lazy"></div>
-        <div class="body">
-          <h3>Classic 2D Discs</h3>
-          <p>The industry-standard round pellet — reliable puff, neutral base flavor, takes seasoning evenly.</p>
-          <div class="specs"><span class="chip">Moisture 11–13%</span><span class="chip">MOQ 5t</span></div>
-        </div>
-      </article>
-      <article class="product-card">
-        <div class="media"><img src="assets/img/potatoes.jpg" alt="Potato pellet raw material for 3D shapes" loading="lazy"></div>
-        <div class="body">
-          <h3>3D Twists &amp; Shells</h3>
-          <p>High-expansion shapes for premium SKUs — larger bite, more surface area for coatings.</p>
-          <div class="specs"><span class="chip">Moisture 10–12%</span><span class="chip">MOQ 5t</span></div>
-        </div>
-      </article>
-      <article class="product-card">
-        <div class="media"><img src="assets/img/potatoes.jpg" alt="Potato pellet raw material for baked line" loading="lazy"></div>
-        <div class="body">
-          <h3>Oven-Bake Formulation</h3>
-          <p>Lower-oil formulation qualified for oven and air-fryer production lines.</p>
-          <div class="specs"><span class="chip">Non-fried option</span><span class="chip">MOQ 8t</span></div>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="section section--alt" id="wheat">
-  <div class="container">
-    <div class="section-head">
-      <p class="eyebrow">02 · Grain-Based</p>
+      <p class="eyebrow">01 · Grain-Based</p>
       <h2>Wheat Pellets</h2>
-      <p>Whole-wheat and refined-flour blends for a lighter, more fibrous bite — popular for health-forward SKUs and private-label lines.</p>
+      <p>Seven wheat pellet shapes — from colorful chips and decorative flowers to classic rings and pipes — formulated for a light, crisp fry.</p>
     </div>
     <div class="card-grid">
       <article class="product-card">
-        <div class="media"><img src="assets/img/wheat.jpg" alt="Whole wheat kernels for wheat pellets" loading="lazy"></div>
+        <div class="media">
+          <span class="tag">Best Seller</span>
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Colorful Wheat Chips — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Colorful Wheat Chips — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
         <div class="body">
-          <h3>Whole-Grain Rings</h3>
-          <p>Visible bran flecking, higher fiber content on-label, formulated for a crunchy set.</p>
-          <div class="specs"><span class="chip">Whole-grain</span><span class="chip">MOQ 5t</span></div>
+          <h3>Colorful Wheat Chips</h3>
+          <p>Multi-color wheat chip pellet, vivid natural color blend, formulated for a light, crisp fry.</p>
+          <div class="specs"><span class="chip">Multi-color blend</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Colorful%20Wheat%20Chips#quote-form">Request Sample Kit</a>
         </div>
       </article>
       <article class="product-card">
-        <div class="media"><img src="assets/img/wheat.jpg" alt="Refined wheat flour blend for wheat pellets" loading="lazy"></div>
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Window Wheat — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Window Wheat — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
         <div class="body">
-          <h3>Refined-Flour Sticks</h3>
-          <p>Fine, uniform texture with a light color — carries delicate seasonings well.</p>
-          <div class="specs"><span class="chip">Refined flour</span><span class="chip">MOQ 5t</span></div>
+          <h3>Window Wheat</h3>
+          <p>Classic "window" wheat pellet with a hollow center cavity for even puffing and seasoning pickup.</p>
+          <div class="specs"><span class="chip">Hollow-window shape</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Window%20Wheat#quote-form">Request Sample Kit</a>
         </div>
       </article>
       <article class="product-card">
-        <div class="media"><img src="assets/img/wheat.jpg" alt="Protein-enriched wheat pellet blend" loading="lazy"></div>
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Square Wheat With Serrated Flakes — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Square Wheat With Serrated Flakes — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
         <div class="body">
-          <h3>Protein-Enriched Blend</h3>
-          <p>Wheat base with added pulse protein — formulated to a customer-specified protein %.</p>
-          <div class="specs"><span class="chip">Custom protein %</span><span class="chip">MOQ 10t</span></div>
+          <h3>Square Wheat With Serrated Flakes</h3>
+          <p>Square-cut wheat pellet with a serrated flake edge for extra crunch and surface area.</p>
+          <div class="specs"><span class="chip">Serrated edge</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Square%20Wheat%20With%20Serrated%20Flakes#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Wheat Pipe — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Wheat Pipe — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Wheat Pipe</h3>
+          <p>Tubular "pipe" wheat pellet, uniform bore for a consistent light, airy puff.</p>
+          <div class="specs"><span class="chip">Tubular shape</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Wheat%20Pipe#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Wheat Ring - Small — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Wheat Ring - Small — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Wheat Ring - Small</h3>
+          <p>Small-format wheat ring pellet, bite-sized shape suited to kids' and snack-mix SKUs.</p>
+          <div class="specs"><span class="chip">Small ring</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Wheat%20Ring%20-%20Small#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Wheat Ring - Large — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Wheat Ring - Large — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Wheat Ring - Large</h3>
+          <p>Large-format wheat ring pellet, bigger bite and more surface area for heavier coatings.</p>
+          <div class="specs"><span class="chip">Large ring</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Wheat%20Ring%20-%20Large#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/wheat-raw.jpg" alt="Flower Wheat — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/wheat-fried.jpg" alt="Flower Wheat — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Flower Wheat</h3>
+          <p>Flower-shaped wheat pellet, decorative multi-petal profile for premium retail SKUs.</p>
+          <div class="specs"><span class="chip">Flower shape</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Flower%20Wheat#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="potato">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">02 · Potato-Based</p>
+      <h2>Potato Pellets</h2>
+      <p>Made from pure potato starch, our best-selling line. Spiral, skin-textured and plain shapes, formulated for a light, crisp fry with minimal oil uptake.</p>
+    </div>
+    <div class="card-grid">
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/potato-raw.jpg" alt="Spiral Potatoes — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/potato-fried.jpg" alt="Spiral Potatoes — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Spiral Potatoes</h3>
+          <p>Spiral-cut potato pellet, twisted profile for a crisp, high-surface-area fry.</p>
+          <div class="specs"><span class="chip">Spiral shape</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Spiral%20Potatoes#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/potato-raw.jpg" alt="Potato Skins — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/potato-fried.jpg" alt="Potato Skins — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Potato Skins</h3>
+          <p>Potato-skin style pellet, rustic textured profile with visible skin fleck for an artisanal look.</p>
+          <div class="specs"><span class="chip">Skin-on texture</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Potato%20Skins#quote-form">Request Sample Kit</a>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="media">
+          <span class="tag">Best Seller</span>
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/potato-raw.jpg" alt="Plain Potatoes — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/potato-fried.jpg" alt="Plain Potatoes — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Plain Potatoes</h3>
+          <p>Classic plain potato pellet, neutral base flavor that takes seasoning evenly.</p>
+          <div class="specs"><span class="chip">Neutral base</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Plain%20Potatoes#quote-form">Request Sample Kit</a>
         </div>
       </article>
     </div>
@@ -116,78 +227,112 @@
 <section class="section" id="corn">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">03 · Corn-Based</p>
-      <h2>Corn Pellets</h2>
-      <p>High-expansion corn pellets for classic curl, ball and stick shapes — the workhorse of the extruded-snack category.</p>
+      <p class="eyebrow">03 · Egyptian 3D Shapes</p>
+      <h2>Corn &amp; 3D Pellets</h2>
+      <p>Egyptian-style 3D extruded corn pellets — high-expansion novelty shapes popular across MENA and export markets.</p>
     </div>
     <div class="card-grid">
-      <article class="feature-card">
-        <div class="num">Shape 01</div>
-        <h3>Classic Curls</h3>
-        <p>High-expansion curl shape, light and airy, standard for cheese-puff style snacks.</p>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/corn-raw.jpg" alt="Egyptian 3D Fish — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/corn-fried.jpg" alt="Egyptian 3D Fish — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Egyptian 3D Fish</h3>
+          <p>Egyptian-style 3D fish-shaped corn pellet, high-expansion novelty shape popular across MENA markets.</p>
+          <div class="specs"><span class="chip">3D fish shape</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Egyptian%203D%20Fish#quote-form">Request Sample Kit</a>
+        </div>
       </article>
-      <article class="feature-card">
-        <div class="num">Shape 02</div>
-        <h3>Ball Pellets</h3>
-        <p>Dense, even ball shape — takes a heavier seasoning coat without collapsing.</p>
-      </article>
-      <article class="feature-card">
-        <div class="num">Shape 03</div>
-        <h3>Straight Sticks</h3>
-        <p>Uniform stick length for automated packing lines and consistent portion counts.</p>
+      <article class="product-card">
+        <div class="media">
+          <div class="media-state is-active" data-state="raw"><img src="assets/images/products/corn-raw.jpg" alt="Egyptian 3D Ball — raw pellet" loading="lazy"></div>
+          <div class="media-state" data-state="fried"><img src="assets/images/products/corn-fried.jpg" alt="Egyptian 3D Ball — fried" loading="lazy"></div>
+          <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view"><span class="media-toggle-pill" aria-hidden="true"></span><button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button><button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button></div>
+        </div>
+        <div class="body">
+          <h3>Egyptian 3D Ball</h3>
+          <p>Egyptian-style 3D ball-shaped corn pellet, dense round profile that holds a heavy seasoning coat.</p>
+          <div class="specs"><span class="chip">3D ball shape</span><span class="chip">MOQ 5t</span></div>
+          <a class="btn btn--outline btn--sm request-sample-btn" href="contact.html?product=Egyptian%203D%20Ball#quote-form">Request Sample Kit</a>
+        </div>
       </article>
     </div>
   </div>
 </section>
+</div>
 
-<section class="section section--alt" id="micro">
-  <div class="container">
-    <div class="split">
-      <div class="split-content">
-        <p class="eyebrow">04 · Micro Pellets</p>
-        <h2>Micro &amp; Grain-Blend Pellets</h2>
-        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;">
-          Sub-5mm micro pellets and rice/corn blends built for co-extrusion
-          fillings, cereal-style snacks and applications where standard
-          pellet sizing is too large.
-        </p>
-        <ul>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sizing from 2mm to 5mm</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Rice, corn and grain-blend bases</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom color and flavor-carry additives</li>
-        </ul>
-      </div>
-      <div class="split-media">
-        <img src="assets/img/rice.jpg" alt="Rice grains used in micro pellet blends" loading="lazy">
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="semi-finished">
+<section class="section section--alt" id="load-calculator">
   <div class="container">
     <div class="section-head center">
-      <p class="eyebrow">05 · Semi-Finished Chips</p>
-      <h2>Also producing semi-finished slice chips</h2>
-      <p>Beyond extruded pellets, we supply par-fried and blanched semi-finished potato slices — ready for your final fry, seasoning and pack.</p>
+      <p class="eyebrow" data-i18n="products.calc.eyebrow">Plan Your Order</p>
+      <h2 data-i18n="products.calc.h2">Container Load Calculator</h2>
+      <p data-i18n="products.calc.p">Estimate how many containers your order needs. Pick a product line, packaging format and target quantity — we'll factor in typical bulk density against each container's weight and volume limits.</p>
     </div>
-    <div class="card-grid">
-      <article class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-        <h3>Par-Fried Slices</h3>
-        <p>Blanched, par-fried and frozen — a single final fry away from finished chips.</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-        <h3>Custom Cut Profiles</h3>
-        <p>Wavy, straight, crinkle and shoestring cuts, produced to your target thickness.</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M4 9h16" stroke="currentColor" stroke-width="1.8"/></svg></div>
-        <h3>Bulk &amp; Retail-Ready Pack</h3>
-        <p>Frozen bulk cartons for further processing, or retail-ready bags on request.</p>
-      </article>
+
+    <div class="calc-card">
+      <div class="calc-grid">
+        <div class="field">
+          <label for="calc-category">Product Line</label>
+          <select id="calc-category">
+            <option value="550">Wheat Pellets</option>
+            <option value="580">Potato Pellets</option>
+            <option value="520">Corn &amp; 3D Pellets</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="calc-packaging">Packaging Format</label>
+          <select id="calc-packaging">
+            <option value="25" data-unit-label="25kg Bags">25kg Bags (palletized)</option>
+            <option value="1000" data-unit-label="1,000kg Jumbo Bags">1,000kg Jumbo Bags</option>
+            <option value="20" data-unit-label="20kg Cartons">20kg Cartons (frozen line)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="calc-quantity">Order Quantity</label>
+          <div class="calc-qty-row">
+            <input type="number" id="calc-quantity" min="0.1" step="0.5" value="20" inputmode="decimal">
+            <select id="calc-unit">
+              <option value="1000">Tonnes</option>
+              <option value="1">Kilograms</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="calc-container">Container Type</label>
+          <select id="calc-container">
+            <option value="20std">20' Standard</option>
+            <option value="40std">40' Standard</option>
+            <option value="40hc" selected>40' High Cube</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="calc-result">
+        <div class="calc-result-grid">
+          <div class="calc-result-stat">
+            <div class="calc-result-num" id="calc-out-containers">—</div>
+            <div class="calc-result-label">Containers Needed</div>
+          </div>
+          <div class="calc-result-stat">
+            <div class="calc-result-num" id="calc-out-perload">—</div>
+            <div class="calc-result-label">Max Load / Container</div>
+          </div>
+          <div class="calc-result-stat">
+            <div class="calc-result-num" id="calc-out-units">—</div>
+            <div class="calc-result-label" id="calc-out-units-label">Units — Total</div>
+          </div>
+          <div class="calc-result-stat">
+            <div class="calc-result-num" id="calc-out-fill">—</div>
+            <div class="calc-result-label">Last Container Fill</div>
+          </div>
+        </div>
+        <div class="calc-result-note" id="calc-out-note"></div>
+      </div>
     </div>
+
+    <p class="calc-disclaimer">Figures are planning estimates based on typical bulk density and palletized packing efficiency for each product line — final container count and stowage plan are confirmed by our logistics team once packaging and pallet configuration are set. <a href="contact.html" style="color:var(--green-700);font-weight:700;">Request a formal quote →</a></p>
   </div>
 </section>
 
@@ -195,11 +340,11 @@
   <div class="container">
     <div class="cta-banner">
       <div>
-        <h2>Need a spec sheet before you commit?</h2>
-        <p>We'll send moisture, density and fry-parameter data for any line above, plus a sample kit on request.</p>
+        <h2 data-i18n="products.cta.h2">Need a spec sheet before you commit?</h2>
+        <p data-i18n="products.cta.p">We'll send moisture, density and fry-parameter data for any line above, plus a sample kit on request.</p>
       </div>
       <div class="cta-actions">
-        <a href="contact.html" class="btn btn--navy">Request Samples</a>
+        <a href="contact.html" class="btn btn--navy" data-i18n="products.cta.btn">Request Samples</a>
       </div>
     </div>
   </div>
@@ -212,38 +357,38 @@
         <a href="index.html" class="brand">
           <img src="assets/img/logo.png" alt="Gold Pelet" class="brand-logo">
         </a>
-        <p>Pellet snack and semi-finished chips manufacturer, producing for food brands and co-packers in 25+ countries.</p>
+        <p data-content-key="footer.blurb">Pellet snack and semi-finished chips manufacturer, producing for food brands and co-packers in 25+ countries.</p>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
+        <h4 data-i18n="footer.heading.company">Company</h4>
         <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="news.html">Events &amp; News</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="about.html" data-i18n="nav.about">About Us</a></li>
+          <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+          <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
+          <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Products</h4>
+        <h4 data-i18n="footer.heading.products">Products</h4>
         <ul>
-          <li><a href="products.html#potato">Potato Pellets</a></li>
-          <li><a href="products.html#wheat">Wheat Pellets</a></li>
-          <li><a href="products.html#corn">Corn Pellets</a></li>
-          <li><a href="products.html#micro">Micro Pellets</a></li>
+          <li><a href="products.html#wheat" data-i18n="footer.link.wheat">Wheat Pellets</a></li>
+          <li><a href="products.html#potato" data-i18n="footer.link.potato">Potato Pellets</a></li>
+          <li><a href="products.html#corn" data-i18n="footer.link.corn">Corn &amp; 3D Pellets</a></li>
+          <li><a href="products.html#load-calculator" data-i18n="footer.link.calculator">Load Calculator</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4 data-i18n="footer.heading.contact">Contact</h4>
         <ul>
-          <li><a href="mailto:info@goldpeletcips.com">info@goldpeletcips.com</a></li>
-          <li><a href="tel:+903425030773">+90 342 503 0773</a></li>
-          <li><a href="https://www.goldpeletcips.com" target="_blank" rel="noopener">www.goldpeletcips.com</a></li>
-          <li><span style="opacity:0.85;">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span></li>
+          <li><a href="mailto:info@goldpeletcips.com" data-content-key="contact.email">info@goldpeletcips.com</a></li>
+          <li><a href="tel:+903425030773" data-content-key="contact.phone_primary">+90 342 503 0773</a></li>
+          <li><a href="https://www.goldpeletcips.com" target="_blank" rel="noopener" data-content-key="contact.website">www.goldpeletcips.com</a></li>
+          <li><span style="opacity:0.85;" data-content-key="contact.address">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Gold Pelet. All rights reserved.</span>
+      <span data-i18n="footer.copyright">© 2026 Gold Pelet. All rights reserved.</span>
       <div class="footer-social">
         <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 8.98h4v12H3v-12zm7 0h3.84v1.64h.05c.53-1 1.85-2.05 3.8-2.05 4.06 0 4.81 2.67 4.81 6.14v6.27h-4v-5.56c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.66h-4v-12z"/></svg></a>
         <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 2.1.25 2.6.44a4.8 4.8 0 011.85 1.2 4.8 4.8 0 011.2 1.85c.19.5.39 1.43.44 2.6.06 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.25 2.1-.44 2.6a5.1 5.1 0 01-3.05 3.05c-.5.19-1.43.39-2.6.44-1.25.06-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-2.1-.25-2.6-.44a4.8 4.8 0 01-1.85-1.2 4.8 4.8 0 01-1.2-1.85c-.19-.5-.39-1.43-.44-2.6C2.21 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.25-2.1.44-2.6a4.8 4.8 0 011.2-1.85 4.8 4.8 0 011.85-1.2c.5-.19 1.43-.39 2.6-.44C8.4 2.21 8.8 2.2 12 2.2zm0 3.03a6.77 6.77 0 100 13.54 6.77 6.77 0 000-13.54zm0 2.17a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm6.94-2.4a1.58 1.58 0 11-3.16 0 1.58 1.58 0 013.16 0z"/></svg></a>
@@ -253,5 +398,8 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/cms.js"></script>
 </body>
 </html>

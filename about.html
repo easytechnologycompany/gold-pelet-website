@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var l=localStorage.getItem('gp_lang');if(l==='ar'||l==='ku'){document.documentElement.dir='rtl';document.documentElement.lang=l;}else if(l==='tr'){document.documentElement.lang='tr';}}catch(e){}})();</script>
 <title>About Us — Gold Pelet</title>
 <meta name="description" content="15+ years manufacturing pellet snacks and semi-finished chips, exporting to 25+ countries. The story, certifications and facility behind Gold Pelet.">
 <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body data-page="about">
 
 <header class="site-header">
   <div class="container">
@@ -16,16 +17,41 @@
     </a>
     <nav class="main-nav" id="main-nav">
       <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="products.html">Products</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="about.html" aria-current="page">About Us</a></li>
-        <li><a href="news.html">Events &amp; News</a></li>
-        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="products.html" data-i18n="nav.products">Products</a></li>
+        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+        <li><a href="about.html" aria-current="page" data-i18n="nav.about">About Us</a></li>
+        <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
+        <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
       </ul>
     </nav>
     <div class="header-actions">
-      <a href="contact.html" class="btn btn--outline">Get a Quote</a>
+      <div class="lang-switcher" id="lang-switcher">
+        <button type="button" class="lang-switcher-btn" id="lang-switcher-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+          <svg class="lang-globe" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9s1.3-6.5 3.8-9z" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span class="lang-current-code" id="lang-current-code">EN</span>
+          <svg class="lang-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="lang-switcher-menu" id="lang-switcher-menu" role="listbox">
+          <li role="option" data-lang="en" aria-selected="true">
+            <span class="lang-name-row"><span class="lang-code">EN</span><span>English</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="ar" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">AR</span><span>العربية</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="tr" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">TR</span><span>Türkçe</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+          <li role="option" data-lang="ku" aria-selected="false">
+            <span class="lang-name-row"><span class="lang-code">KU</span><span>کوردی</span></span>
+            <svg class="lang-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </li>
+        </ul>
+      </div>
+      <a href="contact.html" class="btn btn--outline" data-i18n="header.cta">Get a Quote</a>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-nav"><span></span></button>
     </div>
   </div>
@@ -35,9 +61,9 @@
   <div class="hero-bg" style="background-image:url('assets/img/hero-field.jpg');"></div>
   <div class="container">
     <p class="breadcrumb"><a href="index.html" style="color:inherit;">Home</a> / <span>About Us</span></p>
-    <p class="eyebrow">About Gold Pelet</p>
-    <h1>Your process-line partner in pellet snacks.</h1>
-    <p>Founded in 1998, Gold Pelet builds long-term supply relationships with food brands and co-packers — not one-off orders.</p>
+    <p class="eyebrow" data-i18n="about.hero.eyebrow">About Gold Pelet</p>
+    <h1 data-i18n="about.hero.h1">Your process-line partner in pellet snacks.</h1>
+    <p data-i18n="about.hero.p">Founded in 1998, Gold Pelet builds long-term supply relationships with food brands and co-packers — not one-off orders.</p>
   </div>
 </section>
 
@@ -46,8 +72,8 @@
     <div class="split">
       <div class="split-content">
         <p class="eyebrow">Our Story</p>
-        <h2>Built on one idea: a pellet supplier you don't have to babysit.</h2>
-        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;">
+        <h2 data-content-key="about.story.heading">Built on one idea: a pellet supplier you don't have to babysit.</h2>
+        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;" data-content-key="about.story.para1">
           Gold Pelet was founded in 1998 to solve a problem the
           founders had lived through as snack producers themselves:
           inconsistent pellet quality that forced constant fryer
@@ -55,7 +81,7 @@
           moisture and density tolerances — and every line since has held
           to that same standard.
         </p>
-        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;">
+        <p style="margin-top:16px;color:var(--ink-500);font-size:1.02rem;" data-content-key="about.story.para2">
           Today, four production lines run from a single facility, supplying
           potato, wheat, corn and micro pellets to food brands and
           co-packers in 25+ countries.
@@ -75,19 +101,19 @@
 <section class="stats-strip">
   <div class="container">
     <div class="grid">
-      <div class="stat">
+      <div class="stat" data-stat-key="years_in_operation">
         <div class="stat-num"><span data-count-to="15">0</span><span class="unit">+ yrs</span></div>
         <div class="stat-label">In Production</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="daily_capacity">
         <div class="stat-num"><span data-count-to="50">0</span><span class="unit">+ t/day</span></div>
         <div class="stat-label">Production Capacity</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="export_volume">
         <div class="stat-num"><span data-count-to="60">0</span><span class="unit">%</span></div>
         <div class="stat-label">Export Volume</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat-key="countries_served">
         <div class="stat-num"><span data-count-to="25">0</span><span class="unit">+</span></div>
         <div class="stat-label">Countries Served</div>
       </div>
@@ -101,7 +127,7 @@
       <p class="eyebrow">Milestones</p>
       <h2>15+ years, four expansions.</h2>
     </div>
-    <div class="timeline">
+    <div class="timeline" data-mount="timeline">
       <div class="timeline-item">
         <div class="year">1998</div>
         <h3>Founded, first extrusion line installed</h3>
@@ -137,7 +163,7 @@
       <p class="eyebrow">Certifications</p>
       <h2>What we're audited against.</h2>
     </div>
-    <div class="cert-strip">
+    <div class="cert-strip" data-mount="certifications">
       <div class="cert-badge">
         <div class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-4z" stroke="currentColor" stroke-width="1.8"/></svg></div>
         <div><strong>ISO 22000</strong><span>Food Safety Management</span></div>
@@ -189,11 +215,11 @@
   <div class="container">
     <div class="cta-banner">
       <div>
-        <h2>Want to see the facility?</h2>
-        <p>We host qualified buyers for facility tours by appointment. Reach out to arrange a visit.</p>
+        <h2 data-i18n="about.cta.h2">Want to see the facility?</h2>
+        <p data-i18n="about.cta.p">We host qualified buyers for facility tours by appointment. Reach out to arrange a visit.</p>
       </div>
       <div class="cta-actions">
-        <a href="contact.html" class="btn btn--navy">Contact Us</a>
+        <a href="contact.html" class="btn btn--navy" data-i18n="about.cta.btn">Contact Us</a>
       </div>
     </div>
   </div>
@@ -206,38 +232,38 @@
         <a href="index.html" class="brand">
           <img src="assets/img/logo.png" alt="Gold Pelet" class="brand-logo">
         </a>
-        <p>Pellet snack and semi-finished chips manufacturer, producing for food brands and co-packers in 25+ countries.</p>
+        <p data-content-key="footer.blurb">Pellet snack and semi-finished chips manufacturer, producing for food brands and co-packers in 25+ countries.</p>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
+        <h4 data-i18n="footer.heading.company">Company</h4>
         <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="news.html">Events &amp; News</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="about.html" data-i18n="nav.about">About Us</a></li>
+          <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+          <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
+          <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Products</h4>
+        <h4 data-i18n="footer.heading.products">Products</h4>
         <ul>
-          <li><a href="products.html#potato">Potato Pellets</a></li>
-          <li><a href="products.html#wheat">Wheat Pellets</a></li>
-          <li><a href="products.html#corn">Corn Pellets</a></li>
-          <li><a href="products.html#micro">Micro Pellets</a></li>
+          <li><a href="products.html#wheat" data-i18n="footer.link.wheat">Wheat Pellets</a></li>
+          <li><a href="products.html#potato" data-i18n="footer.link.potato">Potato Pellets</a></li>
+          <li><a href="products.html#corn" data-i18n="footer.link.corn">Corn &amp; 3D Pellets</a></li>
+          <li><a href="products.html#load-calculator" data-i18n="footer.link.calculator">Load Calculator</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4 data-i18n="footer.heading.contact">Contact</h4>
         <ul>
-          <li><a href="mailto:info@goldpeletcips.com">info@goldpeletcips.com</a></li>
-          <li><a href="tel:+903425030773">+90 342 503 0773</a></li>
-          <li><a href="https://www.goldpeletcips.com" target="_blank" rel="noopener">www.goldpeletcips.com</a></li>
-          <li><span style="opacity:0.85;">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span></li>
+          <li><a href="mailto:info@goldpeletcips.com" data-content-key="contact.email">info@goldpeletcips.com</a></li>
+          <li><a href="tel:+903425030773" data-content-key="contact.phone_primary">+90 342 503 0773</a></li>
+          <li><a href="https://www.goldpeletcips.com" target="_blank" rel="noopener" data-content-key="contact.website">www.goldpeletcips.com</a></li>
+          <li><span style="opacity:0.85;" data-content-key="contact.address">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Gold Pelet. All rights reserved.</span>
+      <span data-i18n="footer.copyright">© 2026 Gold Pelet. All rights reserved.</span>
       <div class="footer-social">
         <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 8.98h4v12H3v-12zm7 0h3.84v1.64h.05c.53-1 1.85-2.05 3.8-2.05 4.06 0 4.81 2.67 4.81 6.14v6.27h-4v-5.56c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.66h-4v-12z"/></svg></a>
         <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 2.1.25 2.6.44a4.8 4.8 0 011.85 1.2 4.8 4.8 0 011.2 1.85c.19.5.39 1.43.44 2.6.06 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.25 2.1-.44 2.6a5.1 5.1 0 01-3.05 3.05c-.5.19-1.43.39-2.6.44-1.25.06-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-2.1-.25-2.6-.44a4.8 4.8 0 01-1.85-1.2 4.8 4.8 0 01-1.2-1.85c-.19-.5-.39-1.43-.44-2.6C2.21 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.25-2.1.44-2.6a4.8 4.8 0 011.2-1.85 4.8 4.8 0 011.85-1.2c.5-.19 1.43-.39 2.6-.44C8.4 2.21 8.8 2.2 12 2.2zm0 3.03a6.77 6.77 0 100 13.54 6.77 6.77 0 000-13.54zm0 2.17a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm6.94-2.4a1.58 1.58 0 11-3.16 0 1.58 1.58 0 013.16 0z"/></svg></a>
@@ -247,5 +273,7 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/cms.js"></script>
 </body>
 </html>
