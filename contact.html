@@ -72,19 +72,19 @@
     <div class="contact-info-grid">
       <div class="info-card">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8"/></svg></div>
-        <strong>Sales Inquiries</strong>
+        <strong data-i18n="contact.info.sales">Sales Inquiries</strong>
         <a href="mailto:info@goldpeletcips.com" data-content-key="contact.email">info@goldpeletcips.com</a>
       </div>
       <div class="info-card">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2C9.5 21 3 14.5 3 6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8"/></svg></div>
-        <strong>Call Our Team</strong>
+        <strong data-i18n="contact.info.call">Call Our Team</strong>
         <a href="tel:+903425030773" style="display:block;" data-content-key="contact.phone_primary">+90 342 503 0773</a>
         <a href="tel:+903425030874" style="display:block;">+90 342 503 08 74</a>
         <a href="tel:+905398537330" style="display:block;">+90 539 853 73 30</a>
       </div>
       <div class="info-card">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg></div>
-        <strong>Facility</strong>
+        <strong data-i18n="contact.info.facility">Facility</strong>
         <span data-content-key="contact.address">2. Organize Sanayi Bölgesi, 83214 Nolu Cad. No.6, Başpınar / Şehitkamil, Gaziantep, Türkiye</span>
       </div>
     </div>
@@ -93,66 +93,66 @@
       <div id="quote-form">
         <p class="eyebrow" data-i18n="contact.form.eyebrow">RFQ / B2B Inquiry</p>
         <h2 style="margin-bottom:8px;" data-i18n="contact.form.h2">Request a Quote</h2>
-        <p style="color:var(--ink-500);margin-bottom:24px;">Fields marked <span style="color:var(--danger);">*</span> are required. We typically respond within 3 business days.</p>
+        <p style="color:var(--ink-500);margin-bottom:24px;"><span style="color:var(--danger);">*</span> <span data-i18n="contact.form.required">Fields marked * are required. We typically respond within 3 business days.</span></p>
 
         <form class="form-card" data-rfq-form novalidate>
           <div class="form-grid">
             <div class="field">
-              <label for="company">Company Name <span class="req">*</span></label>
+              <label for="company"><span data-i18n="contact.form.label.company">Company Name</span> <span class="req">*</span></label>
               <input type="text" id="company" name="company" data-validate="required" autocomplete="organization">
               <span class="error-msg"></span>
             </div>
             <div class="field">
-              <label for="contact-name">Contact Name <span class="req">*</span></label>
+              <label for="contact-name"><span data-i18n="contact.form.label.contactName">Contact Name</span> <span class="req">*</span></label>
               <input type="text" id="contact-name" name="contact_name" data-validate="required" autocomplete="name">
               <span class="error-msg"></span>
             </div>
             <div class="field">
-              <label for="email">Email <span class="req">*</span></label>
+              <label for="email"><span data-i18n="contact.form.label.email">Email</span> <span class="req">*</span></label>
               <input type="email" id="email" name="email" data-validate="required email" autocomplete="email">
               <span class="error-msg"></span>
             </div>
             <div class="field">
-              <label for="phone">Phone</label>
+              <label for="phone" data-i18n="contact.form.label.phone">Phone</label>
               <input type="tel" id="phone" name="phone" data-validate="phone" autocomplete="tel">
               <span class="error-msg"></span>
             </div>
             <div class="field">
-              <label for="country">Country <span class="req">*</span></label>
+              <label for="country"><span data-i18n="contact.form.label.country">Country</span> <span class="req">*</span></label>
               <input type="text" id="country" name="country" data-validate="required" autocomplete="country-name">
               <span class="error-msg"></span>
             </div>
             <div class="field">
-              <label for="product">Product of Interest <span class="req">*</span></label>
+              <label for="product"><span data-i18n="contact.form.label.product">Product of Interest</span> <span class="req">*</span></label>
               <select id="product" name="product" data-validate="required">
-                <option value="">Select a product line</option>
-                <option value="wheat">Wheat Pellets</option>
-                <option value="potato">Potato Pellets</option>
-                <option value="corn">Corn &amp; 3D Pellets</option>
-                <option value="other">Other / Custom Formulation</option>
+                <option value="" data-i18n="contact.form.option.selectProduct">Select a product line</option>
+                <option value="wheat" data-i18n="contact.form.option.wheat">Wheat Pellets</option>
+                <option value="potato" data-i18n="contact.form.option.potato">Potato Pellets</option>
+                <option value="corn" data-i18n="contact.form.option.corn">Corn &amp; 3D Pellets</option>
+                <option value="other" data-i18n="contact.form.option.other">Other / Custom Formulation</option>
               </select>
               <span class="error-msg"></span>
             </div>
             <div class="field">
-              <label for="volume">Estimated Monthly Volume</label>
+              <label for="volume" data-i18n="contact.form.label.volume">Estimated Monthly Volume</label>
               <select id="volume" name="volume">
-                <option value="">Select a range</option>
-                <option value="under-5t">Under 5 tonnes</option>
-                <option value="5-20t">5–20 tonnes</option>
-                <option value="20-50t">20–50 tonnes</option>
-                <option value="50t-plus">50+ tonnes</option>
+                <option value="" data-i18n="contact.form.option.selectVolume">Select a range</option>
+                <option value="under-5t" data-i18n="contact.form.option.under5t">Under 5 tonnes</option>
+                <option value="5-20t" data-i18n="contact.form.option.5to20t">5–20 tonnes</option>
+                <option value="20-50t" data-i18n="contact.form.option.20to50t">20–50 tonnes</option>
+                <option value="50t-plus" data-i18n="contact.form.option.50tPlus">50+ tonnes</option>
               </select>
             </div>
             <div class="field full">
-              <label for="message">Tell us about your requirement <span class="req">*</span></label>
-              <textarea id="message" name="message" data-validate="required" placeholder="Target shape, flavor carry, packaging format, timeline..."></textarea>
+              <label for="message"><span data-i18n="contact.form.label.message">Tell us about your requirement</span> <span class="req">*</span></label>
+              <textarea id="message" name="message" data-validate="required" placeholder="Target shape, flavor carry, packaging format, timeline..." data-i18n-placeholder="contact.form.placeholder.message"></textarea>
               <span class="error-msg"></span>
             </div>
           </div>
 
           <button type="submit" class="btn btn--primary btn--block" style="margin-top:24px;" data-i18n="contact.form.submit">Submit Inquiry</button>
           <div class="form-status" role="status"></div>
-          <p class="form-note">
+          <p class="form-note" data-i18n="contact.form.consent">
             By submitting, you agree to be contacted by our sales team regarding this inquiry.
             We do not share your information with third parties.
           </p>
@@ -160,29 +160,29 @@
       </div>
 
       <div>
-        <p class="eyebrow">What Happens Next</p>
-        <h2 style="margin-bottom:24px;">Our response process</h2>
+        <p class="eyebrow" data-i18n="contact.process.eyebrow">What Happens Next</p>
+        <h2 style="margin-bottom:24px;" data-i18n="contact.process.h2">Our response process</h2>
         <div class="timeline">
           <div class="timeline-item">
-            <div class="year">Day 1</div>
-            <h3>Inquiry received &amp; reviewed</h3>
-            <p>Your requirement is routed to the right technical sales contact for your product line.</p>
+            <div class="year" data-i18n="contact.process.day1.label">Day 1</div>
+            <h3 data-i18n="contact.process.day1.title">Inquiry received &amp; reviewed</h3>
+            <p data-i18n="contact.process.day1.description">Your requirement is routed to the right technical sales contact for your product line.</p>
           </div>
           <div class="timeline-item">
-            <div class="year">Day 2–3</div>
-            <h3>Formulation &amp; quote prepared</h3>
-            <p>We match your brief to an existing formulation or scope a custom one, with indicative pricing and lead time.</p>
+            <div class="year" data-i18n="contact.process.day2.label">Day 2–3</div>
+            <h3 data-i18n="contact.process.day2.title">Formulation &amp; quote prepared</h3>
+            <p data-i18n="contact.process.day2.description">We match your brief to an existing formulation or scope a custom one, with indicative pricing and lead time.</p>
           </div>
           <div class="timeline-item">
-            <div class="year">Day 3+</div>
-            <h3>Sample kit dispatched (on request)</h3>
-            <p>A physical sample ships for your own fry trials before any order is confirmed.</p>
+            <div class="year" data-i18n="contact.process.day3.label">Day 3+</div>
+            <h3 data-i18n="contact.process.day3.title">Sample kit dispatched (on request)</h3>
+            <p data-i18n="contact.process.day3.description">A physical sample ships for your own fry trials before any order is confirmed.</p>
           </div>
         </div>
 
         <div class="cert-badge" style="margin-top:32px;">
           <div class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-4z" stroke="currentColor" stroke-width="1.8"/></svg></div>
-          <div><strong>Prefer email?</strong><span>Write directly to <a href="mailto:info@goldpeletcips.com" style="color:var(--green-700);font-weight:600;">info@goldpeletcips.com</a></span></div>
+          <div><strong data-i18n="contact.preferEmail.title">Prefer email?</strong><span><span data-i18n="contact.preferEmail.text">Write directly to</span> <a href="mailto:info@goldpeletcips.com" style="color:var(--green-700);font-weight:600;">info@goldpeletcips.com</a></span></div>
         </div>
       </div>
     </div>

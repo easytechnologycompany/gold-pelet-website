@@ -56,23 +56,25 @@ async function applyPageHero() {
   if (!page) return;
   const hero = await cmsFetch(`/public/page-heroes/${page}`);
   if (!hero) return;
-  // CMS hero content is English-only; if the visitor has an
-  // i18n.js-translated language active, keep the translated text rather
-  // than stomping it with the English database copy.
-  if (document.documentElement.lang && document.documentElement.lang !== 'en') return;
 
   const section = document.querySelector('.hero, .page-hero');
   if (!section) return;
 
+  // The hero photo is language-independent, so it always applies — only
+  // the text below is gated on English, since the CMS copy has no
+  // translations and would otherwise stomp an active i18n.js language.
+  const bgEl = section.querySelector('.hero-bg');
+  if (bgEl && hero.image_url) bgEl.style.backgroundImage = `url('${mediaURL(hero.image_url)}')`;
+
+  if (document.documentElement.lang && document.documentElement.lang !== 'en') return;
+
   const eyebrowEl = section.querySelector('.eyebrow');
   const headingEl = section.querySelector('h1');
   const subEl = section.querySelector('.hero-lede, .page-hero > .container > p:not(.eyebrow):not(.breadcrumb)');
-  const bgEl = section.querySelector('.hero-bg');
 
   if (eyebrowEl && hero.eyebrow) eyebrowEl.textContent = hero.eyebrow;
   if (headingEl && hero.heading) headingEl.textContent = hero.heading;
   if (subEl && hero.subheading) subEl.textContent = hero.subheading;
-  if (bgEl && hero.image_url) bgEl.style.backgroundImage = `url('${mediaURL(hero.image_url)}')`;
 }
 
 /* ---------------- Stats (hero-stats + stats-strip instances) ---------------- */
@@ -97,8 +99,15 @@ async function applyStats() {
       numEl.textContent = stat.value_number;
     }
     if (unitEl) unitEl.textContent = stat.unit_suffix || '';
-    if (labelEl) labelEl.textContent = stat.label;
+    if (labelEl) {
+      // Same slug-keyed override pattern, keyed by stat_key this time —
+      // stats.<stat_key>.label in TRANSLATIONS, English CMS value as the
+      // fallback when a language has no override for that key.
+      labelEl.textContent = stat.label;
+      labelEl.setAttribute('data-i18n', `stats.${stat.stat_key}.label`);
+    }
   });
+  retranslate();
 }
 
 /* ---------------- Site content (key -> text blocks) ---------------- */
@@ -174,9 +183,13 @@ async function applyNews() {
   const featured = result.data.find((n) => n.is_featured);
   const rest = result.data.filter((n) => !n.is_featured);
 
+  const featuredMedia = featured && featured.image_url
+    ? `<div class="media"><img src="${mediaURL(featured.image_url)}" alt="${featured.title}" loading="lazy"></div>`
+    : `<div class="media pattern"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21l3-8 5 3 4-9 6 14H3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>`;
+
   if (featuredMount && featured) {
     featuredMount.innerHTML = `<article class="news-card news-card--feature">
-      <div class="media pattern"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21l3-8 5 3 4-9 6 14H3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+      ${featuredMedia}
       <div class="body">
         <span class="date">${featured.date_label}</span>
         <h3 style="font-size:1.6rem;">${featured.title}</h3>
@@ -188,16 +201,19 @@ async function applyNews() {
 
   if (gridMount) {
     gridMount.innerHTML = rest
-      .map(
-        (n) => `<article class="news-card">
-          <div class="media pattern"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M12 2l7 4v6c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-4z" stroke="currentColor" stroke-width="1.6"/></svg></div>
+      .map((n) => {
+        const media = n.image_url
+          ? `<div class="media"><img src="${mediaURL(n.image_url)}" alt="${n.title}" loading="lazy"></div>`
+          : `<div class="media pattern"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M12 2l7 4v6c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-4z" stroke="currentColor" stroke-width="1.6"/></svg></div>`;
+        return `<article class="news-card">
+          ${media}
           <div class="body">
             <span class="date">${n.date_label}</span>
             <h3>${n.title}</h3>
             <p>${n.description || ''}</p>
           </div>
-        </article>`
-      )
+        </article>`;
+      })
       .join('');
     window.applyScrollReveal && window.applyScrollReveal(gridMount);
   }
@@ -205,17 +221,24 @@ async function applyNews() {
 
 /* ---------------- Products / catalog ---------------- */
 function productCardHTML(p) {
-  const tag = p.is_featured ? '<span class="tag">Best Seller</span>' : '';
+  const tag = p.is_featured ? '<span class="tag" data-i18n="product.bestSeller">Best Seller</span>' : '';
 
   const rawState = p.raw_image_url
     ? `<img src="${mediaURL(p.raw_image_url)}" alt="${p.name} — raw pellet" loading="lazy">`
-    : `<div class="media-placeholder"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Raw photo coming soon</span></div>`;
+    : `<div class="media-placeholder"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="product.rawPhotoSoon">Raw photo coming soon</span></div>`;
   const friedState = p.fried_image_url
     ? `<img src="${mediaURL(p.fried_image_url)}" alt="${p.name} — fried" loading="lazy">`
-    : `<div class="media-placeholder"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Fried photo coming soon</span></div>`;
+    : `<div class="media-placeholder"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="product.friedPhotoSoon">Fried photo coming soon</span></div>`;
 
   const specs = (p.specs || []).map((s) => `<span class="chip">${s.label}</span>`).join('');
   const sampleHref = `contact.html?product=${encodeURIComponent(p.name)}#quote-form`;
+  // Product names/descriptions live in the CMS (English-only — there's no
+  // translation column on the products table), so a client-side override
+  // keyed by slug fills in for the 4 supported languages via the exact
+  // same data-i18n/TRANSLATIONS mechanism as everything else. Falls back
+  // to the real CMS value (English) for any product without an override.
+  const nameKey = `products.${p.slug}.name`;
+  const descKey = `products.${p.slug}.description`;
 
   return `<article class="product-card">
     <div class="media">
@@ -224,17 +247,27 @@ function productCardHTML(p) {
       <div class="media-state" data-state="fried">${friedState}</div>
       <div class="media-toggle" data-active="raw" role="group" aria-label="Raw or fried view">
         <span class="media-toggle-pill" aria-hidden="true"></span>
-        <button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true">Raw</button>
-        <button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false">Fried</button>
+        <button type="button" class="media-toggle-btn is-active" data-state="raw" aria-pressed="true" data-i18n="product.raw">Raw</button>
+        <button type="button" class="media-toggle-btn" data-state="fried" aria-pressed="false" data-i18n="product.fried">Fried</button>
       </div>
     </div>
     <div class="body">
-      <h3>${p.name}</h3>
-      <p>${p.description || ''}</p>
+      <h3 data-i18n="${nameKey}">${p.name}</h3>
+      <p data-i18n="${descKey}">${p.description || ''}</p>
       <div class="specs">${specs}</div>
-      <a class="btn btn--outline btn--sm request-sample-btn" href="${sampleHref}">Request Sample Kit</a>
+      <a class="btn btn--outline btn--sm request-sample-btn" href="${sampleHref}" data-i18n="product.requestSample">Request Sample Kit</a>
     </div>
   </article>`;
+}
+
+// cms.js's own DOMContentLoaded handler runs its applies concurrently
+// (not awaited) — by the time any of them mutate the DOM, i18n.js has
+// already done its one-time translation pass on page load. Every function
+// below that injects data-i18n-bearing markup re-runs that pass afterward
+// against the *current* language, or newly-injected content would stay
+// English until the visitor manually touched the language switcher again.
+function retranslate() {
+  window.applyTranslations && window.applyTranslations(document.documentElement.lang || 'en');
 }
 
 /** Home page: a flat preview grid of the first few active products. */
@@ -245,6 +278,7 @@ async function applyHomeProducts(limit = 3) {
   if (!result || !result.data.length) return;
   mount.innerHTML = result.data.slice(0, limit).map(productCardHTML).join('');
   window.applyScrollReveal && window.applyScrollReveal(mount);
+  retranslate();
 }
 
 /** Products page: every category as its own section, in category order. */
@@ -267,12 +301,15 @@ async function applyCatalog() {
     .map((cat, i) => {
       const products = productsByCategory[cat.id] || [];
       const altClass = i % 2 === 1 ? ' section--alt' : '';
+      // Same slug-keyed override approach as product names/descriptions —
+      // categories.<slug>.name/.description in TRANSLATIONS, falling back
+      // to the CMS's English value when no override exists.
       return `<section class="section${altClass}" id="${cat.slug}">
         <div class="container">
           <div class="section-head">
-            <p class="eyebrow">${String(i + 1).padStart(2, '0')} · ${cat.name}</p>
-            <h2>${cat.name}</h2>
-            <p>${cat.description || ''}</p>
+            <p class="eyebrow">${String(i + 1).padStart(2, '0')} · <span data-i18n="categories.${cat.slug}.name">${cat.name}</span></p>
+            <h2 data-i18n="categories.${cat.slug}.name">${cat.name}</h2>
+            <p data-i18n="categories.${cat.slug}.description">${cat.description || ''}</p>
           </div>
           <div class="card-grid">${products.map(productCardHTML).join('')}</div>
         </div>
@@ -280,6 +317,7 @@ async function applyCatalog() {
     })
     .join('');
   window.applyScrollReveal && window.applyScrollReveal(mount);
+  retranslate();
 }
 
 /* ---------------- RFQ / contact form ---------------- */
@@ -336,6 +374,29 @@ function wireRealRFQSubmission() {
   });
 }
 
+/* ---------------- Named image slots (Manufacturing Story stages, split
+   sections, and any other one-off photo an admin should be able to swap) --
+   generic find-and-set on any element carrying data-image-key, matching the
+   backend's site_images.image_key. Applies to <img> (src) and any other
+   element (background-image), so it covers both markup styles used across
+   the story/split sections without needing per-slot code. ---------------- */
+async function applySiteImages() {
+  const targets = document.querySelectorAll('[data-image-key]');
+  if (!targets.length) return;
+  const result = await cmsFetch('/public/site-images');
+  if (!result) return;
+  const byKey = {};
+  result.data.forEach((img) => (byKey[img.image_key] = img));
+
+  targets.forEach((el) => {
+    const slot = byKey[el.dataset.imageKey];
+    if (!slot || !slot.image_url) return;
+    const url = mediaURL(slot.image_url);
+    if (el.tagName === 'IMG') el.src = url;
+    else el.style.backgroundImage = `url('${url}')`;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   applyBranding();
   applyPageHero();
@@ -346,5 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
   applyNews();
   applyHomeProducts();
   applyCatalog();
+  applySiteImages();
   wireRealRFQSubmission();
 });
