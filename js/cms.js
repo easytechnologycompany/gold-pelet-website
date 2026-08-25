@@ -114,6 +114,18 @@ async function applyStats() {
   retranslate();
 }
 
+// Content keys that are prose (change with the visitor's language) vs.
+// facts (an email/phone/URL/address is the same string in every
+// language — translating it would corrupt real contact data). Only the
+// prose keys get the slug-keyed data-i18n override below; the rest are
+// intentionally left as plain CMS text in every language.
+const TRANSLATABLE_CONTENT_KEYS = new Set([
+  'about.story.heading',
+  'about.story.para1',
+  'about.story.para2',
+  'footer.blurb',
+]);
+
 /* ---------------- Site content (key -> text blocks) ---------------- */
 async function applyContent() {
   const result = await cmsFetch('/public/content');
@@ -122,14 +134,24 @@ async function applyContent() {
   result.data.forEach((c) => (byKey[c.content_key] = c.content_value));
 
   document.querySelectorAll('[data-content-key]').forEach((el) => {
-    const value = byKey[el.dataset.contentKey];
+    const key = el.dataset.contentKey;
+    const value = byKey[key];
     if (value === undefined) return;
     el.textContent = value;
     if (el.tagName === 'A') {
       if (el.getAttribute('href')?.startsWith('mailto:')) el.href = `mailto:${value}`;
       else if (el.getAttribute('href')?.startsWith('tel:')) el.href = `tel:${value.replace(/[^+\d]/g, '')}`;
     }
+    if (TRANSLATABLE_CONTENT_KEYS.has(key)) {
+      // Same slug-keyed override pattern as applyStats(): the CMS value
+      // (English) is the fallback already applied above; retranslate()
+      // below overwrites it with the active language's version if one
+      // exists in TRANSLATIONS, and leaves the English CMS text in place
+      // (with a console warning) if it doesn't — never a blank string.
+      el.setAttribute('data-i18n', `content.${key}`);
+    }
   });
+  retranslate();
 }
 
 /* ---------------- Certifications ---------------- */
