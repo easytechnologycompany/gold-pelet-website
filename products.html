@@ -60,7 +60,7 @@
 <section class="page-hero">
   <div class="hero-bg" style="background-image:url('assets/img/wheat-wide.jpg');"></div>
   <div class="container">
-    <p class="breadcrumb"><a href="index.html" style="color:inherit;">Home</a> / <span>Products</span></p>
+    <p class="breadcrumb"><a href="index.html" style="color:inherit;" data-i18n="nav.home">Home</a> / <span data-i18n="nav.products">Products</span></p>
     <p class="eyebrow" data-i18n="products.hero.eyebrow">Product Catalog</p>
     <h1 data-i18n="products.hero.h1">Five pellet lines. One consistent raw-material standard.</h1>
     <p data-i18n="products.hero.p">Every formulation below ships with a full spec sheet — moisture content, bulk density, expansion ratio and recommended fry parameters — so your production team can qualify it before the first container arrives.</p>
@@ -71,7 +71,7 @@
 <section class="section" id="wheat">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">01 · Grain-Based</p>
+      <p class="eyebrow" data-i18n="products.eyebrow.grain">01 · Grain-Based</p>
       <h2 data-i18n="categories.wheat.name">Wheat Pellets</h2>
       <p data-i18n="categories.wheat.description">Seven wheat pellet shapes — from colorful chips and decorative flowers to classic rings and pipes — formulated for a light, crisp fry.</p>
     </div>
@@ -175,7 +175,7 @@
 <section class="section section--alt" id="potato">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">02 · Potato-Based</p>
+      <p class="eyebrow" data-i18n="products.eyebrow.potato">02 · Potato-Based</p>
       <h2 data-i18n="categories.potato.name">Potato Pellets</h2>
       <p data-i18n="categories.potato.description">Made from pure potato starch, our best-selling line. Spiral, skin-textured and plain shapes, formulated for a light, crisp fry with minimal oil uptake.</p>
     </div>
@@ -227,7 +227,7 @@
 <section class="section" id="corn">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">03 · Egyptian 3D Shapes</p>
+      <p class="eyebrow" data-i18n="products.eyebrow.egyptian3d">03 · Egyptian 3D Shapes</p>
       <h2 data-i18n="categories.corn.name">Corn &amp; 3D Pellets</h2>
       <p data-i18n="categories.corn.description">Egyptian-style 3D extruded corn pellets — high-expansion novelty shapes popular across MENA and export markets.</p>
     </div>
@@ -274,37 +274,37 @@
     <div class="calc-card">
       <div class="calc-grid">
         <div class="field">
-          <label for="calc-category">Product Line</label>
+          <label for="calc-category" data-i18n="products.calc.productLine">Product Line</label>
           <select id="calc-category">
-            <option value="550">Wheat Pellets</option>
-            <option value="580">Potato Pellets</option>
-            <option value="520">Corn &amp; 3D Pellets</option>
+            <option value="550" data-i18n="categories.wheat.name">Wheat Pellets</option>
+            <option value="580" data-i18n="categories.potato.name">Potato Pellets</option>
+            <option value="520" data-i18n="categories.corn.name">Corn &amp; 3D Pellets</option>
           </select>
         </div>
         <div class="field">
-          <label for="calc-packaging">Packaging Format</label>
+          <label for="calc-packaging" data-i18n="products.calc.packagingFormat">Packaging Format</label>
           <select id="calc-packaging">
-            <option value="25" data-unit-label="25kg Bags">25kg Bags (palletized)</option>
-            <option value="1000" data-unit-label="1,000kg Jumbo Bags">1,000kg Jumbo Bags</option>
-            <option value="20" data-unit-label="20kg Cartons">20kg Cartons (frozen line)</option>
+            <option value="25" data-unit-label-key="products.calc.unitLabel.bags25" data-i18n="products.calc.packaging.bags25">25kg Bags (palletized)</option>
+            <option value="1000" data-unit-label-key="products.calc.unitLabel.jumbo1000" data-i18n="products.calc.packaging.jumbo1000">1,000kg Jumbo Bags</option>
+            <option value="20" data-unit-label-key="products.calc.unitLabel.cartons20" data-i18n="products.calc.packaging.cartons20">20kg Cartons (frozen line)</option>
           </select>
         </div>
         <div class="field">
-          <label for="calc-quantity">Order Quantity</label>
+          <label for="calc-quantity" data-i18n="products.calc.orderQuantity">Order Quantity</label>
           <div class="calc-qty-row">
             <input type="number" id="calc-quantity" min="0.1" step="0.5" value="20" inputmode="decimal">
             <select id="calc-unit">
-              <option value="1000">Tonnes</option>
-              <option value="1">Kilograms</option>
+              <option value="1000" data-i18n="products.calc.tonnes">Tonnes</option>
+              <option value="1" data-i18n="products.calc.kilograms">Kilograms</option>
             </select>
           </div>
         </div>
         <div class="field">
-          <label for="calc-container">Container Type</label>
+          <label for="calc-container" data-i18n="products.calc.containerTypeLabel">Container Type</label>
           <select id="calc-container">
-            <option value="20std">20' Standard</option>
-            <option value="40std">40' Standard</option>
-            <option value="40hc" selected>40' High Cube</option>
+            <option value="20std" data-i18n="products.calc.container.20std">20' Standard</option>
+            <option value="40std" data-i18n="products.calc.container.40std">40' Standard</option>
+            <option value="40hc" selected data-i18n="products.calc.container.40hc">40' High Cube</option>
           </select>
         </div>
       </div>
@@ -313,11 +313,11 @@
         <div class="calc-result-grid">
           <div class="calc-result-stat">
             <div class="calc-result-num" id="calc-out-containers">—</div>
-            <div class="calc-result-label">Containers Needed</div>
+            <div class="calc-result-label" data-i18n="products.calc.containersNeeded">Containers Needed</div>
           </div>
           <div class="calc-result-stat">
             <div class="calc-result-num" id="calc-out-perload">—</div>
-            <div class="calc-result-label">Max Load / Container</div>
+            <div class="calc-result-label" data-i18n="products.calc.maxLoad">Max Load / Container</div>
           </div>
           <div class="calc-result-stat">
             <div class="calc-result-num" id="calc-out-units">—</div>
@@ -325,14 +325,14 @@
           </div>
           <div class="calc-result-stat">
             <div class="calc-result-num" id="calc-out-fill">—</div>
-            <div class="calc-result-label">Last Container Fill</div>
+            <div class="calc-result-label" data-i18n="products.calc.lastFill">Last Container Fill</div>
           </div>
         </div>
         <div class="calc-result-note" id="calc-out-note"></div>
       </div>
     </div>
 
-    <p class="calc-disclaimer">Figures are planning estimates based on typical bulk density and palletized packing efficiency for each product line — final container count and stowage plan are confirmed by our logistics team once packaging and pallet configuration are set. <a href="contact.html" style="color:var(--green-700);font-weight:700;">Request a formal quote →</a></p>
+    <p class="calc-disclaimer"><span data-i18n="products.calc.disclaimer">Figures are planning estimates based on typical bulk density and palletized packing efficiency for each product line — final container count and stowage plan are confirmed by our logistics team once packaging and pallet configuration are set.</span> <a href="contact.html" style="color:var(--green-700);font-weight:700;" data-i18n="products.calc.requestQuote">Request a formal quote →</a></p>
   </div>
 </section>
 

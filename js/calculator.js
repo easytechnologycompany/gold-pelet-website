@@ -10,9 +10,9 @@
 // discounts nominal cubic capacity for palletized/bagged packing
 // efficiency (~85%), not the empty-box CBM figure.
 const CONTAINERS = {
-  '20std': { label: "20' Standard", payloadKg: 28200, usableVolumeM3: 28 },
-  '40std': { label: "40' Standard", payloadKg: 26700, usableVolumeM3: 58 },
-  '40hc': { label: "40' High Cube", payloadKg: 28000, usableVolumeM3: 68 },
+  '20std': { labelKey: 'products.calc.container.20std', payloadKg: 28200, usableVolumeM3: 28 },
+  '40std': { labelKey: 'products.calc.container.40std', payloadKg: 26700, usableVolumeM3: 58 },
+  '40hc': { labelKey: 'products.calc.container.40hc', payloadKg: 28000, usableVolumeM3: 68 },
 };
 
 function computeLoad({ densityKgM3, orderKg, container, bagKg }) {
@@ -51,7 +51,8 @@ function initLoadCalculator() {
   function render() {
     const densityKgM3 = Number(categorySelect.value);
     const bagKg = Number(packagingSelect.value);
-    const unitLabel = packagingSelect.selectedOptions[0].dataset.unitLabel;
+    const unitLabelKey = packagingSelect.selectedOptions[0].dataset.unitLabelKey;
+    const unitLabel = window.t ? window.t(unitLabelKey) : unitLabelKey;
     const rawQuantity = Number(quantityInput.value);
     const unitMultiplier = Number(unitSelect.value);
     const container = CONTAINERS[containerSelect.value];
@@ -65,24 +66,34 @@ function initLoadCalculator() {
       return;
     }
 
+    const containerLabel = window.t ? window.t(container.labelKey) : container.labelKey;
     const orderKg = rawQuantity * unitMultiplier;
     const result = computeLoad({ densityKgM3, orderKg, container, bagKg });
 
-    outContainers.textContent = `${result.containersNeeded} × ${container.label}`;
+    outContainers.textContent = window.t
+      ? window.t('products.calc.containersResult', { count: result.containersNeeded, container: containerLabel })
+      : `${result.containersNeeded} × ${containerLabel}`;
     outPerLoad.textContent = formatTonnes(result.maxLoadKg);
     outUnits.textContent = result.totalUnits.toLocaleString('en-US');
-    outUnitsLabel.textContent = `${unitLabel} — Total`;
+    outUnitsLabel.textContent = window.t ? window.t('products.calc.unitsTotal', { unit: unitLabel }) : `${unitLabel} — Total`;
     outFill.textContent = `${result.fillPct}%`;
 
-    outNote.textContent =
-      result.bindingConstraint === 'volume'
-        ? `This load is volume-limited: at an estimated ${densityKgM3} kg/m³ bulk density, the ${container.label.toLowerCase()} fills its ${container.usableVolumeM3} m³ usable capacity (≈${formatTonnes(result.volumeLimitKg)}) before reaching its ${formatTonnes(container.payloadKg)} weight limit.`
-        : `This load is weight-limited: the ${container.label.toLowerCase()} reaches its ${formatTonnes(container.payloadKg)} payload limit before filling its ${container.usableVolumeM3} m³ usable capacity.`;
+    const noteVars = {
+      density: densityKgM3,
+      container: containerLabel.toLowerCase(),
+      volume: container.usableVolumeM3,
+      approxWeight: formatTonnes(result.volumeLimitKg),
+      maxWeight: formatTonnes(container.payloadKg),
+    };
+    outNote.textContent = window.t
+      ? window.t(result.bindingConstraint === 'volume' ? 'products.calc.note.volumeLimited' : 'products.calc.note.weightLimited', noteVars)
+      : '';
   }
 
   [categorySelect, packagingSelect, quantityInput, unitSelect, containerSelect].forEach((el) =>
     el.addEventListener('input', render)
   );
+  window.reRenderCalculator = render;
   render();
 }
 
