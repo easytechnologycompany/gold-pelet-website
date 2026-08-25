@@ -44,7 +44,11 @@ async function applyBranding() {
   if (branding.accent_navy_hex) root.setProperty('--navy-600', branding.accent_navy_hex);
 
   if (branding.logo_url) {
-    document.querySelectorAll('.brand-logo').forEach((img) => {
+    // Excludes .brand-logo--static (the footer's logo): that instance sits
+    // on the dark footer and uses a purpose-built light-on-dark variant
+    // (assets/img/logo-light.png) that isn't a CMS asset, so it must never
+    // be overwritten by whatever logo_url the admin uploads for the header.
+    document.querySelectorAll('.brand-logo:not(.brand-logo--static)').forEach((img) => {
       img.src = mediaURL(branding.logo_url);
     });
   }
