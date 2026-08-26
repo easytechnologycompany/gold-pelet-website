@@ -1227,15 +1227,30 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   max-width: 920px;
   margin: 0 auto;
 }
+/* The 3rd column ("Order Quantity") holds the stepper (two buttons + the
+   number input) *and* the unit select, so it structurally needs more room
+   than a lone <select> — an even 1fr split left it just short of fitting
+   both on one line at the card's own max-width, every time, not as a rare
+   edge case. */
 .calc-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* minmax(0, Nfr), not bare Nfr — a bare fr track's minimum is its
+     content's min-content size, so the "Packaging Format" select's long
+     option text ("25kg Bags (palletized)") was winning space over the
+     Quantity column despite the 1.3fr weighting. minmax(0, ...) makes the
+     fr values the real, content-independent proportions. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr);
   gap: var(--space-5);
 }
 @media (max-width: 860px) { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .calc-grid { grid-template-columns: 1fr; } }
-.calc-qty-row { display: flex; gap: 8px; }
-.calc-qty-row select { width: 112px; flex-shrink: 0; }
+/* Wraps rather than crushing the number input: belt-and-suspenders for
+   any width where even the wider column above still isn't quite enough
+   (a long language's "Tonnes"/"Kilograms" translation, extreme zoom) —
+   the unit select drops to its own line instead of squeezing the number
+   input down to invisibility. */
+.calc-qty-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.calc-qty-row select { width: 92px; flex-shrink: 0; }
 
 /* Custom +/- stepper: replaces the native number-input spinner (visually
    inconsistent across browsers) while keeping the real <input type=number>
@@ -1244,8 +1259,8 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
 .calc-qty-stepper {
   display: flex;
   align-items: stretch;
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 96px;
+  min-width: 96px;
   border: 1.5px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--surface-alt);
@@ -1254,12 +1269,12 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
 .calc-qty-stepper:focus-within { border-color: var(--green-600); background: #fff; }
 .calc-qty-stepper input[type="number"] {
   flex: 1;
-  min-width: 0;
+  min-width: 32px;
   width: 100%;
   border: none;
   background: transparent;
   text-align: center;
-  padding: 12px 4px;
+  padding: 12px 2px;
   -moz-appearance: textfield;
 }
 .calc-qty-stepper input[type="number"]:focus { outline: none; }
@@ -1267,7 +1282,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
 .calc-qty-stepper input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .calc-qty-btn {
   flex-shrink: 0;
-  width: 40px;
+  width: 32px;
   display: grid;
   place-items: center;
   color: var(--ink-700);
