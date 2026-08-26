@@ -549,9 +549,9 @@ table.data-table .col-actions { text-align: right; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 6px;
   text-align: center;
-  padding: 14px 16px;
+  padding: 16px;
   border: 1.25px dashed var(--line);
   border-radius: var(--radius-md);
   background: var(--surface-alt);
@@ -613,9 +613,7 @@ table.data-table .col-actions { text-align: right; }
 .upload-zone.is-dragover .upload-zone-icon { background: var(--surface); transform: translateY(-1px); }
 .upload-zone.has-error .upload-zone-icon { background: var(--danger-bg); color: var(--danger); }
 
-.upload-zone-title { font-weight: 600; font-size: 0.78rem; color: var(--ink-900); }
-.upload-zone-subtitle { font-size: 0.68rem; color: var(--ink-500); }
-.upload-zone-meta { font-size: 0.62rem; color: var(--ink-300); margin-top: 1px; }
+.upload-zone-title { font-weight: 600; font-size: 0.8rem; color: var(--ink-900); }
 .upload-zone-error-msg { font-size: 0.72rem; font-weight: 600; color: var(--danger); margin-top: 1px; }
 
 /* ---- Selected-file state ---- */

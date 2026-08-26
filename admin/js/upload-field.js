@@ -61,20 +61,22 @@ function enhanceUploadField(input) {
   const maxSizeLabel = `${maxSizeMB}MB`;
   const labelText = input.dataset.uploadLabel || uploadT(input.dataset.uploadLabelKey || 'upload.label.default');
   const formats = uploadAcceptToFormats(input.accept);
-  const metaParts = [];
-  if (formats) metaParts.push(`${uploadT('upload.accepted')}: ${formats}`);
-  metaParts.push(uploadT('upload.maxSize', { size: maxSizeLabel }));
+  const hintParts = [uploadT('upload.dragDrop')];
+  if (formats) hintParts.push(`${uploadT('upload.accepted')}: ${formats}`);
+  hintParts.push(uploadT('upload.maxSize', { size: maxSizeLabel }));
 
   const zone = document.createElement('div');
   zone.className = 'upload-zone';
   if (input.disabled) zone.classList.add('is-disabled');
+  // The drag/accept/max-size hint is dropped from the visible box to keep
+  // it compact, but kept as a native tooltip + accessible name so sighted
+  // mouse users and screen readers both still get it.
+  zone.title = hintParts.join(' · ');
 
   zone.innerHTML = `
     <div class="upload-zone-empty">
       <div class="upload-zone-icon">${UPLOAD_ICONS.upload}</div>
       <div class="upload-zone-title">${labelText}</div>
-      <div class="upload-zone-subtitle">${uploadT('upload.dragDrop')}</div>
-      <div class="upload-zone-meta">${metaParts.join(' · ')}</div>
       <div class="upload-zone-error-msg" data-zone-error hidden></div>
     </div>
     <div class="upload-zone-selected">
@@ -99,6 +101,9 @@ function enhanceUploadField(input) {
   input.parentNode.insertBefore(zone, input);
   zone.appendChild(input);
   input.classList.add('upload-zone-input');
+  // Screen readers announce the focused control's own accessible name, not
+  // a tooltip on its container, so the dropped hint text goes here too.
+  input.setAttribute('aria-label', `${labelText} — ${zone.title}`);
 
   const errorEl = zone.querySelector('[data-zone-error]');
   const thumbEl = zone.querySelector('[data-zone-thumb]');
