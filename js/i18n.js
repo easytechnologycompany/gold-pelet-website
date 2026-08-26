@@ -1127,6 +1127,10 @@ function setLanguage(lang) {
   // textContent assignment, not [data-i18n] markup, so it needs its own
   // re-render hook to pick up the new language.
   if (window.reRenderCalculator) window.reRenderCalculator();
+  // Same reasoning for the custom dropdowns: their visible label is read
+  // from the (now newly-translated) hidden native <select>'s options at
+  // build time, so it needs to be re-read after applyTranslations() runs.
+  if (window.refreshCustomSelects) window.refreshCustomSelects();
 }
 
 function initLangSwitcher() {

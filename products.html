@@ -275,7 +275,7 @@
       <div class="calc-grid">
         <div class="field">
           <label for="calc-category" data-i18n="products.calc.productLine">Product Line</label>
-          <select id="calc-category">
+          <select id="calc-category" data-custom-select>
             <option value="550" data-i18n="categories.wheat.name">Wheat Pellets</option>
             <option value="580" data-i18n="categories.potato.name">Potato Pellets</option>
             <option value="520" data-i18n="categories.corn.name">Corn &amp; 3D Pellets</option>
@@ -283,7 +283,7 @@
         </div>
         <div class="field">
           <label for="calc-packaging" data-i18n="products.calc.packagingFormat">Packaging Format</label>
-          <select id="calc-packaging">
+          <select id="calc-packaging" data-custom-select>
             <option value="25" data-unit-label-key="products.calc.unitLabel.bags25" data-i18n="products.calc.packaging.bags25">25kg Bags (palletized)</option>
             <option value="1000" data-unit-label-key="products.calc.unitLabel.jumbo1000" data-i18n="products.calc.packaging.jumbo1000">1,000kg Jumbo Bags</option>
             <option value="20" data-unit-label-key="products.calc.unitLabel.cartons20" data-i18n="products.calc.packaging.cartons20">20kg Cartons (frozen line)</option>
@@ -297,7 +297,7 @@
               <input type="number" id="calc-quantity" min="0.1" step="0.5" value="20" inputmode="decimal">
               <button type="button" class="calc-qty-btn" id="calc-qty-increase" aria-label="Increase quantity" data-i18n-aria-label="products.calc.increaseQty">+</button>
             </div>
-            <select id="calc-unit">
+            <select id="calc-unit" data-custom-select>
               <option value="1000" data-i18n="products.calc.tonnes">Tonnes</option>
               <option value="1" data-i18n="products.calc.kilograms">Kilograms</option>
             </select>
@@ -305,7 +305,7 @@
         </div>
         <div class="field">
           <label for="calc-container" data-i18n="products.calc.containerTypeLabel">Container Type</label>
-          <select id="calc-container">
+          <select id="calc-container" data-custom-select>
             <option value="20std" data-i18n="products.calc.container.20std">20' Standard</option>
             <option value="40std" data-i18n="products.calc.container.40std">40' Standard</option>
             <option value="40hc" selected data-i18n="products.calc.container.40hc">40' High Cube</option>
@@ -407,6 +407,7 @@
 
 <script src="js/main.js"></script>
 <script src="js/calculator.js"></script>
+<script src="js/custom-select.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/cms.js"></script>
 </body>
