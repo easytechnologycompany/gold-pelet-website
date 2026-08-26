@@ -551,7 +551,7 @@ table.data-table .col-actions { text-align: right; }
 .login-error.show { display: block; }
 
 .current-image { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-.current-image img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); }
+.current-image img { width: 96px; height: 64px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); flex-shrink: 0; }
 
 /* ============================================================
    Upload zone — replaces the native "Choose File" input everywhere

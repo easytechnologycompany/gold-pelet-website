@@ -758,7 +758,7 @@ html[dir="rtl"] .media-toggle[data-active="fried"] .media-toggle-pill { transfor
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   width: 100%;
-  aspect-ratio: 5/4;
+  aspect-ratio: 3/2;
   object-fit: cover;
 }
 .split-media { position: relative; }
@@ -1136,7 +1136,7 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
 
   .story-visual {
     position: relative;
-    aspect-ratio: 6/5;
+    aspect-ratio: 3/2;
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
