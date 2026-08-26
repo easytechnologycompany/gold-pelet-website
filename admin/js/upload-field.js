@@ -61,20 +61,25 @@ function enhanceUploadField(input) {
   const maxSizeLabel = `${maxSizeMB}MB`;
   const labelText = input.dataset.uploadLabel || uploadT(input.dataset.uploadLabelKey || 'upload.label.default');
   const formats = uploadAcceptToFormats(input.accept);
-  const hintParts = [uploadT('upload.dragDrop')];
-  if (formats) hintParts.push(`${uploadT('upload.accepted')}: ${formats}`);
-  hintParts.push(uploadT('upload.maxSize', { size: maxSizeLabel }));
+  const metaLine = [formats ? `${uploadT('upload.accepted')}: ${formats}` : null, uploadT('upload.maxSize', { size: maxSizeLabel })]
+    .filter(Boolean)
+    .join(' · ');
 
   const zone = document.createElement('div');
   zone.className = 'upload-zone';
   if (input.disabled) zone.classList.add('is-disabled');
 
+  // No title line here: the field's own <label for="..."> (present on every
+  // page that uses this component) already names it, so repeating that
+  // name inside the box was pure duplication. labelText still drives the
+  // input's aria-label below, so the name stays available to screen readers
+  // even on the rare page where a visible <label> isn't practical.
   zone.innerHTML = `
     <div class="upload-zone-empty">
       <div class="upload-zone-icon">${UPLOAD_ICONS.upload}</div>
       <div class="upload-zone-text">
-        <div class="upload-zone-title">${labelText}</div>
-        <div class="upload-zone-subtitle">${hintParts.join(' · ')}</div>
+        <div class="upload-zone-subtitle">${uploadT('upload.dragDrop')}</div>
+        <div class="upload-zone-meta">${metaLine}</div>
       </div>
       <div class="upload-zone-error-msg" data-zone-error hidden></div>
     </div>
@@ -100,7 +105,7 @@ function enhanceUploadField(input) {
   input.parentNode.insertBefore(zone, input);
   zone.appendChild(input);
   input.classList.add('upload-zone-input');
-  input.setAttribute('aria-label', `${labelText} — ${hintParts.join(' · ')}`);
+  input.setAttribute('aria-label', `${labelText} — ${uploadT('upload.dragDrop')} · ${metaLine}`);
 
   const errorEl = zone.querySelector('[data-zone-error]');
   const thumbEl = zone.querySelector('[data-zone-thumb]');

@@ -52,7 +52,7 @@ function initCrudPage(config) {
       }
       if (f.type === 'image') {
         return `<div class="field">
-          <label>${f.label}${f.required ? ' *' : ''}</label>
+          <label for="f-${f.name}-file">${f.label}${f.required ? ' *' : ''}</label>
           <img id="f-${f.name}-preview" alt="" style="display:none;max-width:160px;max-height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;">
           <input type="file" id="f-${f.name}-file" accept=".jpg,.jpeg,.png,.webp" data-upload-label-key="upload.label.photo" data-max-size-mb="8">
           <input type="hidden" id="f-${f.name}" name="${f.name}">

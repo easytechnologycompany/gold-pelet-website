@@ -612,8 +612,8 @@ html[dir="rtl"] .upload-zone { text-align: right; }
 .upload-zone.has-error .upload-zone-icon { color: var(--danger); }
 
 .upload-zone-text { flex: 1; min-width: 0; line-height: 1.35; }
-.upload-zone-title { font-weight: 600; font-size: 0.78rem; color: var(--ink-900); }
-.upload-zone-subtitle { font-size: 0.68rem; color: var(--ink-300); }
+.upload-zone-subtitle { font-weight: 600; font-size: 0.76rem; color: var(--ink-900); }
+.upload-zone-meta { font-size: 0.68rem; color: var(--ink-300); margin-top: 1px; }
 .upload-zone-error-msg { font-size: 0.72rem; font-weight: 600; color: var(--danger); margin-top: 1px; }
 
 /* ---- Selected-file state ---- */

@@ -61,7 +61,10 @@
         <img id="hero-preview" src="" alt="Current hero image">
         <div style="font-weight:600;font-size:0.9rem;" data-i18n="heroes.currentImage">Current hero image</div>
       </div>
-      <input type="file" id="hero-file" accept=".jpg,.jpeg,.png,.webp" data-upload-label-key="upload.label.hero" data-max-size-mb="8">
+      <div class="field">
+        <label for="hero-file" data-i18n="upload.label.hero">Upload hero image</label>
+        <input type="file" id="hero-file" accept=".jpg,.jpeg,.png,.webp" data-upload-label-key="upload.label.hero" data-max-size-mb="8">
+      </div>
       <p class="field-hint" style="margin:8px 0 20px;" data-i18n="heroes.uploadHint">JPG, PNG or WEBP, up to 8MB.</p>
 
       <form id="hero-form">

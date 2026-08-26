@@ -53,7 +53,10 @@
           <div style="color:var(--ink-500);font-size:0.82rem;" data-i18n="branding.logoShownHint">Shown in the header and footer of every page.</div>
         </div>
       </div>
-      <input type="file" id="logo-file" accept=".jpg,.jpeg,.png,.webp,.svg" data-upload-label-key="upload.label.logo" data-max-size-mb="8">
+      <div class="field">
+        <label for="logo-file" data-i18n="upload.label.logo">Upload logo</label>
+        <input type="file" id="logo-file" accept=".jpg,.jpeg,.png,.webp,.svg" data-upload-label-key="upload.label.logo" data-max-size-mb="8">
+      </div>
       <p class="field-hint" style="margin-top:8px;" data-i18n="branding.logoUploadHint">JPG, PNG, WEBP or SVG, up to 8MB. Uploading replaces the logo immediately.</p>
     </div>
 
