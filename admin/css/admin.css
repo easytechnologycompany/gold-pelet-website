@@ -549,9 +549,9 @@ table.data-table .col-actions { text-align: right; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 3px;
   text-align: center;
-  padding: 20px 18px;
+  padding: 14px 16px;
   border: 1.25px dashed var(--line);
   border-radius: var(--radius-md);
   background: var(--surface-alt);
@@ -599,8 +599,8 @@ table.data-table .col-actions { text-align: right; }
 .upload-zone.has-file .upload-zone-input { pointer-events: none; }
 
 .upload-zone-icon {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -608,15 +608,15 @@ table.data-table .col-actions { text-align: right; }
   color: var(--green-700, var(--green-600));
   transition: background 180ms ease, color 180ms ease, transform 180ms ease;
 }
-.upload-zone-icon svg { width: 15px; height: 15px; }
+.upload-zone-icon svg { width: 12px; height: 12px; }
 .upload-zone:hover .upload-zone-icon,
 .upload-zone.is-dragover .upload-zone-icon { background: var(--surface); transform: translateY(-1px); }
 .upload-zone.has-error .upload-zone-icon { background: var(--danger-bg); color: var(--danger); }
 
-.upload-zone-title { font-weight: 600; font-size: 0.84rem; color: var(--ink-900); }
-.upload-zone-subtitle { font-size: 0.74rem; color: var(--ink-500); }
-.upload-zone-meta { font-size: 0.68rem; color: var(--ink-300); margin-top: 1px; }
-.upload-zone-error-msg { font-size: 0.76rem; font-weight: 600; color: var(--danger); margin-top: 1px; }
+.upload-zone-title { font-weight: 600; font-size: 0.78rem; color: var(--ink-900); }
+.upload-zone-subtitle { font-size: 0.68rem; color: var(--ink-500); }
+.upload-zone-meta { font-size: 0.62rem; color: var(--ink-300); margin-top: 1px; }
+.upload-zone-error-msg { font-size: 0.72rem; font-weight: 600; color: var(--danger); margin-top: 1px; }
 
 /* ---- Selected-file state ---- */
 .upload-zone-selected {
@@ -629,13 +629,13 @@ table.data-table .col-actions { text-align: right; }
 html[dir="rtl"] .upload-zone-selected { text-align: right; }
 .upload-zone.has-file .upload-zone-empty { display: none; }
 .upload-zone.has-file .upload-zone-selected { display: flex; }
-.upload-zone.has-file { cursor: default; padding: 12px; }
+.upload-zone.has-file { cursor: default; padding: 10px; }
 
 .upload-zone-thumb {
   position: relative;
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--surface);
@@ -645,7 +645,7 @@ html[dir="rtl"] .upload-zone-selected { text-align: right; }
   color: var(--ink-300);
 }
 .upload-zone-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.upload-zone-thumb svg { width: 18px; height: 18px; }
+.upload-zone-thumb svg { width: 15px; height: 15px; }
 .upload-zone-check {
   position: absolute;
   bottom: -3px;
@@ -664,13 +664,13 @@ html[dir="rtl"] .upload-zone-selected { text-align: right; }
 .upload-zone-info { flex: 1; min-width: 0; }
 .upload-zone-filename {
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--ink-900);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.upload-zone-filesize { font-size: 0.72rem; color: var(--ink-500); margin-top: 1px; }
+.upload-zone-filesize { font-size: 0.68rem; color: var(--ink-500); margin-top: 1px; }
 .upload-zone-progress {
   margin-top: 5px;
   height: 3px;
@@ -699,15 +699,15 @@ html[dir="rtl"] .upload-zone-selected { text-align: right; }
 .upload-zone-action-btn {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: var(--radius-sm);
   border: 1.25px solid var(--line);
   background: var(--surface);
   color: var(--ink-500);
   transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
 }
-.upload-zone-action-btn svg { width: 13px; height: 13px; }
+.upload-zone-action-btn svg { width: 12px; height: 12px; }
 .upload-zone-action-btn:hover { border-color: var(--green-600); color: var(--green-700, var(--green-600)); }
 .upload-zone-action-btn:focus-visible { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3px rgba(84, 125, 61, 0.22); }
 .upload-zone-action-btn.is-danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
