@@ -59,6 +59,7 @@
 <script src="js/api.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/confirm-dialog.js"></script>
+<script src="js/autosize-textarea.js"></script>
 <script>
   requireAuth();
 
@@ -114,12 +115,6 @@
     return 'paragraph';
   }
 
-  function autoResizeTextarea(el) {
-    el.style.height = 'auto';
-    el.style.height = `${el.scrollHeight}px`;
-    el.classList.toggle('is-tall', el.scrollHeight >= 320);
-  }
-
   function renderSkeletonCard() {
     return `
       <div class="card skeleton-card" aria-hidden="true">
@@ -139,7 +134,7 @@
       ? `<span class="content-char-count" data-char-count>${value.length} / ${HEADING_MAX_LEN}</span>`
       : '';
     const control = kind === 'paragraph'
-      ? `<textarea id="cf-${item.content_key}" data-content-key="${item.content_key}" rows="2">${escapeHtml(value)}</textarea>`
+      ? `<textarea id="cf-${item.content_key}" data-content-key="${item.content_key}" class="autosize-textarea" data-autosize-enhanced="true" rows="2">${escapeHtml(value)}</textarea>`
       : `<input type="text" id="cf-${item.content_key}" data-content-key="${item.content_key}" value="${escapeHtml(value)}">`;
     return `
       <div class="content-field" data-field-key="${item.content_key}">
@@ -178,7 +173,7 @@
 
     editor.innerHTML = Object.entries(grouped).map(([page, items]) => cardTemplate(page, items)).join('');
 
-    editor.querySelectorAll('textarea[data-content-key]').forEach(autoResizeTextarea);
+    editor.querySelectorAll('textarea[data-content-key]').forEach(autosizeTextarea);
     editor.querySelectorAll('[data-content-key]').forEach((el) => {
       el.addEventListener('input', () => onFieldInput(el));
     });
@@ -186,7 +181,7 @@
 
   function onFieldInput(el) {
     const key = el.dataset.contentKey;
-    if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
+    if (el.tagName === 'TEXTAREA') autosizeTextarea(el);
 
     const countEl = el.closest('.content-field').querySelector('[data-char-count]');
     if (countEl) {
@@ -300,7 +295,7 @@
       const el = editor.querySelector(`[data-content-key="${CSS.escape(key)}"]`);
       if (!el) return;
       el.value = savedValues[key];
-      if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
+      if (el.tagName === 'TEXTAREA') autosizeTextarea(el);
       const countEl = el.closest('.content-field').querySelector('[data-char-count]');
       if (countEl) {
         countEl.textContent = `${el.value.length} / ${HEADING_MAX_LEN}`;

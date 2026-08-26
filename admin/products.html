@@ -86,7 +86,7 @@
       </div>
       <div class="field">
         <label for="description" data-i18n="field.description">Description</label>
-        <textarea id="description" name="description"></textarea>
+        <textarea id="description" name="description" class="autosize-textarea"></textarea>
       </div>
 
       <div class="field-row">
@@ -145,6 +145,7 @@
 <script src="js/i18n.js"></script>
 <script src="js/upload-field.js"></script>
 <script src="js/confirm-dialog.js"></script>
+<script src="js/autosize-textarea.js"></script>
 <script>
   requireAuth();
 
@@ -241,12 +242,19 @@
   }
 
   function openModal(product) {
+    // Opened before the fields are populated: autosizeTextarea() below
+    // measures scrollHeight, which reports 0 on a still-hidden
+    // (display:none) modal — the description textarea would start
+    // collapsed instead of fit to the loaded content.
+    modal.classList.add('open');
     editingId = product ? product.id : null;
     document.getElementById('modal-title').textContent = product ? t('page.products.editTitle') : t('page.products.addTitle');
     document.getElementById('category_id').value = product?.category_id || categories[0]?.id || '';
     document.getElementById('name').value = product?.name || '';
     document.getElementById('slug').value = product?.slug || '';
-    document.getElementById('description').value = product?.description || '';
+    const descriptionEl = document.getElementById('description');
+    descriptionEl.value = product?.description || '';
+    autosizeTextarea(descriptionEl);
     document.getElementById('sort_order').value = product?.sort_order ?? 0;
     document.getElementById('is_featured').checked = Boolean(product?.is_featured);
     document.getElementById('is_active').checked = product ? product.is_active : true;
@@ -266,7 +274,6 @@
     } else {
       friedImagePreviewWrap.style.display = 'none';
     }
-    modal.classList.add('open');
   }
   function closeModal() {
     modal.classList.remove('open');

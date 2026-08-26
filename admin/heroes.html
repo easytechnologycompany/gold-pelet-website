@@ -78,7 +78,7 @@
         </div>
         <div class="field">
           <label for="subheading" data-i18n="heroes.subheadingLabel">Subheading</label>
-          <textarea id="subheading" name="subheading"></textarea>
+          <textarea id="subheading" name="subheading" class="autosize-textarea"></textarea>
         </div>
         <button type="submit" class="btn btn--primary" data-i18n="crud.save">Save</button>
       </form>
@@ -89,6 +89,7 @@
 <script src="js/api.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/upload-field.js"></script>
+<script src="js/autosize-textarea.js"></script>
 <script>
   requireAuth();
 
@@ -109,7 +110,9 @@
     const hero = await res.json();
     document.getElementById('eyebrow').value = hero.eyebrow || '';
     document.getElementById('heading').value = hero.heading || '';
-    document.getElementById('subheading').value = hero.subheading || '';
+    const subheadingEl = document.getElementById('subheading');
+    subheadingEl.value = hero.subheading || '';
+    autosizeTextarea(subheadingEl);
     currentImageUrl = hero.image_url || '';
     if (currentImageUrl) {
       preview.src = mediaURL(currentImageUrl);

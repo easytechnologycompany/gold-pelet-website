@@ -217,7 +217,7 @@ input, select, textarea { font: inherit; }
 .field input:focus, .field select:focus, .field textarea:focus {
   outline: none; border-color: var(--green-600); background: #fff;
 }
-.field textarea { min-height: 90px; resize: vertical; }
+.field textarea { min-height: 90px; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .field-checkbox { flex-direction: row; align-items: center; gap: 8px; }
 .field-checkbox input { width: 16px; height: 16px; }
@@ -424,13 +424,30 @@ table.data-table .col-actions { text-align: right; }
 .content-field textarea:focus-visible {
   box-shadow: 0 0 0 3px rgba(84, 125, 61, 0.16);
 }
-.content-field textarea {
+/* ============================================================
+   Autosize textarea — grows with content up to a max height, then
+   becomes internally scrollable rather than growing the page. Applied
+   by js/autosize-textarea.js to every <textarea> in the dashboard
+   (Story paragraphs, Facility address, product/category/news/timeline
+   descriptions, ...), not just this page's own fields — a single
+   shared behavior rather than a per-page reimplementation.
+   ============================================================ */
+.autosize-textarea {
+  width: 100%;
   resize: none;
   overflow-y: hidden;
   max-height: 320px;
   line-height: 1.55;
+  /* Firefox: thin, low-contrast track/thumb matching the palette. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-300) transparent;
 }
-.content-field textarea.is-tall { overflow-y: auto; }
+.autosize-textarea.is-tall { overflow-y: auto; }
+/* Chrome/Safari/Edge equivalent of scrollbar-width/-color above. */
+.autosize-textarea::-webkit-scrollbar { width: 8px; }
+.autosize-textarea::-webkit-scrollbar-track { background: transparent; }
+.autosize-textarea::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+.autosize-textarea::-webkit-scrollbar-thumb:hover { background: var(--ink-300); }
 
 /* ---- Loading skeleton — no such pattern existed elsewhere in the
    dashboard (every list just showed a "Loading…" string), so this is a

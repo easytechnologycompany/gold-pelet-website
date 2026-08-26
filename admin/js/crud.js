@@ -46,7 +46,7 @@ function initCrudPage(config) {
       if (f.type === 'textarea') {
         return `<div class="field">
           <label for="f-${f.name}">${f.label}</label>
-          <textarea id="f-${f.name}" name="${f.name}" placeholder="${f.placeholder || ''}"></textarea>
+          <textarea id="f-${f.name}" name="${f.name}" class="autosize-textarea" placeholder="${f.placeholder || ''}"></textarea>
           ${f.hint ? `<span class="field-hint">${f.hint}</span>` : ''}
         </div>`;
       }
@@ -104,6 +104,11 @@ function initCrudPage(config) {
     const el = form.querySelector(`[name="${name}"]`);
     if (type === 'checkbox') el.checked = Boolean(value);
     else el.value = value ?? '';
+    // A scripted .value assignment doesn't fire 'input', so a textarea
+    // that already has the autosize behavior wired (see
+    // js/autosize-textarea.js) needs an explicit re-measure to fit
+    // whatever was just loaded, instead of staying at its empty height.
+    if (type === 'textarea' && window.autosizeTextarea) window.autosizeTextarea(el);
     if (type === 'image') {
       const preview = document.getElementById(`${el.id}-preview`);
       if (value) {
@@ -116,11 +121,14 @@ function initCrudPage(config) {
   }
 
   function openModal(item) {
+    // Opened before the fields are populated: a textarea's autosize
+    // measurement reads scrollHeight, which reports 0 on a still-hidden
+    // (display:none) modal.
+    backdrop.classList.add('open');
     editingId = item ? item.id : null;
     modalTitle.textContent = item ? `${t('crud.edit')} ${config.titleSingular}` : `${t('crud.add').replace('+', '').trim()} ${config.titleSingular}`;
     const values = item || config.defaults || {};
     config.fields.forEach((f) => setFieldValue(f.name, f.type, values[f.name]));
-    backdrop.classList.add('open');
   }
   function closeModal() {
     backdrop.classList.remove('open');
