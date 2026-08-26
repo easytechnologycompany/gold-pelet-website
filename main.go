@@ -31,10 +31,23 @@ func denyBuildFiles(next http.Handler) http.Handler {
 	})
 }
 
+// This is a low-traffic content site with no build step, so there's no
+// content-hashed filename to cache indefinitely and bust on change. Instead,
+// force every request to revalidate with the server (a cheap 304 when
+// nothing changed) rather than let browsers silently serve a stale HTML/
+// CSS/JS/image straight from disk cache after a deploy — the alternative
+// forces every reader to know to hard-refresh, which they won't.
+func noCache(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	mux := http.NewServeMux()
-	mux.Handle("/admin/", http.StripPrefix("/admin/", http.FileServer(http.Dir("./admin"))))
-	mux.Handle("/", denyBuildFiles(http.FileServer(http.Dir("."))))
+	mux.Handle("/admin/", noCache(http.StripPrefix("/admin/", http.FileServer(http.Dir("./admin")))))
+	mux.Handle("/", noCache(denyBuildFiles(http.FileServer(http.Dir(".")))))
 
 	port := os.Getenv("PORT")
 	if port == "" {
