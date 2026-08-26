@@ -44,14 +44,31 @@ async function applyBranding() {
   if (branding.accent_navy_hex) root.setProperty('--navy-600', branding.accent_navy_hex);
 
   if (branding.logo_url) {
-    // Excludes .brand-logo--static (the footer's logo): that instance sits
-    // on the dark footer and uses a purpose-built light-on-dark variant
-    // (assets/img/logo-white.png) that isn't a CMS asset, so it must never
-    // be overwritten by whatever logo_url the admin uploads for the header.
-    document.querySelectorAll('.brand-logo:not(.brand-logo--static)').forEach((img) => {
+    // Excludes every dark-background logo instance (marked
+    // data-logo-theme="dark" — see applyLogoVariants below): those sit on
+    // dark backgrounds and use the fixed white variant, which isn't a CMS
+    // asset, so it must never be overwritten by whatever logo_url the admin
+    // uploads for the light-background header logo.
+    document.querySelectorAll('.brand-logo:not([data-logo-theme="dark"])').forEach((img) => {
       img.src = mediaURL(branding.logo_url);
     });
   }
+}
+
+/* ---------------- Logo variant: contrast-aware light/dark ---------------- */
+// Single source of truth for which logo asset renders on which background.
+// Every logo placement declares its context once via data-logo-theme
+// ("light" | "dark") on the <img> tag; this is the only place the two file
+// paths are named. Adding a new dark-background logo spot (a dark hero, a
+// dark CTA, a dark mobile-nav overlay, ...) means tagging that <img> with
+// data-logo-theme="dark" — never hardcoding assets/img/logo-white.png again.
+const LOGO_LIGHT_BG = 'assets/img/logo.png';
+const LOGO_DARK_BG = 'assets/img/logo-white.png';
+
+function applyLogoVariants() {
+  document.querySelectorAll('[data-logo-theme]').forEach((img) => {
+    img.src = img.dataset.logoTheme === 'dark' ? LOGO_DARK_BG : LOGO_LIGHT_BG;
+  });
 }
 
 /* ---------------- Page hero ---------------- */
@@ -424,6 +441,7 @@ async function applySiteImages() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  applyLogoVariants();
   applyBranding();
   applyPageHero();
   applyStats();

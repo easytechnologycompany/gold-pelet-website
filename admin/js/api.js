@@ -95,4 +95,19 @@ function wireLogoutButton() {
   const btn = document.querySelector('[data-logout]');
   if (btn) btn.addEventListener('click', logout);
 }
-document.addEventListener('DOMContentLoaded', wireLogoutButton);
+
+/** Single source of truth for the sidebar logo, which always sits on the
+ * dark sidebar background (--green-900) — mirrors chips-company-website's
+ * data-logo-theme pattern. Changing the asset path means editing this one
+ * constant, not every admin page's markup. */
+const SIDEBAR_LOGO_SRC = '../assets/img/logo-white.png';
+
+function applySidebarLogo() {
+  const img = document.querySelector('.sidebar-brand img');
+  if (img) img.src = SIDEBAR_LOGO_SRC;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  wireLogoutButton();
+  applySidebarLogo();
+});
