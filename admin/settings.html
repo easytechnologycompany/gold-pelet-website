@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Site Content — Gold Pelet Admin</title>
+<title>Website Settings — Gold Pelet Admin</title>
 <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
@@ -18,10 +18,10 @@
       <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
       <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
       <div class="group-label" data-i18n="nav.group.settings">Website Settings</div>
-      <a href="settings.html" data-i18n="nav.settings">Website Settings</a>
+      <a href="settings.html" class="active" data-i18n="nav.settings">Website Settings</a>
       <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
       <a href="about.html" data-i18n="nav.about">About Page</a>
-      <a href="content.html" class="active" data-i18n="nav.content">Site Content</a>
+      <a href="content.html" data-i18n="nav.content">Site Content</a>
       <a href="stats.html" data-i18n="nav.stats">Stats</a>
       <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
       <a href="certifications.html" data-i18n="nav.certifications">Certifications</a>
@@ -40,14 +40,31 @@
   </aside>
 
   <main class="main">
-    <div class="page-head">
+    <div class="editor-header">
       <div>
-        <h1 data-i18n="page.content.title">Site Content</h1>
-        <p data-i18n="page.content.desc">One-off text blocks for pages without their own dedicated editor yet.</p>
+        <h1 data-i18n="settings.title">Website Settings</h1>
+        <p data-i18n="settings.desc">Company details used site-wide — contact info, facility address, and footer text.</p>
+      </div>
+      <div class="editor-header-actions">
+        <span class="editor-status-pill" id="editor-status-pill"></span>
       </div>
     </div>
 
-    <div id="content-editor"></div>
+    <div id="settings-editor">
+      <div class="card skeleton-card" aria-hidden="true">
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-line label"></div>
+        <div class="skeleton-line field"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="content-card-head">
+        <h3 data-i18n="settings.section.branding">Branding</h3>
+        <p data-i18n="settings.section.brandingDesc">Logo and brand colors, managed on their own page.</p>
+      </div>
+      <a href="branding.html" class="btn btn--outline btn--sm" data-i18n="settings.branding.manageLink">Manage Branding &amp; Logo</a>
+    </div>
 
     <div class="save-bar" id="save-bar" role="status" aria-live="polite">
       <div class="save-bar-status" id="save-bar-status"></div>
@@ -65,53 +82,29 @@
 <script>
   requireAuth();
 
-  // The admin dashboard and the public site are two separate deployments
-  // (Railway vs. GitHub Pages/localhost:8123) — mirrors the same
-  // local-vs-deployed split chips-company-website/js/cms.js uses for its
-  // own API_BASE, just inverted (there we point at the backend; here we
-  // point at the public site).
-  const PUBLIC_SITE_BASE = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-    ? 'http://localhost:8123'
-    : 'https://easytechnologycompany.github.io/gold-pelet-website';
-
-  // Only content_key "page" groups that map 1:1 to one real public page
-  // get a "View Page" link.
-  const PAGE_URLS = { home: 'index.html', contact: 'contact.html' };
-
-  // 'about' and 'global' content_key groups moved out to their own pages
-  // (about.html, settings.html) — filtered out of `fields` in load()
-  // below. Their content_key/page/label values on the backend are
-  // untouched; this is purely which admin page renders them.
-  const pageTitles = {
-    home: t('content.group.home'),
-    contact: t('content.group.contact'),
-  };
-  const pageDescriptions = {};
-
   const HEADING_MAX_LEN = 140;
   const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  const editor = document.getElementById('content-editor');
-  const saveBar = document.getElementById('save-bar');
-  const saveBarStatus = document.getElementById('save-bar-status');
-  const saveBtn = document.getElementById('save-changes-btn');
-  const discardBtn = document.getElementById('discard-btn');
-
-  let fields = [];
-  let savedValues = {}; // content_key -> last-saved value (baseline for dirty-tracking)
-  const dirtyKeys = new Set();
-  let saving = false;
+  // Which "global" content_key values belong under which Website Settings
+  // section — purely a client-side grouping for display. The content_key
+  // names and the 'global' page value on the backend are unchanged; this
+  // page just organizes them differently than the old flat list did.
+  const SECTION_MAP = {
+    'contact.email': 'contact',
+    'contact.phone_primary': 'contact',
+    'contact.phone_secondary': 'contact',
+    'contact.phone_mobile': 'contact',
+    'contact.website': 'contact',
+    'contact.address': 'address',
+    'footer.blurb': 'footer',
+  };
+  const SECTION_ORDER = ['contact', 'address', 'footer'];
 
   function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  // Headings get a single-line input + a soft character count (nothing is
-  // enforced/truncated — just a visual nudge); short factual fields
-  // (email/phone/website) also get a single-line input; everything else
-  // (paragraphs, the address) gets an auto-resizing textarea.
   function fieldKind(key) {
-    if (/heading$/.test(key)) return 'heading';
     if (/(email|phone_primary|phone_secondary|phone_mobile|website)$/.test(key)) return 'short';
     return 'paragraph';
   }
@@ -119,27 +112,23 @@
   function autoResizeTextarea(el) {
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
-    el.classList.toggle('is-tall', el.scrollHeight >= 320);
   }
 
-  function renderSkeletonCard() {
-    return `
-      <div class="card skeleton-card" aria-hidden="true">
-        <div class="skeleton-line title"></div>
-        <div class="skeleton-line label"></div>
-        <div class="skeleton-line field"></div>
-        <div class="skeleton-line label"></div>
-        <div class="skeleton-line field"></div>
-      </div>
-    `;
-  }
+  const editor = document.getElementById('settings-editor');
+  const statusPill = document.getElementById('editor-status-pill');
+  const saveBar = document.getElementById('save-bar');
+  const saveBarStatus = document.getElementById('save-bar-status');
+  const saveBtn = document.getElementById('save-changes-btn');
+  const discardBtn = document.getElementById('discard-btn');
+
+  let fields = [];
+  let savedValues = {};
+  const dirtyKeys = new Set();
+  let saving = false;
 
   function fieldTemplate(item) {
     const kind = fieldKind(item.content_key);
     const value = item.content_value || '';
-    const countHtml = kind === 'heading'
-      ? `<span class="content-char-count" data-char-count>${value.length} / ${HEADING_MAX_LEN}</span>`
-      : '';
     const control = kind === 'paragraph'
       ? `<textarea id="cf-${item.content_key}" data-content-key="${item.content_key}" rows="2">${escapeHtml(value)}</textarea>`
       : `<input type="text" id="cf-${item.content_key}" data-content-key="${item.content_key}" value="${escapeHtml(value)}">`;
@@ -147,26 +136,23 @@
       <div class="content-field" data-field-key="${item.content_key}">
         <div class="content-field-label-row">
           <label for="cf-${item.content_key}">${escapeHtml(item.label)}</label>
-          ${countHtml}
         </div>
         ${control}
       </div>
     `;
   }
 
-  function cardTemplate(page, items) {
-    const title = pageTitles[page] || page;
-    const desc = pageDescriptions[page] || '';
-    const viewUrl = PAGE_URLS[page] ? `${PUBLIC_SITE_BASE}/${PAGE_URLS[page]}` : null;
+  function sectionTemplate(section, items, index) {
+    const titleKey = { contact: 'settings.section.contact', address: 'settings.section.address', footer: 'settings.section.footer' }[section];
+    const descKey = { contact: 'settings.section.contactDesc', address: 'settings.section.addressDesc', footer: 'settings.section.footerDesc' }[section];
     return `
-      <div class="card">
+      <div class="card section-card">
         <div class="content-card-head">
           <div class="content-card-head-row">
             <div>
-              <h3>${title}</h3>
-              ${desc ? `<p>${desc}</p>` : ''}
+              <h3><span class="section-card-num">0${index + 1}</span> ${t(titleKey)}</h3>
+              <p>${t(descKey)}</p>
             </div>
-            ${viewUrl ? `<a href="${viewUrl}" target="_blank" rel="noopener" class="btn btn--outline btn--sm">${t('content.viewPage')} ↗</a>` : ''}
           </div>
         </div>
         ${items.map(fieldTemplate).join('')}
@@ -176,9 +162,16 @@
 
   function renderCards() {
     const grouped = {};
-    fields.forEach((item) => (grouped[item.page] ||= []).push(item));
+    fields.forEach((item) => {
+      const section = SECTION_MAP[item.content_key];
+      if (!section) return;
+      (grouped[section] ||= []).push(item);
+    });
 
-    editor.innerHTML = Object.entries(grouped).map(([page, items]) => cardTemplate(page, items)).join('');
+    editor.innerHTML = SECTION_ORDER
+      .filter((s) => grouped[s] && grouped[s].length)
+      .map((s, i) => sectionTemplate(s, grouped[s], i))
+      .join('');
 
     editor.querySelectorAll('textarea[data-content-key]').forEach(autoResizeTextarea);
     editor.querySelectorAll('[data-content-key]').forEach((el) => {
@@ -189,13 +182,6 @@
   function onFieldInput(el) {
     const key = el.dataset.contentKey;
     if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
-
-    const countEl = el.closest('.content-field').querySelector('[data-char-count]');
-    if (countEl) {
-      countEl.textContent = `${el.value.length} / ${HEADING_MAX_LEN}`;
-      countEl.classList.toggle('is-over', el.value.length > HEADING_MAX_LEN);
-    }
-
     if (el.value !== savedValues[key]) dirtyKeys.add(key);
     else dirtyKeys.delete(key);
     refreshSaveBar();
@@ -204,51 +190,54 @@
   function refreshSaveBar(state) {
     if (!state) state = dirtyKeys.size > 0 ? 'dirty' : 'clean';
     saveBar.classList.remove('is-saved', 'is-error');
+    statusPill.className = 'editor-status-pill';
 
     if (state === 'clean') {
       saveBar.classList.remove('is-visible');
+      statusPill.innerHTML = `<span class="dot"></span> ${t('content.allSaved')}`;
       return;
     }
     saveBar.classList.add('is-visible');
 
     if (state === 'dirty') {
-      saveBarStatus.innerHTML = `<span class="dot"></span> ${t('content.unsavedChanges')}`;
+      saveBarStatus.innerHTML = `<span class="dot"></span> ${dirtyKeys.size} ${t('content.unsavedChanges')}`;
+      statusPill.classList.add('is-dirty');
+      statusPill.innerHTML = `<span class="dot"></span> ${t('content.unsavedChanges')}`;
       saveBtn.disabled = false;
       discardBtn.disabled = false;
     } else if (state === 'saving') {
       saveBarStatus.innerHTML = `<span class="dot"></span> ${t('content.saving')}`;
+      statusPill.innerHTML = `<span class="dot"></span> ${t('content.saving')}`;
       saveBtn.disabled = true;
       discardBtn.disabled = true;
     } else if (state === 'saved') {
       saveBar.classList.add('is-saved');
       saveBarStatus.innerHTML = `${CHECK_ICON} ${t('content.changesSaved')}`;
+      statusPill.classList.add('is-saved');
+      statusPill.innerHTML = `${CHECK_ICON} ${t('content.changesSaved')}`;
       saveBtn.disabled = false;
       discardBtn.disabled = false;
     } else if (state === 'error') {
       saveBar.classList.add('is-error');
       saveBarStatus.textContent = t('content.saveError');
+      statusPill.innerHTML = `<span class="dot"></span> ${t('content.saveError')}`;
       saveBtn.disabled = false;
       discardBtn.disabled = false;
     }
   }
 
   async function load() {
-    editor.innerHTML = renderSkeletonCard() + renderSkeletonCard();
     const res = await apiFetch('/admin/content');
     if (!res.ok) {
       editor.innerHTML = `<div class="card"><div class="empty-state">${t('toast.contentFailedLoad')}</div></div>`;
       return;
     }
     const { data } = await res.json();
-    fields = data.filter((item) => item.page !== 'about' && item.page !== 'global');
+    fields = data.filter((item) => item.page === 'global');
     savedValues = {};
     fields.forEach((item) => { savedValues[item.content_key] = item.content_value; });
     dirtyKeys.clear();
-    if (fields.length === 0) {
-      editor.innerHTML = `<div class="card"><div class="empty-state">${t('content.emptyRedirect')}</div></div>`;
-    } else {
-      renderCards();
-    }
+    renderCards();
     refreshSaveBar('clean');
   }
 
@@ -270,9 +259,6 @@
     );
     saving = false;
 
-    // Only keys that actually succeeded move their baseline forward and
-    // drop out of "dirty" — a failed key stays dirty (and its typed value
-    // stays exactly as the admin left it) so nothing is ever silently lost.
     results.filter((r) => r.ok).forEach((r) => {
       savedValues[r.key] = r.value;
       dirtyKeys.delete(r.key);
@@ -307,20 +293,11 @@
       if (!el) return;
       el.value = savedValues[key];
       if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
-      const countEl = el.closest('.content-field').querySelector('[data-char-count]');
-      if (countEl) {
-        countEl.textContent = `${el.value.length} / ${HEADING_MAX_LEN}`;
-        countEl.classList.remove('is-over');
-      }
     });
     dirtyKeys.clear();
     refreshSaveBar('clean');
   });
 
-  // Standard native warning — fires on refresh, tab close, or navigating
-  // to another site entirely; in-app link clicks (e.g. the sidebar) are a
-  // real navigation too, so this covers "leaves the page" in every sense
-  // a plain content-editing page can intercept.
   window.addEventListener('beforeunload', (e) => {
     if (dirtyKeys.size > 0) {
       e.preventDefault();
