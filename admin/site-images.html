@@ -10,7 +10,6 @@
   .image-card { display: flex; flex-direction: column; gap: 10px; }
   .image-card > img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 8px; background: #eee; }
   .image-card .label { font-weight: 600; font-size: 0.92rem; }
-  .image-card .key { font-size: 0.78rem; color: #888; font-family: monospace; }
 </style>
 </head>
 <body>
@@ -68,7 +67,6 @@
       <div class="card image-card" data-key="${img.image_key}">
         <img src="${mediaURL(img.image_url)}" alt="${img.label}">
         <div class="label">${img.label}</div>
-        <div class="key">${img.image_key}</div>
         <input type="file" accept=".jpg,.jpeg,.png,.webp" data-upload data-upload-label="${img.label}" data-max-size-mb="8">
       </div>
     `;
