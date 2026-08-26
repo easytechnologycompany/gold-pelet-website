@@ -904,6 +904,11 @@ html[dir="rtl"] .split-badge { right: auto; left: -22px; }
   border-color: var(--green-600);
   background: #fff;
 }
+.field input:hover:not(:focus),
+.field select:hover:not(:focus) { border-color: var(--green-500); }
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible { box-shadow: 0 0 0 3px rgba(84, 125, 61, 0.16); }
 .field textarea { resize: vertical; min-height: 120px; }
 .field .error-msg {
   font-size: 0.8rem;
@@ -1230,8 +1235,50 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
 @media (max-width: 860px) { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .calc-grid { grid-template-columns: 1fr; } }
 .calc-qty-row { display: flex; gap: 8px; }
-.calc-qty-row input { flex: 1; min-width: 0; }
 .calc-qty-row select { width: 112px; flex-shrink: 0; }
+
+/* Custom +/- stepper: replaces the native number-input spinner (visually
+   inconsistent across browsers) while keeping the real <input type=number>
+   underneath, so direct typing, keyboard entry, and screen readers all
+   still work exactly as before. */
+.calc-qty-stepper {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.calc-qty-stepper:focus-within { border-color: var(--green-600); background: #fff; }
+.calc-qty-stepper input[type="number"] {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  padding: 12px 4px;
+  -moz-appearance: textfield;
+}
+.calc-qty-stepper input[type="number"]:focus { outline: none; }
+.calc-qty-stepper input[type="number"]::-webkit-outer-spin-button,
+.calc-qty-stepper input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.calc-qty-btn {
+  flex-shrink: 0;
+  width: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-700);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.calc-qty-btn:hover { background: var(--green-100); color: var(--green-700); }
+.calc-qty-btn:active { background: var(--green-600); color: #fff; }
+.calc-qty-btn:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--green-600); }
 
 .calc-result {
   margin-top: var(--space-7);
@@ -1244,11 +1291,25 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   gap: var(--space-4);
   text-align: center;
 }
-@media (max-width: 720px) { .calc-result-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1020px) { .calc-result-grid { grid-template-columns: repeat(2, 1fr); } }
 .calc-result-stat {
+  position: relative;
   background: var(--surface-alt);
+  border: 1.5px solid transparent;
   border-radius: var(--radius-md);
   padding: var(--space-5) var(--space-3);
+  transition: transform 320ms var(--ease-premium), box-shadow 320ms var(--ease-premium), border-color 320ms var(--ease-premium);
+}
+/* Briefly lifts + strengthens the border when its value just changed —
+   toggled by calculator.js for ~350ms, only on the stat(s) that actually
+   changed. Kept out of the reduced-motion path entirely (transform/shadow
+   are exactly the kind of motion that preference asks us to drop). */
+@media (prefers-reduced-motion: no-preference) {
+  .calc-result-stat.is-updated {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--green-500);
+  }
 }
 .calc-result-num {
   font-family: var(--font-display);
@@ -1264,6 +1325,26 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   color: var(--ink-500);
   letter-spacing: 0.01em;
 }
+
+/* Container-fill progress bar under the "Last Container Fill" stat. */
+.calc-fill-bar {
+  margin-top: 10px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.calc-fill-bar-inner {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green-600);
+  width: 0%;
+  transition: width 400ms var(--ease-premium), background 300ms ease;
+}
+/* Low fill reuses the existing warning color rather than a new alarm
+   color — informational, not an error state. */
+.calc-fill-bar-inner.is-low { background: var(--warn); }
+
 .calc-result-note {
   margin-top: var(--space-5);
   padding: var(--space-4) var(--space-5);
@@ -1273,6 +1354,20 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.calc-result-note svg { flex-shrink: 0; width: 17px; height: 17px; margin-top: 2px; opacity: 0.75; }
+.calc-result-note span {
+  display: inline-block;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .calc-result-note span.is-swapping { opacity: 0; transform: translateY(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .calc-result-stat, .calc-fill-bar-inner, .calc-result-note span { transition-duration: 1ms; }
 }
 .calc-disclaimer {
   margin-top: var(--space-5);

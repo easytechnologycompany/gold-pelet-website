@@ -292,7 +292,11 @@
         <div class="field">
           <label for="calc-quantity" data-i18n="products.calc.orderQuantity">Order Quantity</label>
           <div class="calc-qty-row">
-            <input type="number" id="calc-quantity" min="0.1" step="0.5" value="20" inputmode="decimal">
+            <div class="calc-qty-stepper">
+              <button type="button" class="calc-qty-btn" id="calc-qty-decrease" aria-label="Decrease quantity" data-i18n-aria-label="products.calc.decreaseQty">&minus;</button>
+              <input type="number" id="calc-quantity" min="0.1" step="0.5" value="20" inputmode="decimal">
+              <button type="button" class="calc-qty-btn" id="calc-qty-increase" aria-label="Increase quantity" data-i18n-aria-label="products.calc.increaseQty">+</button>
+            </div>
             <select id="calc-unit">
               <option value="1000" data-i18n="products.calc.tonnes">Tonnes</option>
               <option value="1" data-i18n="products.calc.kilograms">Kilograms</option>
@@ -326,9 +330,13 @@
           <div class="calc-result-stat">
             <div class="calc-result-num" id="calc-out-fill">—</div>
             <div class="calc-result-label" data-i18n="products.calc.lastFill">Last Container Fill</div>
+            <div class="calc-fill-bar"><div class="calc-fill-bar-inner" id="calc-out-fill-bar"></div></div>
           </div>
         </div>
-        <div class="calc-result-note" id="calc-out-note"></div>
+        <div class="calc-result-note" aria-live="polite">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="calc-out-note"></span>
+        </div>
       </div>
     </div>
 

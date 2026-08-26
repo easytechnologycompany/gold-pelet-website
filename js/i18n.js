@@ -90,6 +90,8 @@ const TRANSLATIONS = {
     'products.calc.requestQuote': 'Request a formal quote →',
     'products.calc.note.volumeLimited': 'This load is volume-limited: at an estimated {density} kg/m³ bulk density, the {container} fills its {volume} m³ usable capacity (≈{approxWeight}) before reaching its {maxWeight} weight limit.',
     'products.calc.note.weightLimited': 'This load is weight-limited: the {container} reaches its {maxWeight} payload limit before filling its {volume} m³ usable capacity.',
+    'products.calc.decreaseQty': 'Decrease quantity',
+    'products.calc.increaseQty': 'Increase quantity',
     'story.eyebrow': 'From Field to Fryer',
     'story.title': 'One continuous line, from raw grain to finished snack.',
     'story.steps.raw.title': 'Raw Materials',
@@ -372,6 +374,8 @@ const TRANSLATIONS = {
     'products.calc.requestQuote': 'اطلب عرض سعر رسمي ←',
     'products.calc.note.volumeLimited': 'هذه الحمولة محدودة بالحجم: عند كثافة ظاهرية تقديرية {density} كجم/م³، تمتلئ سعة {container} الاستيعابية البالغة {volume} م³ (≈{approxWeight}) قبل الوصول إلى حد الوزن البالغ {maxWeight}.',
     'products.calc.note.weightLimited': 'هذه الحمولة محدودة بالوزن: تصل {container} إلى حد الحمولة البالغ {maxWeight} قبل امتلاء سعتها الاستيعابية البالغة {volume} م³.',
+    'products.calc.decreaseQty': 'إنقاص الكمية',
+    'products.calc.increaseQty': 'زيادة الكمية',
     'products.cta.h2': 'تحتاج نشرة مواصفات قبل الالتزام؟',
     'products.cta.p': 'سنرسل بيانات الرطوبة والكثافة ومعايير القلي لأي خط أعلاه، بالإضافة إلى عيّنة عند الطلب.',
     'products.cta.btn': 'اطلب عيّنات',
@@ -627,6 +631,8 @@ const TRANSLATIONS = {
     'products.calc.requestQuote': 'Resmi teklif isteyin →',
     'products.calc.note.volumeLimited': 'Bu yük hacim sınırlıdır: tahmini {density} kg/m³ yığın yoğunluğunda, {container} {maxWeight} ağırlık sınırına ulaşmadan önce {volume} m³ kullanılabilir kapasitesini (≈{approxWeight}) doldurur.',
     'products.calc.note.weightLimited': 'Bu yük ağırlık sınırlıdır: {container}, {volume} m³ kullanılabilir kapasitesini doldurmadan önce {maxWeight} yük sınırına ulaşır.',
+    'products.calc.decreaseQty': 'Miktarı azalt',
+    'products.calc.increaseQty': 'Miktarı artır',
     'products.cta.h2': 'Karar vermeden önce bir spesifikasyon föyüne mi ihtiyacınız var?',
     'products.cta.p': 'Yukarıdaki herhangi bir hat için nem, yoğunluk ve kızartma parametresi verilerini, talep üzerine bir numune kitiyle birlikte göndeririz.',
     'products.cta.btn': 'Numune İste',
@@ -882,6 +888,8 @@ const TRANSLATIONS = {
     'products.calc.requestQuote': 'داوای نرخنامەیەکی فەرمی بکە ←',
     'products.calc.note.volumeLimited': 'ئەم بارە بە قەبارە سنووردارە: لە چڕی خەمڵێنراوی {density} کیلۆگرام/م³، {container} توانای بەکارهێنانی {volume} م³ی پڕ دەکات (≈{approxWeight}) پێش گەیشتن بە سنووری کێشی {maxWeight}.',
     'products.calc.note.weightLimited': 'ئەم بارە بە کێش سنووردارە: {container} دەگاتە سنووری بارکردنی {maxWeight} پێش پڕبوونی توانای بەکارهێنانی {volume} م³.',
+    'products.calc.decreaseQty': 'کەمکردنەوەی بڕ',
+    'products.calc.increaseQty': 'زیادکردنی بڕ',
     'products.cta.h2': 'پێش وەرگرتنی بڕیار پێویستت بە بەڵگەنامەی تایبەتمەندییە؟',
     'products.cta.p': 'زانیاری هەڵم و چڕی و پارامیتری سووراندن بۆ هەر هێڵێکی سەرەوە دەنێرین، سەرباری نموونەیەک لە کاتی داواکردندا.',
     'products.cta.btn': 'داواکردنی نموونە',
@@ -1084,6 +1092,14 @@ function applyTranslations(lang) {
       el.setAttribute('placeholder', dict[key]);
     } else if (lang !== 'en') {
       console.warn(`[i18n] missing placeholder "${key}" for locale "${lang}"`);
+    }
+  });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-aria-label');
+    if (dict[key] !== undefined) {
+      el.setAttribute('aria-label', dict[key]);
+    } else if (lang !== 'en') {
+      console.warn(`[i18n] missing aria-label "${key}" for locale "${lang}"`);
     }
   });
 }
