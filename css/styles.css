@@ -437,10 +437,15 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
 }
 .hero .eyebrow { color: var(--navy-300); }
 .hero .eyebrow::before { background: var(--navy-300); }
-.hero h1 { max-width: 15ch; }
+/* 34ch fits the English headline ("From raw grain to ready-to-fry
+   pellets, engineered for scale.", 63 chars) in ~2 lines on large
+   desktop without a hardcoded <br> — longer translations just wrap to
+   more lines naturally instead of the drastically narrow 15ch this
+   replaced, which left most of the 1240px container empty. */
+.hero h1 { max-width: 34ch; }
 .hero-lede {
   margin-top: var(--space-4);
-  max-width: 46ch;
+  max-width: 54ch;
   font-size: 1.15rem;
   color: rgba(255,255,255,0.86);
 }
