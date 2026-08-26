@@ -17,10 +17,7 @@
       <a href="branding.html" data-i18n="nav.branding">Branding &amp; Logo</a>
       <a href="heroes.html" data-i18n="nav.heroes">Page Heroes</a>
       <a href="site-images.html" data-i18n="nav.siteImages">Site Images</a>
-      <div class="group-label" data-i18n="nav.group.settings">Website Settings</div>
-      <a href="settings.html" data-i18n="nav.settings">Website Settings</a>
       <div class="group-label" data-i18n="nav.group.content">Content &amp; Text</div>
-      <a href="about.html" data-i18n="nav.about">About Page</a>
       <a href="content.html" class="active" data-i18n="nav.content">Site Content</a>
       <a href="stats.html" data-i18n="nav.stats">Stats</a>
       <a href="timeline.html" data-i18n="nav.timeline">About Timeline</a>
@@ -43,7 +40,7 @@
     <div class="page-head">
       <div>
         <h1 data-i18n="page.content.title">Site Content</h1>
-        <p data-i18n="page.content.desc">One-off text blocks for pages without their own dedicated editor yet.</p>
+        <p data-i18n="page.content.desc">One-off text blocks — footer blurb, about-story paragraphs, contact details.</p>
       </div>
     </div>
 
@@ -75,18 +72,19 @@
     : 'https://easytechnologycompany.github.io/gold-pelet-website';
 
   // Only content_key "page" groups that map 1:1 to one real public page
-  // get a "View Page" link.
-  const PAGE_URLS = { home: 'index.html', contact: 'contact.html' };
+  // get a "View Page" link — "global" content (footer/contact info)
+  // appears on every page, so there's no single URL to send the admin to.
+  const PAGE_URLS = { about: 'about.html', home: 'index.html', contact: 'contact.html' };
 
-  // 'about' and 'global' content_key groups moved out to their own pages
-  // (about.html, settings.html) — filtered out of `fields` in load()
-  // below. Their content_key/page/label values on the backend are
-  // untouched; this is purely which admin page renders them.
   const pageTitles = {
+    global: t('content.group.global'),
+    about: t('content.about.title'),
     home: t('content.group.home'),
     contact: t('content.group.contact'),
   };
-  const pageDescriptions = {};
+  const pageDescriptions = {
+    about: t('content.about.desc'),
+  };
 
   const HEADING_MAX_LEN = 140;
   const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -240,15 +238,11 @@
       return;
     }
     const { data } = await res.json();
-    fields = data.filter((item) => item.page !== 'about' && item.page !== 'global');
+    fields = data;
     savedValues = {};
-    fields.forEach((item) => { savedValues[item.content_key] = item.content_value; });
+    data.forEach((item) => { savedValues[item.content_key] = item.content_value; });
     dirtyKeys.clear();
-    if (fields.length === 0) {
-      editor.innerHTML = `<div class="card"><div class="empty-state">${t('content.emptyRedirect')}</div></div>`;
-    } else {
-      renderCards();
-    }
+    renderCards();
     refreshSaveBar('clean');
   }
 
