@@ -107,7 +107,86 @@ function applySidebarLogo() {
   if (img) img.src = SIDEBAR_LOGO_SRC;
 }
 
+/**
+ * Mobile shell. Below 900px the sidebar becomes an off-canvas drawer (see
+ * admin.css), which needs a toggle to open it and a backdrop to close it.
+ * Both are built here rather than pasted into all 12 admin pages' markup —
+ * same reasoning as applySidebarLogo above: one definition, and a page
+ * without a sidebar (login.html) simply never gets them.
+ *
+ * The topbar also carries the brand, which is otherwise only in the
+ * sidebar and so would be invisible on a phone until you opened the drawer.
+ */
+function initMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const main = document.querySelector('.main');
+  if (!sidebar || !main) return;
+
+  if (!sidebar.id) sidebar.id = 'admin-sidebar';
+  const label = window.t ? window.t('sidebar.menu') : 'Menu';
+
+  const topbar = document.createElement('div');
+  topbar.className = 'admin-topbar';
+  topbar.innerHTML =
+    `<button type="button" class="sidebar-toggle" aria-expanded="false" aria-controls="${sidebar.id}" aria-label="${label}"><span></span></button>` +
+    `<span class="admin-topbar-brand"><img src="${SIDEBAR_LOGO_SRC}" alt=""><span data-i18n="sidebar.admin">Admin</span></span>`;
+  main.prepend(topbar);
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'sidebar-backdrop';
+  document.body.appendChild(backdrop);
+
+  const toggle = topbar.querySelector('.sidebar-toggle');
+
+  function setOpen(open) {
+    sidebar.classList.toggle('is-open', open);
+    backdrop.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    // Only while the drawer covers the page — the desktop sidebar is part
+    // of the layout and must never lock scrolling.
+    document.body.classList.toggle('sidebar-locked', open);
+    if (open) sidebar.querySelector('a, button')?.focus();
+    else toggle.focus();
+  }
+
+  toggle.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open')));
+  backdrop.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('is-open')) setOpen(false);
+  });
+
+  // Rotating a phone to landscape can cross the breakpoint while the drawer
+  // is open; without this the desktop sidebar comes back with the backdrop
+  // and the scroll lock still applied over it.
+  const mq = window.matchMedia('(min-width: 901px)');
+  const onChange = () => { if (mq.matches) setOpen(false); };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange);
+}
+
+/**
+ * Admin tables have more columns than a phone has width. Wrapping each one
+ * in its own scroll container keeps the overflow inside the card instead of
+ * widening the whole document — the card, its heading and the page around
+ * it stay put while only the table pans.
+ *
+ * Wrapping the <table> element itself (not its contents) is what makes this
+ * survive crud.js, which re-renders thead/tbody innerHTML on every load and
+ * never replaces the table node.
+ */
+function wrapDataTables() {
+  document.querySelectorAll('table.data-table').forEach((table) => {
+    if (table.parentElement.classList.contains('table-scroll')) return;
+    const scroller = document.createElement('div');
+    scroller.className = 'table-scroll';
+    table.parentNode.insertBefore(scroller, table);
+    scroller.appendChild(table);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   wireLogoutButton();
   applySidebarLogo();
+  initMobileSidebar();
+  wrapDataTables();
 });

@@ -728,3 +728,146 @@ html[dir="rtl"] .upload-zone-selected { text-align: right; }
 .upload-zone-action-btn.is-danger:hover { color: var(--danger); background: var(--danger-bg); }
 
 .color-swatch { display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); vertical-align: middle; margin-right: 8px; }
+
+/* ============================================================
+   Mobile shell
+   The dashboard was built desktop-only: a 240px sidebar plus a table
+   with no scroll container meant a 375px phone laid out a 720px-wide
+   document with 135px of usable content, and every page panned
+   sideways. Below 900px the sidebar becomes an off-canvas drawer and
+   each table scrolls inside its own card, so the page itself never
+   exceeds the viewport.
+   The toggle, the topbar and the backdrop are injected by
+   initMobileSidebar() in js/api.js — they exist on every page with a
+   .sidebar and nowhere else.
+   ============================================================ */
+
+/* Both are desktop-invisible: the sidebar is simply always there above
+   900px, so nothing needs to open it. */
+.admin-topbar { display: none; }
+.sidebar-backdrop { display: none; }
+
+/* Wraps every table.data-table (see wrapDataTables() in js/api.js).
+   Unconditional, not inside the media query: a narrow desktop window
+   needs this exactly as much as a phone does. */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* dvh, not vh: mobile browser chrome would otherwise push the
+       sign-out button below the fold with no way to scroll to it. */
+    height: 100dvh;
+    width: min(82vw, 300px);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 60;
+    will-change: transform;
+  }
+  .sidebar.is-open { transform: translateX(0); }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(22, 32, 27, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
+    z-index: 50;
+  }
+  .sidebar-backdrop.is-open { opacity: 1; visibility: visible; }
+
+  /* Set only while the drawer is open, so the page behind it can't be
+     scrolled out from under the reader. */
+  body.sidebar-locked { overflow: hidden; }
+
+  .main { padding: 0 16px 48px; }
+
+  .admin-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* Full-bleed against .main's 16px side padding. */
+    margin: 0 -16px 20px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .admin-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.98rem;
+  }
+  .admin-topbar-brand img { height: 26px; width: auto; }
+
+  /* Three bars from one element, matching the public site's .nav-toggle. */
+  .sidebar-toggle {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    margin-left: -10px;
+  }
+  .sidebar-toggle span,
+  .sidebar-toggle span::before,
+  .sidebar-toggle span::after {
+    content: '';
+    display: block;
+    width: 19px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink-900);
+    position: relative;
+  }
+  .sidebar-toggle span::before { position: absolute; top: -6px; }
+  .sidebar-toggle span::after { position: absolute; top: 6px; }
+
+  .page-head { flex-direction: column; align-items: stretch; }
+  .field-row { grid-template-columns: 1fr; }
+  .modal { max-height: 88dvh; }
+  .toast { left: 16px; right: 16px; bottom: 16px; text-align: center; }
+
+  /* .save-bar bleeds to the edges with a negative inline margin sized to
+     .main's padding — which is 16px here, not the desktop 40px. Left at
+     -40px it overhangs the viewport by 48px and reintroduces exactly the
+     sideways scroll this block exists to remove. */
+  .save-bar { margin-inline: -16px; padding: 14px 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar, .sidebar-backdrop { transition: none; }
+}
+
+/* Touch targets — same reasoning as the public site's block: keyed on the
+   input device, because a tablet in landscape keeps the desktop layout but
+   is still driven by a finger. Only grows hit area; nothing is restyled
+   for mouse users. */
+@media (pointer: coarse) {
+  .sidebar-nav a { padding: 13px 12px; }
+  .btn { padding: 13px 18px; }
+  .btn--sm { padding: 11px 14px; }
+  .modal-close { min-width: 44px; min-height: 44px; }
+  .field-checkbox input { width: 20px; height: 20px; }
+  .lang-switch button { min-height: 44px; min-width: 44px; }
+
+  /* Three controls that carry no class and so miss every rule above:
+     the sidebar's sign-out button, the bare <select> filters some
+     page-heads use, and colour swatches — which render at the UA's own
+     ~50x27 regardless of the .field input padding around them. */
+  .sidebar-footer button { min-height: 44px; }
+  select { min-height: 44px; }
+  input[type="color"] { width: 100%; height: 44px; padding: 4px; }
+}
