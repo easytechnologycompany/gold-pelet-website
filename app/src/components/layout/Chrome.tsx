@@ -54,32 +54,35 @@ export function Chrome() {
 }
 
 /**
- * The real logo from the CMS when it is reachable, and the hand-drawn mark
- * plus wordmark when it is not.
+ * The real logo's mark from the CMS when it is reachable, and the hand-drawn
+ * glyph when it is not. Either way the wordmark beside it is live text, which
+ * is what keeps the company name legible at header size — the artwork's own
+ * "ELET" lettering is what forced the full lockup small.
  *
- * The CMS artwork is a complete lockup — it already spells "GOLD PELET" — so
- * it stands alone rather than sitting next to the text, which would print the
- * company name twice. `alt` carries the name for anyone not seeing the image.
+ * The mark is cropped out of the full logo in CSS (see `.brand-logo`), so the
+ * image is decorative here: the adjacent text already carries the name, and
+ * an `alt` would make a screen reader say it twice.
  */
 function BrandMark() {
   const { t } = useT()
   const branding = useCms((s) => s.branding)
   const logo = branding?.logo_url ? mediaURL(branding.logo_url) : null
 
-  if (logo) {
-    // Intrinsic ratio is 910×576; these keep the box reserved before load.
-    return <img className="brand-logo" src={logo} alt={t(copy.brand)} width={73} height={46} />
-  }
-
   return (
     <>
-      <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
-        <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" strokeWidth="2" />
-        <path
-          d="M10,17.5 C10,12.5 15,9.5 19,11.5 C23,13.5 23,20 19,22 C15,24 10,22 10,17.5 Z"
-          fill="var(--accent)"
-        />
-      </svg>
+      {logo ? (
+        <span className="brand-logo">
+          <img src={logo} alt="" aria-hidden="true" />
+        </span>
+      ) : (
+        <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" strokeWidth="2" />
+          <path
+            d="M10,17.5 C10,12.5 15,9.5 19,11.5 C23,13.5 23,20 19,22 C15,24 10,22 10,17.5 Z"
+            fill="var(--accent)"
+          />
+        </svg>
+      )}
       <span>{t(copy.brand)}</span>
     </>
   )

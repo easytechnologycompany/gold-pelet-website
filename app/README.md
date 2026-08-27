@@ -184,14 +184,24 @@ Not code problems — things to fix in the admin dashboard.
   `#0B4363`). Applying those would overwrite the approved black-and-gold
   token system, so nothing reads them.
 
-  Two things to know about the logo itself. It is a full wordmark that
-  already spells "GOLD PELET", so it replaces the mark *and* the text rather
-  than sitting beside them — otherwise the name prints twice. And its navy
-  would all but vanish on the dark theme's near-black ground, so it is
-  flattened to the foreground colour with `brightness(0) invert(1)` in dark
-  mode. That drops the green and navy. If the brand colours must survive
-  literally, the alternative is a light-on-dark logo variant uploaded to the
-  CMS, the way the old site ships `assets/img/logo-white.png`.
+  Two things to know about the logo itself. The CMS ships one asset: a full
+  lockup reading "GOLD PELET", in which the navy graphic *is* the P. At
+  header size its "ELET" lettering is what forces the whole thing small, so
+  the header crops to the **mark only** — leaf, P and dot — and the wordmark
+  returns as live text beside it, which is the lockup the design always had.
+
+  The crop is CSS, not a committed asset, so the header follows whatever the
+  admin uploads. It is measured off the current artwork (910x576): the mark
+  ends at x=475, and the leaf's tip overhangs the "E", which begins at x=426
+  below y=380 — so the box crops to the first and a polygon notches out the
+  second. Those ratios hold for any re-upload of the same artwork at any
+  resolution, but a genuinely different logo design would need re-measuring.
+
+  Second: the navy would all but vanish on the dark theme's near-black
+  ground, so the mark is flattened to the foreground colour with
+  `brightness(0) invert(1)` in dark mode. That drops the green and navy. If
+  the brand colours must survive literally, upload a light-on-dark variant to
+  the CMS, the way the old site ships `assets/img/logo-white.png`.
 - **`/public/page-heroes`, `/public/timeline`, `/public/news`** — page-specific
   content for the old multi-page site. This design is a single page with no
   section that corresponds.
