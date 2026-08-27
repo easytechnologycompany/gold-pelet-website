@@ -4,7 +4,10 @@
    the real Gold Pelet logo mark, against warm neutrals.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Work+Sans:wght@400;500;600;700&family=Cairo:wght@500;600;700;800;900&display=swap');
+/* Noto Sans Arabic is loaded from 400 (Cairo starts at 500) because it
+   carries Kurdish body copy as well as headings — see the lang="ku" block
+   below for why Cairo can't. */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Work+Sans:wght@400;500;600;700&family=Cairo:wght@500;600;700;800;900&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* ---- Brand — sampled directly from the real Gold Pelet logo ---- */
@@ -76,6 +79,95 @@ html[dir="rtl"] {
   --font-display: 'Cairo', 'Segoe UI', sans-serif;
   --font-body: 'Cairo', 'Segoe UI', sans-serif;
 }
+
+/* ---- Kurdish (Sorani) needs a different face than Arabic ----
+   Cairo's Arabic subset is missing five letters Sorani is built on:
+   ە U+06D5, ڕ U+0695, ڵ U+06B5, ۆ U+06C6, ێ U+06CE. ە alone appears in
+   most Kurdish words. Cairo's unicode-range still advertises U+0600-06FF,
+   so the browser downloads it, finds no glyph for those five, and falls
+   back per character — half a word in Cairo, half in a system face, with
+   the cursive joins between the two broken and the baselines mismatched.
+   That is the "broken shaping" this rule exists to fix, not a styling
+   problem. Noto Sans Arabic covers the whole Sorani set, so a word
+   renders from one face and stays connected.
+   Deliberately keyed on lang="ku" rather than dir="rtl": Arabic renders
+   correctly in Cairo and keeps it, unchanged. The [dir][lang] pair also
+   outranks the plain [dir="rtl"] block above regardless of source order. */
+html[dir="rtl"][lang="ku"] {
+  --font-display: 'Noto Sans Arabic', 'Cairo', 'Segoe UI', sans-serif;
+  --font-body: 'Noto Sans Arabic', 'Cairo', 'Segoe UI', sans-serif;
+}
+
+/* ---- Arabic-script typography (both ar and ku) ----
+   These are script-level corrections, not language ones, so they apply to
+   every RTL locale.
+
+   Line height: an Arabic-script face needs far more vertical room than a
+   Latin one. Noto Sans Arabic's own line box is 2.11em (ascender 1.37 +
+   descender 0.74) against Archivo's ~1.3, so the Latin heading value of
+   1.12 cannot physically contain a line — consecutive lines overlap, and
+   tall letters get clipped by any ancestor that hides overflow.
+
+   Letter spacing: Arabic script is cursive and its letters join. Tracking
+   forces gaps between joined forms and visually shreds every word, so the
+   Latin design's tracking is zeroed rather than reduced. Negative tracking
+   on headings is worse still — it collides adjacent glyphs.
+
+   text-transform: uppercase has no effect on Arabic script, but is cleared
+   with the tracking it always accompanies so these rules read as one
+   decision rather than a half-applied one. */
+/* 1.65 is measured, not taste. Rendering all 240 translated strings to a
+   canvas and reading their real ink extent (not the font's declared metrics,
+   which reserve unused room for stacked diacritics) gives a worst case of
+   1.554em for Kurdish in Noto Sans Arabic and 1.60em for Arabic in Cairo.
+   Anything at or under those collides on the longest strings, so the Latin
+   1.12 overlapped every multi-line heading in both locales. */
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4 {
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+
+/* Body copy by the same measurement: the site's Latin 1.6 sits exactly on
+   the Arabic worst case with no margin, so RTL gets a little more. */
+html[dir="rtl"] body {
+  line-height: 1.75;
+}
+
+html[dir="rtl"] .eyebrow,
+html[dir="rtl"] .lang-current-code,
+html[dir="rtl"] .stat-label,
+html[dir="rtl"] .product-card .tag,
+html[dir="rtl"] .media-placeholder span,
+html[dir="rtl"] .media-toggle-btn,
+html[dir="rtl"] .feature-card .num,
+html[dir="rtl"] .news-card .date,
+html[dir="rtl"] .story-progress-item,
+html[dir="rtl"] .story-step-number,
+html[dir="rtl"] .story-mobile-item .story-step-number,
+html[dir="rtl"] .calc-result-label,
+html[dir="rtl"] .footer-col h4 {
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] .eyebrow,
+html[dir="rtl"] .product-card .tag,
+html[dir="rtl"] .media-toggle-btn,
+html[dir="rtl"] .news-card .date,
+html[dir="rtl"] .footer-col h4 {
+  text-transform: none;
+}
+
+/* `ch` is the advance width of "0". Arabic-script text packs far more
+   meaning into that width than Latin does, so a measure tuned to Latin
+   comes out narrow and forces headings into extra lines — which is what
+   pushed the story heading into overlapping. Widening the measure only
+   for RTL keeps the same visual rhythm without touching the Latin
+   layouts these values were chosen for. */
+html[dir="rtl"] .hero h1 { max-width: 22ch; }
+html[dir="rtl"] .cta-banner h2 { max-width: 18ch; }
 
 /* Several tables have no translation column (timeline milestones, cert
    names/descriptions, news items, product spec chips, one-off site-content
