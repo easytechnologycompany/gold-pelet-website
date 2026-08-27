@@ -63,6 +63,12 @@
   --gut: clamp(1.25rem, 4vw, 2rem);
   --bay: clamp(4.5rem, 9vw, 9rem);
 
+  /* Height of the fixed chrome. It was a literal 48px in three places that
+     all had to agree — the header itself, the hero's padding-top, and the
+     scroll offset for anchor links. One token instead, so raising the bar
+     cannot leave the hero sliding underneath it. */
+  --chrome-h: 64px;
+
   --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
   /* critically damped by default; bounce only after a real gesture */
@@ -158,6 +164,13 @@
 
 /* ---------------- base ---------------- */
 * { box-sizing: border-box; }
+
+/* The chrome is fixed, so an anchor jump would otherwise park the target's
+   heading underneath it. This was already true at 48px and only got more
+   obvious at 64px. Lenis handles the smooth path and is given the matching
+   offset in SmoothScroll.tsx; this covers the native path — reduced motion,
+   and a deep link opened cold. */
+html { scroll-padding-top: var(--chrome-h); }
 
 body {
   margin: 0;
@@ -264,7 +277,7 @@ a { color: inherit; text-decoration: none; }
 /* ---------------- chrome: translucent, content scrolls under ---------- */
 header.chrome {
   position: fixed; inset-inline: 0; top: 0; z-index: 100;
-  height: 48px;
+  height: var(--chrome-h);
   background: var(--chrome);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -285,12 +298,10 @@ header.chrome .inner {
    replaces the hand-drawn mark *and* the text rather than sitting beside
    them.
 
-   34px inside the 48px bar leaves 7px of air above and below. That is the
-   practical ceiling: past it the logo touches the chrome's edges and the bar
-   stops reading as the thin Apple-style header the design is built on.
-   Going larger means growing the header itself, which also means moving the
-   hero's padding-top — it is calc(48px + …) and the two have to agree. */
-.brand-logo { height: 34px; width: auto; }
+   46px inside the 64px bar leaves 9px of air above and below. Both are
+   driven by --chrome-h, so the bar and the hero's padding-top can no longer
+   disagree. */
+.brand-logo { height: 46px; width: auto; }
 
 /* The artwork is navy and green — the previous brand's colours, which clash
    with this palette and, worse, all but vanish against a near-black ground.
@@ -372,7 +383,7 @@ header.chrome .inner {
 .brand { min-height: 44px; }
 
 /* The pill stays visually 34px on purpose — a 44px circle would crowd the
-   48px bar. A transparent ::after grows only the hit area, 5px on every
+   chrome bar. A transparent ::after grows only the hit area, 5px on every
    side, so it is symmetric (no direction to get wrong) and costs no layout. */
 .tap { position: relative; }
 .tap::after { content: ''; position: absolute; inset: -5px; }
@@ -389,7 +400,7 @@ header.chrome .inner {
 /* ---------------- hero ---------------- */
 .hero {
   position: relative;
-  padding-top: calc(48px + clamp(3rem, 8vw, 6.5rem));
+  padding-top: calc(var(--chrome-h) + clamp(3rem, 8vw, 6.5rem));
   padding-bottom: clamp(2rem, 5vw, 4rem);
   text-align: center;
   overflow: hidden;

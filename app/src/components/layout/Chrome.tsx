@@ -68,7 +68,7 @@ function BrandMark() {
 
   if (logo) {
     // Intrinsic ratio is 910×576; these keep the box reserved before load.
-    return <img className="brand-logo" src={logo} alt={t(copy.brand)} width={54} height={34} />
+    return <img className="brand-logo" src={logo} alt={t(copy.brand)} width={73} height={46} />
   }
 
   return (
