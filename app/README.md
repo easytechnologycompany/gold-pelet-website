@@ -107,6 +107,36 @@ Plus one restoration: `.specs` re-declares `margin-bottom: 1em`, which the
 original inherited from the UA default for `dl` and Tailwind's Preflight
 resets. Without it the specs section measured 17px shorter than the reference.
 
+## Deployment
+
+Deployed as its own Railway service, **`gold-pelet-app`**, in the
+`gold-pelet-backend` project — separate from `frontend`, which serves the
+static site at the repo root and is untouched by any of this.
+
+<https://gold-pelet-app-production.up.railway.app>
+
+| Setting | Value |
+|---|---|
+| Source | `easytechnologycompany/gold-pelet-website`, branch `master` |
+| Root directory | `app` |
+| Builder | Dockerfile (`app/Dockerfile`) |
+
+Pushes to `master` deploy automatically. `railway.json` sets `watchPatterns`
+to `**` — relative to the service root, so only changes under `app/` trigger a
+build. Without it, every commit to the static site at the repo root would
+rebuild and redeploy this app for nothing, and master carries both projects.
+
+The image builds the bundle with Node and ships only the static output on
+`caddy:alpine`, so there is no Node in the runtime image. Caddy handles the
+SPA fallback that react-router needs — see the comments in `Caddyfile`.
+
+**A new deployment URL needs adding to the API's CORS allowlist**, or the app
+will run on its designed fallback content instead of live data:
+
+```bash
+railway variables --service backend --set "CORS_ORIGINS=<existing>,<new-origin>"
+```
+
 ## Backend connection
 
 The app reads from the existing Go API — the same service `js/cms.js` and the
