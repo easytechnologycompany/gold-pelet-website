@@ -454,11 +454,6 @@ header.chrome .inner {
   color: var(--fg);
 }
 .hero h1 { margin-top: .35rem; }
-.hero h1 .grad {
-  background: linear-gradient(96deg, var(--gold-lo), var(--gold) 46%, var(--accent-2));
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
 .hero .lead { margin-top: 1.1rem; max-width: 36ch; }
 .hero .links { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; }
 
@@ -1016,11 +1011,66 @@ footer .base {
 }
 .stat-cell .cap { font-size: var(--t-small); font-weight: 600; color: var(--fg-3); }
 
-/* The story rail now carries a description under each caption. */
-.story-card .label p { margin-top: .4rem; font-size: .9rem; color: var(--fg-2); }
+/* The story rail now carries a description under each caption. `.label` is a
+   flex row — it was built to sit the step number beside the title — so the
+   description has to be told to take its own line. Without the wrap and the
+   100% basis it competes with the title for the card's 254px and squeezes it
+   to about 50px, stacking a four-word heading one word per line. */
+.story-card .label { flex-wrap: wrap; }
+.story-card .label h3 { flex: 1 1 auto; }
+.story-card .label p {
+  flex: 0 0 100%;
+  margin-top: .4rem; font-size: .9rem; color: var(--fg-2);
+}
 
 /* The capacity cell's link sits under the figure rather than beside it. */
 .bento .cell .chev { margin-top: auto; padding-top: .75rem; font-weight: 600; }
+
+/* ---------------- gold headings ----------------
+   Every h1, h2 and h3 across the site carries the hero's gradient. Body copy,
+   eyebrows, captions, nav and form labels deliberately keep their own colours:
+   this gold drops below the contrast floor at small sizes, so it belongs on
+   display type only.
+
+   The sizing is load-bearing rather than cosmetic. background-clip clips an
+   element's *own* background box, and a block-level heading's box is the full
+   width of its container — so a short heading in a wide bay would paint only
+   the dark left slice of the gradient while a long one painted the whole
+   sweep. Two headings, same words, different colour depending on how much room
+   they happened to have. Shrinking the box to the text fixes that.
+
+   It has to be `max-content` capped by `max-width`, not `fit-content`:
+   fit-content resolves against the balanced line-breaking that `text-wrap:
+   balance` has already chosen, and the two settle on a pathologically narrow
+   measure — "Ready for Your Brand" collapsed to 49px and stacked one word per
+   line. max-content is the unwrapped width, so a short heading sits on one
+   line and a long one is capped at its container and wraps normally.
+
+   Shrinking also means the box no longer fills a centred container, so
+   anywhere the text is centred the heading needs auto margins to stay put —
+   that is what the second rule is for. Logical margins, so RTL is handled.
+
+   Links inside a heading (the mailto and tel on /contact) need nothing: the
+   global `a { color: inherit }` hands them the transparent fill, and the
+   heading's clipped background paints straight through their glyphs. */
+h1,
+h2,
+h3 {
+  background: linear-gradient(96deg, var(--gold-lo), var(--gold) 46%, var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  width: max-content;
+  max-width: 100%;
+}
+
+.center h1, .center h2, .center h3,
+.hero h1, .hero h2, .hero h3,
+.statement h1, .statement h2, .statement h3,
+.cta h1, .cta h2, .cta h3 {
+  margin-inline: auto;
+}
 
 /* ---------------- Turkish ----------------
    Latin script, so it keeps Plus Jakarta Sans and its tracking. Only the

@@ -33,7 +33,7 @@ export function Hero() {
         )}
 
         <Reveal as="h1" delay={60}>
-          <span className="grad">{heading}</span>
+          {heading}
         </Reveal>
 
         {lead && (
