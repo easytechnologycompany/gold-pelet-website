@@ -408,15 +408,15 @@ function wireRealRFQSubmission() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        statusBox.textContent = 'Thank you — your enquiry has been received. Our team will respond within 3 business days.';
+        statusBox.textContent = window.t ? window.t('contact.form.status.ok') : 'Thank you — your enquiry has been received. Our team will respond within 3 business days.';
         statusBox.className = 'form-status show ok';
         form.reset();
       } else {
-        statusBox.textContent = 'Something went wrong sending your enquiry. Please email us directly instead.';
+        statusBox.textContent = window.t ? window.t('contact.form.status.fail') : 'Something went wrong sending your enquiry. Please email us directly instead.';
         statusBox.className = 'form-status show fail';
       }
     } catch (err) {
-      statusBox.textContent = 'Could not reach the server. Please email us directly instead.';
+      statusBox.textContent = window.t ? window.t('contact.form.status.unreachable') : 'Could not reach the server. Please email us directly instead.';
       statusBox.className = 'form-status show fail';
     }
   });

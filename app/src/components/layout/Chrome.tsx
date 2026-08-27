@@ -1,19 +1,27 @@
 import { useEffect, useRef, useState } from 'react'
-import { Moon, Sun } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom'
+import { Menu, Moon, Sun, X } from 'lucide-react'
 import { LOCALE_CODE, LOCALE_NAME, LOCALES, useLang, useT, type Locale } from '@/lib/i18n'
 import { useTheme } from '@/lib/theme'
 import { useCms } from '@/lib/cms'
 import { mediaURL } from '@/lib/api'
 import { copy } from '@/lib/content'
 import { useScrollLinked } from '@/components/motion/useScrollLinked'
+import { useOverlay } from '@/lib/overlay'
 import { cn } from '@/lib/utils'
 
+/**
+ * The finished site's six-item primary nav, keyed to its own `nav.*`
+ * translation keys rather than a parallel set invented here — so a label the
+ * live site already ships in four languages is the same label on this one.
+ */
 const NAV = [
-  { href: '#story', key: 'navOverview' },
-  { href: '#range', key: 'navProducts' },
-  { href: '#made', key: 'navMade' },
-  { href: '#specs', key: 'navSpecs' },
-  { href: '#trade', key: 'navTrade' },
+  { to: '/', key: 'nav.home' },
+  { to: '/products', key: 'nav.products' },
+  { to: '/services', key: 'nav.services' },
+  { to: '/about', key: 'nav.about' },
+  { to: '/news', key: 'nav.news' },
+  { to: '/contact', key: 'nav.contact' },
 ] as const
 
 /**
@@ -23,32 +31,74 @@ const NAV = [
  */
 export function Chrome() {
   const { t } = useT()
+  const { tk } = useOverlay()
   const [atEdge, setAtEdge] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Same rAF tick that drives the hero pack. setState with an unchanged
   // value bails out before re-rendering, so this costs nothing per frame.
   useScrollLinked((y) => setAtEdge(y > 8))
 
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false)
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [menuOpen])
+
   return (
     <header className={cn('chrome', atEdge && 'at-edge')}>
       <div className="inner">
-        <a className="brand" href="#top">
+        <Link className="brand" to="/">
           <BrandMark />
-        </a>
+        </Link>
 
         <nav aria-label={t(copy.ariaPrimary)}>
           {NAV.map((item) => (
-            <a key={item.href} href={item.href}>
-              {t(copy[item.key])}
-            </a>
+            // `end` only on "/", or Home would stay marked active on every
+            // page, since every path starts with a slash.
+            <NavLink key={item.to} to={item.to} end={item.to === '/'}>
+              {tk(item.key)}
+            </NavLink>
           ))}
         </nav>
 
         <div className="tools">
+          {/* The live site's header CTA. Routed, not an anchor, so it works
+              from any page rather than only from the one holding #quote. */}
+          <Link className="nav-cta" to="/contact#quote">
+            {tk('header.cta')}
+          </Link>
           <LanguageMenu />
           <ThemeToggle />
+          <button
+            type="button"
+            className="nav-burger"
+            aria-expanded={menuOpen}
+            aria-controls="nav-sheet"
+            aria-label={t(copy.ariaPrimary)}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+          </button>
         </div>
       </div>
+
+      {/* The phone nav. The desktop row is display:none below 900px, so with
+          six destinations this is the only way to reach five of them there. */}
+      {menuOpen && (
+        // Closing happens on the link itself rather than in an effect watching
+        // the route: the sheet has to shut even when you tap the page you are
+        // already on, which is not a route change at all.
+        <div className="nav-sheet" id="nav-sheet" onClick={() => setMenuOpen(false)}>
+          {NAV.map((item) => (
+            <NavLink key={item.to} to={item.to} end={item.to === '/'}>
+              {tk(item.key)}
+            </NavLink>
+          ))}
+          <NavLink to="/contact#quote">{tk('header.cta')}</NavLink>
+        </div>
+      )}
     </header>
   )
 }

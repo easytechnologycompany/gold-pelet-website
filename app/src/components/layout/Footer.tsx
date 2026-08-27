@@ -1,155 +1,129 @@
-import { copy } from '@/lib/content'
-import { useT } from '@/lib/i18n'
-import type { Str } from '@/lib/i18n'
+import { Link } from 'react-router-dom'
 import { useCms } from '@/lib/cms'
+import { useOverlay } from '@/lib/overlay'
 
-type Column = { heading: Str; links: { label: Str; href: string }[] }
+/**
+ * The finished site's footer, rebuilt in the redesign's language.
+ *
+ * Every string here comes from one of two real sources: a `footer.*`/`nav.*`
+ * translation key the live site already ships in four languages, or a
+ * `/public/content` record the admin dashboard owns. Nothing is invented, and
+ * the previous designed flavour list ("Salt", "Paprika", "Za'atar") is gone —
+ * those products do not exist in the catalogue.
+ */
 
-const COLUMNS: Column[] = [
-  {
-    heading: copy.footProducts,
-    links: [
-      { label: copy.footSalt, href: '#range' },
-      { label: copy.footPaprika, href: '#range' },
-      { label: copy.footRings, href: '#range' },
-      { label: copy.footZaatar, href: '#range' },
-    ],
-  },
-  {
-    heading: copy.footCompany,
-    links: [
-      { label: copy.footOverview, href: '#story' },
-      { label: copy.footManufacturing, href: '#made' },
-      { label: copy.footSpecifications, href: '#specs' },
-    ],
-  },
-  {
-    heading: copy.footTrade,
-    links: [
-      { label: copy.footDistributor, href: '#trade' },
-      { label: copy.footPrivateLabel, href: '#trade' },
-      { label: copy.footSamples, href: '#trade' },
-    ],
-  },
-]
+/** Company column — the live footer reuses the nav keys here. */
+const COMPANY = [
+  { to: '/about', key: 'nav.about' },
+  { to: '/services', key: 'nav.services' },
+  { to: '/news', key: 'nav.news' },
+  { to: '/contact', key: 'nav.contact' },
+] as const
+
+/** Products column. The anchors match the category slugs on /products. */
+const PRODUCTS = [
+  { to: '/products#wheat', key: 'footer.link.wheat' },
+  { to: '/products#potato', key: 'footer.link.potato' },
+  { to: '/products#corn', key: 'footer.link.corn' },
+  { to: '/products#load-calculator', key: 'footer.link.calculator' },
+] as const
 
 export function Footer() {
-  const { t } = useT()
-  const products = useCms((s) => s.products)
-  const categories = useCms((s) => s.categories)
+  const { tk, content } = useOverlay()
+  const cms = useCms((s) => s.content)
 
-  // With a live catalogue the designed flavour list is fiction — swap it for
-  // the real ranges. Categories rather than products: twelve product names
-  // would overrun the column.
-  const liveCategories = Object.values(categories).sort((a, b) => a.sort_order - b.sort_order)
-  const columns: Column[] =
-    products.length && liveCategories.length
-      ? [
-          {
-            heading: copy.footProducts,
-            links: liveCategories.map((c) => ({ label: { en: c.name }, href: '#range' })),
-          },
-          ...COLUMNS.slice(1),
-        ]
-      : COLUMNS
+  // `footer.blurb` is prose, so the overlay translates it; the contact values
+  // below are facts and deliberately are not translated — an address and a
+  // phone number are the same string in every language.
+  const blurb = cms['footer.blurb']
 
   return (
     <footer>
       <div className="bay cols">
-        {columns.map((col) => (
-          <div key={col.heading.en}>
-            <h4>{t(col.heading)}</h4>
-            <ul>
-              {col.links.map((link) => (
-                <li key={link.label.en}>
-                  <a href={link.href}>{t(link.label)}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <div>{blurb ? <p className="foot-blurb">{content('footer.blurb', blurb)}</p> : null}</div>
+
+        <div>
+          <h4>{tk('footer.heading.company')}</h4>
+          <ul>
+            {COMPANY.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to}>{tk(l.key)}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4>{tk('footer.heading.products')}</h4>
+          <ul>
+            {PRODUCTS.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to}>{tk(l.key)}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <ContactColumn />
       </div>
 
       <div className="bay base">
-        <span>{t(copy.footCopyright)}</span>
-        {/* Parts of this page are live CMS data now, but the spec table and
-            the process figures are still invented, so the disclaimer stands
-            until those are real too — see CLAUDE.md §4 in the design repo. */}
-        <span>{t(copy.footDisclaimer)}</span>
+        <span>{tk('footer.copyright')}</span>
       </div>
     </footer>
   )
 }
 
 /**
- * The one column where every value is a real-world fact, so it reads from
- * the CMS's `global` content keys and only falls back to the designed
- * placeholders when the API is unreachable.
- *
- * Worth knowing: the real contact data is Turkish (+90, Gaziantep). The
- * designed placeholders said Baghdad and +964, so this is a correction, not
- * just an enrichment.
+ * Real-world facts, all owned by the admin dashboard via `/public/content`.
+ * Each line renders only when the CMS actually has that value — there are no
+ * placeholder fallbacks here, because a made-up phone number is worse than a
+ * missing one.
  */
 function ContactColumn() {
-  const { t } = useT()
-  const content = useCms((s) => s.content)
+  const { tk } = useOverlay()
+  const cms = useCms((s) => s.content)
 
-  const phone = content['contact.phone_primary']
-  const mobile = content['contact.phone_mobile']
-  const email = content['contact.email']
-  const address = content['contact.address']
-  const website = content['contact.website']
-
-  const live = Boolean(phone || email || address)
+  const email = cms['contact.email']
+  const phone = cms['contact.phone_primary']
+  const mobile = cms['contact.phone_mobile']
+  const website = cms['contact.website']
+  const address = cms['contact.address']
 
   return (
     <div>
-      <h4>{t(copy.footContact)}</h4>
+      <h4>{tk('footer.heading.contact')}</h4>
       <ul>
-        {live ? (
-          <>
-            {phone && (
-              <li>
-                <a href={`tel:${phone.replace(/\s+/g, '')}`}>{phone}</a>
-              </li>
-            )}
-            {mobile && (
-              <li>
-                <a href={`tel:${mobile.replace(/\s+/g, '')}`}>{mobile}</a>
-              </li>
-            )}
-            {email && (
-              <li>
-                <a href={`mailto:${email}`}>{email}</a>
-              </li>
-            )}
-            {website && (
-              <li>
-                <a href={`https://${website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener noreferrer">
-                  {website}
-                </a>
-              </li>
-            )}
-            {address && (
-              <li>
-                <a href="#trade">{address}</a>
-              </li>
-            )}
-          </>
-        ) : (
-          <>
-            <li>
-              <a href="#trade">{t(copy.footPhone)}</a>
-            </li>
-            <li>
-              <a href="#trade">{t(copy.footEmail)}</a>
-            </li>
-            <li>
-              <a href="#trade">{t(copy.footCity)}</a>
-            </li>
-          </>
+        {email && (
+          <li>
+            <a href={`mailto:${email}`}>{email}</a>
+          </li>
+        )}
+        {phone && (
+          <li>
+            <a href={`tel:${phone.replace(/[^+\d]/g, '')}`}>{phone}</a>
+          </li>
+        )}
+        {mobile && (
+          <li>
+            <a href={`tel:${mobile.replace(/[^+\d]/g, '')}`}>{mobile}</a>
+          </li>
+        )}
+        {website && (
+          <li>
+            <a
+              href={`https://${website.replace(/^https?:\/\//, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {website}
+            </a>
+          </li>
+        )}
+        {address && (
+          <li>
+            <span className="foot-address">{address}</span>
+          </li>
         )}
       </ul>
     </div>
