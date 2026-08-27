@@ -29,6 +29,7 @@ const ADMIN_TRANSLATIONS = {
     'nav.enquiries': 'Enquiries',
     'sidebar.signOut': 'Sign Out',
     'sidebar.admin': 'Admin',
+    'sidebar.menu': 'Menu',
 
     'page.dashboard.title': 'Overview',
     'page.dashboard.desc': "A snapshot of what's on the live site right now.",
@@ -271,6 +272,7 @@ const ADMIN_TRANSLATIONS = {
     'nav.enquiries': 'Talepler',
     'sidebar.signOut': 'Çıkış Yap',
     'sidebar.admin': 'Yönetici',
+    'sidebar.menu': 'Menü',
 
     'page.dashboard.title': 'Genel Bakış',
     'page.dashboard.desc': 'Canlı sitede şu anda neler olduğuna dair bir özet.',
