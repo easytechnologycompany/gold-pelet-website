@@ -1444,10 +1444,12 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
 .calc-qty-stepper {
   display: flex;
   align-items: stretch;
+  gap: 4px;
   flex: 1 1 96px;
   min-width: 96px;
+  padding: 4px;
   border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   background: var(--surface-alt);
   transition: border-color 0.15s ease, background 0.15s ease;
 }
