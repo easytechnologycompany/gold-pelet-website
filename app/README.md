@@ -244,14 +244,80 @@ Not code problems — things to fix in the admin dashboard.
   Uploading a white variant to the CMS would therefore add nothing the old
   `brightness(0) invert(1)` filter did not already produce, which is why the
   plate exists instead.
-- **`/public/page-heroes`, `/public/timeline`, `/public/news`** — page-specific
-  content for the old multi-page site. This design is a single page with no
-  section that corresponds.
 
 ## Content status
 
-**Every figure on this site is an illustrative placeholder** — founding year,
-tonnage, line count, governorate coverage, ISO 22000 / HACCP certification, the
-phone number, the email and the address. The footer carries a visible
-disclaimer; leave it until real data lands. The `ku` and `tr` copy is a first
-pass and wants a native review before launch.
+Every public page reads from the live CMS. The catalogue, categories,
+certifications, milestones, news, stats, page heroes, site images, branding and
+contact details are all real records the admin dashboard owns, and there is no
+second hardcoded copy of any of them — the designed placeholder catalogue, the
+bento cells and the spec table were deleted rather than left as a fallback.
+
+What remains in `src/lib/content.ts` is chrome only: the brand name, three aria
+labels, the rail hint and the two 404 strings.
+
+### Translations
+
+The backend stores **English only** — no `name_ar`, no `description_ku`, no
+translation table. The finished site produces four languages with a client-side
+overlay, and `src/lib/overlay.ts` is that same rule expressed as a function:
+
+    API record (English) -> derived key -> TRANSLATIONS[locale] -> text
+                                              (else the English value)
+
+`src/lib/translations.ts` is generated from `js/i18n.js` by
+`npm run sync:translations`. The old file stays the source of truth; never edit
+the generated one. Re-run the sync after changing any copy over there.
+
+One deliberate difference from the live site: there, `applyTranslations()` runs
+for English too, so a `products.<slug>.name` override outranks the database and
+renaming a product in the admin dashboard never shows. Here English is
+admin-owned everywhere and the overlay supplies `ar`/`ku`/`tr` only.
+
+Records with no override — certifications, milestones, news — read in English
+in every locale, exactly as they do on the live site. Fixing that means adding
+translation columns to the backend.
+
+## SEO
+
+Three pieces, and they have to agree with each other:
+
+- **`src/lib/seo.ts`** — the page list, and the `seo.<page>.title` /
+  `seo.<page>.description` keys. Those keys live in `js/i18n.js` like all the
+  others, so titles and descriptions exist in all four locales; the live site
+  had them hardcoded in each HTML file in English only.
+- **`src/components/layout/Seo.tsx`** — keeps the head correct once React takes
+  over: on client-side navigation, and when the visitor switches language.
+  Also sets `noindex` on the 404 route.
+- **`scripts/prerender.mjs`** — runs as part of `npm run build`. Writes a static
+  shell per route into `dist/`, plus `404.html`, `robots.txt` and `sitemap.xml`.
+
+The prerender step is what makes this work for crawlers that do not run
+JavaScript. It is **not** server-side rendering — the `<body>` is still the
+empty root div — but each shell carries the right `<title>`, description,
+canonical and Open Graph tags, which is the part a scraper reads.
+
+`Caddyfile` has to cooperate: `try_files {path} {path}/index.html /404.html`.
+The middle candidate serves the per-route shells; without it every URL returns
+one document and the whole site shares the home page's metadata.
+
+### Deploying somewhere other than production
+
+Canonical URLs, `og:url` and the sitemap all default to
+`https://www.goldpeletcips.com`. Override for any other host:
+
+    VITE_SITE_ORIGIN=https://gold-pelet-app-production.up.railway.app npm run build
+
+A review deploy that claims the production canonical tells search engines to
+index the wrong host. The prerender script reads the same variable.
+
+### No hreflang, and why
+
+hreflang annotates *distinct URLs* for the same content in different languages.
+This site has none: locale is a stored preference, not part of the path, so
+`/about` serves all four languages. Emitting hreflang for it would be a lie.
+
+That also means only the English copy is indexable. Fixing it properly needs
+locale-prefixed routes (`/ar/about`) with a shell per locale per page — a
+routing change, not an SEO tweak. Worth doing if the non-English pages need to
+rank; noted here so the gap is a decision rather than an oversight.

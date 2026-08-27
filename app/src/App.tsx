@@ -8,6 +8,8 @@ import { Sprite } from '@/components/layout/Sprite'
 import { ThemeProvider } from '@/components/layout/ThemeProvider'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { RouteScroll } from '@/components/layout/RouteScroll'
+import { Seo } from '@/components/layout/Seo'
+import { StructuredData } from '@/components/layout/StructuredData'
 import { About } from '@/pages/About'
 import { Contact } from '@/pages/Contact'
 import { Home } from '@/pages/Home'
@@ -31,6 +33,10 @@ export default function App() {
       <LocaleProvider>
         <SmoothScroll />
         <RouteScroll />
+        {/* Head metadata for the active route and locale, and the
+            Organization block built from the CMS's contact record. */}
+        <Seo />
+        <StructuredData />
         {/* Rendered once; every `<use href="#id">` on the page resolves here. */}
         <Sprite />
         <Chrome />
