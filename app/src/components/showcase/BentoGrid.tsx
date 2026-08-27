@@ -3,7 +3,8 @@ import { Icon } from '@/components/ui/Icon'
 import { copy } from '@/lib/content'
 import { useT } from '@/lib/i18n'
 import { formatStat, useCms } from '@/lib/cms'
-import { bento, type BentoCell } from '@/lib/products'
+import { mediaURL } from '@/lib/api'
+import { bento, type BentoCell, type GlyphId } from '@/lib/products'
 import { cn } from '@/lib/utils'
 
 /**
@@ -34,15 +35,34 @@ export function BentoGrid() {
           <Reveal key={i} as="article" className={cn('cell', cell.cls)} delay={i * 55}>
             <CellHead cell={cell} />
             <p>{t(cell.p)}</p>
-            {cell.kind === 'art' && (
-              <svg className="art" viewBox="0 0 200 200" aria-hidden="true">
-                <use href={`#${cell.glyph}`} />
-              </svg>
-            )}
+            {cell.kind === 'art' && <CellArt glyph={cell.glyph} />}
           </Reveal>
         ))}
       </div>
     </section>
+  )
+}
+
+/**
+ * The art cell shows the factory floor when the CMS has a photograph for it,
+ * and the hand-drawn crisp when it does not. Bleeding the image to the cell's
+ * edges is what stops it reading as a picture pasted into a card.
+ */
+function CellArt({ glyph }: { glyph: GlyphId }) {
+  const image = useCms((s) => s.images['split.home_capacity'])
+
+  if (image) {
+    return (
+      <div className="shot-art">
+        <img src={mediaURL(image.image_url)} alt={image.label} loading="lazy" decoding="async" />
+      </div>
+    )
+  }
+
+  return (
+    <svg className="art" viewBox="0 0 200 200" aria-hidden="true">
+      <use href={`#${glyph}`} />
+    </svg>
   )
 }
 

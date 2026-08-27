@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { LOCALE_CODE, LOCALE_NAME, LOCALES, useLang, useT, type Locale } from '@/lib/i18n'
 import { useTheme } from '@/lib/theme'
+import { useCms } from '@/lib/cms'
+import { mediaURL } from '@/lib/api'
 import { copy } from '@/lib/content'
 import { useScrollLinked } from '@/components/motion/useScrollLinked'
 import { cn } from '@/lib/utils'
@@ -31,14 +33,7 @@ export function Chrome() {
     <header className={cn('chrome', atEdge && 'at-edge')}>
       <div className="inner">
         <a className="brand" href="#top">
-          <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
-            <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" strokeWidth="2" />
-            <path
-              d="M10,17.5 C10,12.5 15,9.5 19,11.5 C23,13.5 23,20 19,22 C15,24 10,22 10,17.5 Z"
-              fill="var(--accent)"
-            />
-          </svg>
-          <span>{t(copy.brand)}</span>
+          <BrandMark />
         </a>
 
         <nav aria-label={t(copy.ariaPrimary)}>
@@ -55,6 +50,37 @@ export function Chrome() {
         </div>
       </div>
     </header>
+  )
+}
+
+/**
+ * The real logo from the CMS when it is reachable, and the hand-drawn mark
+ * plus wordmark when it is not.
+ *
+ * The CMS artwork is a complete lockup — it already spells "GOLD PELET" — so
+ * it stands alone rather than sitting next to the text, which would print the
+ * company name twice. `alt` carries the name for anyone not seeing the image.
+ */
+function BrandMark() {
+  const { t } = useT()
+  const branding = useCms((s) => s.branding)
+  const logo = branding?.logo_url ? mediaURL(branding.logo_url) : null
+
+  if (logo) {
+    return <img className="brand-logo" src={logo} alt={t(copy.brand)} width={44} height={28} />
+  }
+
+  return (
+    <>
+      <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" strokeWidth="2" />
+        <path
+          d="M10,17.5 C10,12.5 15,9.5 19,11.5 C23,13.5 23,20 19,22 C15,24 10,22 10,17.5 Z"
+          fill="var(--accent)"
+        />
+      </svg>
+      <span>{t(copy.brand)}</span>
+    </>
   )
 }
 

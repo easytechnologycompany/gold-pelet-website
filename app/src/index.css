@@ -281,6 +281,23 @@ header.chrome .inner {
   font-size: .95rem; font-weight: 800; letter-spacing: -0.02em;
   white-space: nowrap;
 }
+/* The CMS logo is a full wordmark — it already reads "GOLD PELET" — so it
+   replaces the hand-drawn mark *and* the text rather than sitting beside
+   them. 28px in a 48px bar is the largest that leaves the chrome feeling
+   thin; the .brand wrapper keeps its own 44px touch floor around it. */
+.brand-logo { height: 28px; width: auto; }
+
+/* The artwork is navy and green — the previous brand's colours, which clash
+   with this palette and, worse, all but vanish against a near-black ground.
+   Flattening it to the foreground colour keeps it legible in both themes and
+   consistent with a design that carries exactly one accent. Declared across
+   all three theme states so the unset/system case is covered too. */
+.brand-logo { filter: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo { filter: brightness(0) invert(1); }
+}
+:root[data-theme="dark"] .brand-logo { filter: brightness(0) invert(1); }
+
 .chrome nav { display: none; gap: 2.1rem; }
 @media (min-width: 900px) { .chrome nav { display: flex; } }
 .chrome nav a {
@@ -505,6 +522,96 @@ header.chrome .inner {
   display: flex; align-items: center; gap: .4rem; justify-content: center;
   margin-top: .25rem; font-size: var(--t-caption); color: var(--fg-3);
 }
+
+/* ---------------- product photography ----------------
+   The approved design drew every crisp as SVG and barred external images
+   outright. That invariant was lifted deliberately, on the client's
+   instruction, once the real catalogue photography in the CMS became the
+   content the page is for.
+
+   Raw is the default state and fried appears on hover, matching the old
+   site's toggle and the business: the product sold is the pellet, and the
+   fried shot shows what it becomes. A product with no photograph keeps the
+   hand-drawn glyph, so the two can coexist in one rail. */
+.card .shot.photo { display: block; position: relative; padding: 0; }
+.card .shot.photo img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: opacity .5s var(--spring);
+}
+.card .shot.photo .fried { opacity: 0; }
+.card:hover .shot.photo .fried,
+.card:focus-visible .shot.photo .fried { opacity: 1; }
+
+/* Names the state, so the cross-fade reads as deliberate rather than as a
+   loading glitch. Sits inside the shot on a scrim, not over the copy. */
+.shot-state {
+  position: absolute;
+  inset-block-end: .6rem; inset-inline-start: .6rem;
+  display: grid;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(6px);
+  font-size: var(--t-caption); font-weight: 700; letter-spacing: .02em;
+  color: var(--fg-2);
+}
+.shot-state span { grid-area: 1 / 1; transition: opacity .5s var(--ease-out); }
+.shot-state .is-fried { opacity: 0; }
+.card:hover .shot-state .is-raw,
+.card:focus-visible .shot-state .is-raw { opacity: 0; }
+.card:hover .shot-state .is-fried,
+.card:focus-visible .shot-state .is-fried { opacity: 1; }
+
+/* Touch has no hover, so the fried state would simply be unreachable — half
+   the catalogue photography lost on the devices most people browse from.
+   Both states show side by side instead, split by the same hairline the
+   cards already use so it reads as a deliberate before/after rather than as
+   an image failing to load. */
+@media (pointer: coarse) {
+  .card .shot.photo { display: grid; grid-template-columns: 1fr 1fr; }
+  .card .shot.photo img { position: static; inset: auto; opacity: 1; height: 100%; }
+  .card .shot.photo .fried { border-inline-start: 1px solid var(--hair); }
+  .shot-state { grid-auto-flow: column; gap: .35rem; }
+  .shot-state span { grid-area: auto; position: static; opacity: 1; }
+  .shot-state .is-fried::before { content: '·'; margin-inline-end: .35rem; }
+}
+
+/* ---------------- manufacturing story ----------------
+   Not in the approved design — added to give the CMS's process photography
+   a home. Deliberately built from the existing rail: same scroll-snap, same
+   card radius and hairline, so it reads as part of the system rather than a
+   new component. */
+.story-card {
+  flex: 0 0 min(72vw, 16rem);
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--hair); border-radius: var(--r-lg);
+  background: var(--surface); overflow: hidden;
+  transition: transform .35s var(--spring), box-shadow .35s var(--spring);
+}
+.story-card:hover { box-shadow: var(--sh-2); }
+.story-card .frame { aspect-ratio: 4 / 3; background: var(--bg-2); }
+.story-card .frame img { width: 100%; height: 100%; object-fit: cover; }
+.story-card .label {
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .9rem 1.1rem 1.1rem;
+}
+.story-card .step {
+  font-size: var(--t-caption); font-weight: 700; color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.story-card h3 { font-size: 1rem; letter-spacing: -0.01em; }
+
+/* ---------------- bento photography ---------------- */
+.bento .cell .shot-art {
+  margin-top: auto;
+  margin-inline: calc(clamp(1.25rem, 2.4vw, 1.9rem) * -1);
+  margin-bottom: calc(clamp(1.25rem, 2.4vw, 1.9rem) * -1);
+  aspect-ratio: 16 / 9;
+}
+.bento .cell .shot-art img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------------- specs ---------------- */
 /* The approved design leaned on the UA's `dl { margin-block-end: 1em }` for

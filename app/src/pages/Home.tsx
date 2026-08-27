@@ -1,6 +1,7 @@
 import { Hero } from '@/components/showcase/Hero'
 import { Statement } from '@/components/showcase/Statement'
 import { BentoGrid } from '@/components/showcase/BentoGrid'
+import { ManufacturingStory } from '@/components/showcase/ManufacturingStory'
 import { ProductRail } from '@/components/showcase/ProductRail'
 import { Specs } from '@/components/showcase/Specs'
 import { Cta } from '@/components/showcase/Cta'
@@ -17,6 +18,10 @@ export function Home() {
       <Hero />
       <Statement />
       <BentoGrid />
+      {/* Renders only when the CMS has process photography — see the
+          component. It sits under the bento so #made covers the whole
+          manufacturing story, credentials then process. */}
+      <ManufacturingStory />
       <ProductRail />
       <Specs />
       <Cta />
