@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gold Pelet</title>
+    <meta
+      name="description"
+      content="Gold Pelet — pellet-fried snacks manufactured in Baghdad, Iraq. Six flavours, six cuts, one continuous line."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    />
+    <script>
+      // Applied before first paint so a stored explicit choice never flashes
+      // the other theme. Absent storage we set nothing at all and the
+      // prefers-color-scheme branch in index.css takes over — the third
+      // state has to stay genuinely unset, not be resolved to a value here.
+      try {
+        var t = localStorage.getItem('gp-theme')
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
+        var l = localStorage.getItem('gp-lang')
+        if (l === 'ar' || l === 'ku' || l === 'tr') {
+          document.documentElement.lang = l
+          document.documentElement.dir = l === 'tr' ? 'ltr' : 'rtl'
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
