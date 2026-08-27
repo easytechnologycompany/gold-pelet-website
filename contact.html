@@ -24,6 +24,13 @@
         <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
         <li><a href="contact.html" aria-current="page" data-i18n="nav.contact">Contact Us</a></li>
       </ul>
+      <!-- Mobile-only stand-in for the header's "Get a Quote" button, which
+           .header-actions hides below 900px for space, leaving the primary
+           CTA unreachable on phones. Lives inside .main-nav so main.js's
+           existing "close the menu when a nav link is tapped" handler picks
+           it up for free. display:none above 900px keeps it out of the
+           accessibility tree there, so it is never announced twice. -->
+      <a href="contact.html" class="btn btn--outline btn--block nav-cta" data-i18n="header.cta">Get a Quote</a>
     </nav>
     <div class="header-actions">
       <div class="lang-switcher" id="lang-switcher">
@@ -58,7 +65,7 @@
 </header>
 
 <section class="page-hero">
-  <div class="hero-bg" style="background-image:url('assets/img/potatoes.jpg');"></div>
+  <div class="hero-bg" data-hero="potatoes"></div>
   <div class="container">
     <p class="breadcrumb"><a href="index.html" style="color:inherit;" data-i18n="nav.home">Home</a> / <span data-i18n="nav.contact">Contact Us</span></p>
     <p class="eyebrow" data-i18n="contact.hero.eyebrow">Get In Touch</p>

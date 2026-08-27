@@ -435,8 +435,18 @@ async function applySiteImages() {
     const slot = byKey[el.dataset.imageKey];
     if (!slot || !slot.image_url) return;
     const url = mediaURL(slot.image_url);
-    if (el.tagName === 'IMG') el.src = url;
-    else el.style.backgroundImage = `url('${url}')`;
+    if (el.tagName === 'IMG') {
+      // The static markup carries srcset/sizes for the shipped artwork.
+      // A CMS upload replaces that artwork outright and has no responsive
+      // variants of its own, so the old candidate list has to go with it —
+      // srcset outranks src, and leaving it would keep the browser showing
+      // the image this upload was meant to replace.
+      el.removeAttribute('srcset');
+      el.removeAttribute('sizes');
+      el.src = url;
+    } else {
+      el.style.backgroundImage = `url('${url}')`;
+    }
   });
 }
 
