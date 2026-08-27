@@ -1131,6 +1131,10 @@ function setLanguage(lang) {
   // from the (now newly-translated) hidden native <select>'s options at
   // build time, so it needs to be re-read after applyTranslations() runs.
   if (window.refreshCustomSelects) window.refreshCustomSelects();
+  // And the RAW/FRIED pill, which is sized and positioned from whichever
+  // button is active — a new language gives those buttons new labels and
+  // therefore new widths, so the pill has to be re-measured against them.
+  if (window.initMediaToggles) window.initMediaToggles(document);
 }
 
 function initLangSwitcher() {

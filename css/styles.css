@@ -780,38 +780,67 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 0;
   background: rgba(255, 255, 255, 0.94);
   border-radius: 100px;
   padding: 3px;
   box-shadow: var(--shadow-sm);
   z-index: 3;
 }
+/* The pill's width and offset are written by syncMediaTogglePill() in
+   js/main.js, which copies them off whichever button is active. Everything
+   this rule used to do in CSS was subtly wrong:
+
+   `left: 3px` was physical, so under dir="rtl" — where the flex row
+   reverses and RAW moves to the physical right — the pill stayed pinned to
+   the physical left, parked under FRIED while RAW was selected. Because
+   .is-active paints the selected label white, that label then sat as white
+   text on the toggle's white background: invisible. One physical property,
+   both of the reported symptoms.
+
+   `width: calc(50% - 3px)` assumed the two buttons are equal halves. They
+   never are — the labels differ in every language (Raw/Fried by 8px,
+   Ham/Kızarmış by 31px), and neither equal flex nor 1fr grid tracks can
+   equalise them here without clipping the longer label.
+
+   Reading the active button's real geometry solves both at once and needs
+   no direction branch: offsetLeft is already resolved for whatever the
+   writing direction did. */
 .media-toggle-pill {
   position: absolute;
   top: 3px;
-  left: 3px;
-  width: calc(50% - 3px);
+  left: 0;
   height: calc(100% - 6px);
   background: var(--green-700);
   border-radius: 100px;
-  transition: transform 380ms var(--ease-premium);
+  transition: transform 380ms var(--ease-premium), width 380ms var(--ease-premium);
 }
-.media-toggle[data-active="fried"] .media-toggle-pill { transform: translateX(100%); }
-html[dir="rtl"] .media-toggle[data-active="fried"] .media-toggle-pill { transform: translateX(-100%); }
+/* Until the script runs (and if it never does), fall back to the old
+   halves so the control still reads as a segmented toggle rather than
+   collapsing to nothing. */
+.media-toggle-pill:not([style*="width"]) {
+  inset-inline-start: 3px;
+  left: auto;
+  width: calc(50% - 3px);
+}
 .media-toggle-btn {
   position: relative;
   z-index: 1;
-  flex: 1 1 0;
   border: none;
   background: transparent;
   padding: 6px 13px;
   border-radius: 100px;
+  /* The pill is sized from this button, so the button must be sized by its
+     label. A long translation wrapping to two lines would drag the whole
+     control out of shape. */
+  white-space: nowrap;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ink-500);
+  /* ink-700 rather than ink-500: the unselected label sits on the toggle's
+     translucent white over an arbitrary product photo, so it needs to hold
+     up against whatever shows through. */
+  color: var(--ink-700);
   transition: color 200ms ease;
 }
 .media-toggle-btn.is-active { color: #fff; }
