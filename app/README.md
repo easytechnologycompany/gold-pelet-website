@@ -102,6 +102,63 @@ Plus one restoration: `.specs` re-declares `margin-bottom: 1em`, which the
 original inherited from the UA default for `dl` and Tailwind's Preflight
 resets. Without it the specs section measured 17px shorter than the reference.
 
+## Backend connection
+
+The app reads from the existing Go API — the same service `js/cms.js` and the
+admin dashboard already use (`/api/v1`, origin
+`https://backend-production-cfda.up.railway.app`, or `http://localhost:8090`
+locally).
+
+It follows the same **progressive-enhancement** contract as `js/cms.js`: the
+designed content is the baseline, live values overlay it, and an unreachable
+API is silent — every fetch in `src/lib/api.ts` resolves to `null` rather than
+throwing, so the page keeps exactly what it shipped with.
+
+### ⚠ CORS blocks this in production today
+
+The backend returns `Access-Control-Allow-Headers` and `-Allow-Methods` but
+**never `Access-Control-Allow-Origin`**, so browsers block every cross-origin
+call to it. `curl` does not enforce CORS, which is why the endpoints look
+reachable from a shell and are not from a page.
+
+Dev works because Vite proxies `/api` and `/uploads`, making the request
+same-origin. Production has no proxy, so until the backend sends that header
+for the site's origin the app runs permanently on its designed fallback
+content. Nothing breaks — it just never shows live data.
+
+Point dev at a local backend with:
+
+```bash
+VITE_BACKEND_ORIGIN=http://localhost:8090 npm run dev --prefix app
+```
+
+### What is wired
+
+| Endpoint | Where it lands | Fallback |
+|---|---|---|
+| `/public/stats` | The `daily_capacity` bento cell | designed `14t` |
+| `/public/certifications` | The ISO/HACCP bento cell heading | designed `ISO 22000 · HACCP` |
+
+These are exactly the placeholder figures `CLAUDE.md §4` marks for replacement.
+Digits are localized (`٥٠+ t/day` in Arabic); unit suffixes are not, because
+the API has no translation column for them.
+
+### What is deliberately not wired
+
+- **`/public/products`** — the CMS sells raw pellets B2B (*Spiral Potatoes*,
+  *Wheat Pellets*) with raw/fried photographs. The approved rail sells finished
+  snack flavours with a cut, a heat level and a pack weight. Different product
+  model, **no shared key**, and the CMS's photos are barred by the no-external-
+  images invariant. Needs a product decision, not a code change.
+- **`/public/content`** — keys target the old site's pages
+  (`about.story.heading`); nothing corresponds to this design's copy.
+- **`/public/branding`** — returns the old green/navy palette (`#446931`,
+  `#0B4363`). Applying it would destroy the approved black-and-gold token
+  system.
+- **`/public/site-images`**, `/public/page-heroes`, `/public/timeline`,
+  `/public/news` — photographic or page-specific; this design is entirely
+  hand-drawn SVG and single-page.
+
 ## Content status
 
 **Every figure on this site is an illustrative placeholder** — founding year,

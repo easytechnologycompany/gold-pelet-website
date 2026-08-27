@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { useCms } from '@/lib/cms'
 import { Chrome } from '@/components/layout/Chrome'
 import { Footer } from '@/components/layout/Footer'
 import { LocaleProvider } from '@/components/layout/LocaleProvider'
@@ -9,6 +11,15 @@ import { Home } from '@/pages/Home'
 import { NotFound } from '@/pages/NotFound'
 
 export default function App() {
+  const hydrate = useCms((s) => s.hydrate)
+
+  // Fire and forget. The page renders its designed content immediately and
+  // live values swap in only if the API answers — nothing below waits on it,
+  // and a failure is silent by design.
+  useEffect(() => {
+    void hydrate()
+  }, [hydrate])
+
   return (
     <ThemeProvider>
       <LocaleProvider>
