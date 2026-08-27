@@ -104,6 +104,25 @@ export const copy = {
   },
   mild: { en: 'mild', ar: 'غير حارّ', ku: 'سووک', tr: 'hafif' },
 
+  // ---- product photography states ----
+  stateRaw: { en: 'Raw', ar: 'خام', ku: 'خاو', tr: 'Çiğ' },
+  stateFried: { en: 'Fried', ar: 'مقلي', ku: 'سووراو', tr: 'Kızarmış' },
+
+  // ---- manufacturing story ----
+  storyEyebrow: { en: 'How it is made', ar: 'كيف يُصنع', ku: 'چۆن دروست دەکرێت', tr: 'Nasıl üretilir' },
+  storyHeading: {
+    en: 'From formulation to pallet',
+    ar: 'من التركيب إلى المنصّة',
+    ku: 'لە پێکهاتەوە بۆ پاڵێت',
+    tr: 'Formülasyondan palete',
+  },
+  stepRaw: { en: 'Raw material', ar: 'المواد الخام', ku: 'کەرەستەی خاو', tr: 'Ham madde' },
+  stepFormulation: { en: 'Formulation', ar: 'التركيب', ku: 'پێکهاتە', tr: 'Formülasyon' },
+  stepExtrusion: { en: 'Extrusion', ar: 'البثق', ku: 'دەرهاویشتن', tr: 'Ekstrüzyon' },
+  stepDrying: { en: 'Drying', ar: 'التجفيف', ku: 'وشککردن', tr: 'Kurutma' },
+  stepFrying: { en: 'Frying', ar: 'القلي', ku: 'سووراندن', tr: 'Kızartma' },
+  stepReady: { en: 'Ready to ship', ar: 'جاهز للشحن', ku: 'ئامادەی ناردن', tr: 'Sevkiyata hazır' },
+
   // ---- specs ----
   specsEyebrow: {
     en: 'Specifications',

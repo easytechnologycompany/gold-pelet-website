@@ -104,3 +104,29 @@ export type Category = {
   sort_order: number
   is_active: boolean
 }
+
+export type SiteImage = {
+  id: string
+  image_key: string
+  image_url: string
+  label: string
+}
+
+export type ContentEntry = {
+  id: string
+  content_key: string
+  page: string
+  label: string
+  content_value: string
+}
+
+/** Note: the colour fields are read but deliberately never applied — see
+ *  the note in cms.ts. Only `logo_url` is usable here. */
+export type Branding = {
+  id: number
+  primary_hex: string
+  primary_dark_hex: string
+  primary_light_hex: string
+  accent_navy_hex: string
+  logo_url: string
+}

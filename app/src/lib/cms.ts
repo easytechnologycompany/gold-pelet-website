@@ -1,5 +1,15 @@
 import { create } from 'zustand'
-import { cmsList, type Certification, type Stat } from './api'
+import {
+  cmsList,
+  cmsFetch,
+  type ApiProduct,
+  type Branding,
+  type Category,
+  type Certification,
+  type ContentEntry,
+  type SiteImage,
+  type Stat,
+} from './api'
 import type { Locale } from './i18n'
 
 /**
@@ -9,12 +19,8 @@ import type { Locale } from './i18n'
  * The direction matters: the design is the baseline and the CMS is the
  * enhancement, never the other way round. Nothing here can blank a section —
  * if the API is unreachable the store simply stays empty and every consumer
- * falls back to the string it was designed with. That is what makes the page
- * safe to ship before the backend's CORS headers are in place.
- *
- * Scope is deliberately narrow: only the endpoints whose data actually
- * corresponds to something in the approved design. See app/README.md for
- * what is intentionally *not* consumed and why.
+ * falls back to the string or artwork it was designed with. That is what
+ * makes the page safe to ship before the backend's CORS headers are in place.
  */
 
 export type CmsStatus = 'idle' | 'loading' | 'ready' | 'unavailable'
@@ -24,6 +30,14 @@ type CmsState = {
   /** Keyed by `stat_key` for direct lookup from a bento cell. */
   stats: Record<string, Stat>
   certifications: Certification[]
+  /** Active products, ordered by category then the product's own order. */
+  products: ApiProduct[]
+  categories: Record<string, Category>
+  /** Keyed by `image_key`, e.g. `story.extrusion`. */
+  images: Record<string, SiteImage>
+  /** Keyed by `content_key`, e.g. `contact.email`. */
+  content: Record<string, string>
+  branding: Branding | null
   hydrate: () => Promise<void>
 }
 
@@ -33,29 +47,62 @@ export const useCms = create<CmsState>((set, get) => ({
   status: 'idle',
   stats: {},
   certifications: [],
+  products: [],
+  categories: {},
+  images: {},
+  content: {},
+  branding: null,
 
   hydrate: async () => {
     if (get().status === 'loading') return
     set({ status: 'loading' })
 
-    const [stats, certifications] = await Promise.all([
-      cmsList<Stat>('/public/stats'),
-      cmsList<Certification>('/public/certifications'),
-    ])
+    const [stats, certifications, products, categories, images, content, branding] =
+      await Promise.all([
+        cmsList<Stat>('/public/stats'),
+        cmsList<Certification>('/public/certifications'),
+        cmsList<ApiProduct>('/public/products'),
+        cmsList<Category>('/public/categories'),
+        cmsList<SiteImage>('/public/site-images'),
+        cmsList<ContentEntry>('/public/content'),
+        cmsFetch<Branding>('/public/branding'),
+      ])
 
-    // Both empty means the API gave us nothing usable — reachable but bare,
-    // or blocked. Either way the designed content stands.
-    if (!stats.length && !certifications.length) {
+    // Nothing usable came back — reachable but bare, or blocked. Either way
+    // the designed content stands.
+    if (!stats.length && !certifications.length && !products.length && !content.length) {
       set({ status: 'unavailable' })
       return
     }
 
+    const categoriesById = Object.fromEntries(
+      categories.filter((c) => c.is_active).map((c) => [c.id, c]),
+    )
+
+    // `sort_order` restarts per category, so it only orders products *within*
+    // one category — the category's own order has to come first or the rail
+    // interleaves the three ranges.
+    const activeProducts = products
+      .filter((p) => p.is_active)
+      .sort((a, b) => {
+        const ca = categoriesById[a.category_id]?.sort_order ?? Number.MAX_SAFE_INTEGER
+        const cb = categoriesById[b.category_id]?.sort_order ?? Number.MAX_SAFE_INTEGER
+        return ca - cb || a.sort_order - b.sort_order
+      })
+      .map((p) => ({ ...p, specs: [...p.specs].sort(bySortOrder) }))
+
     set({
       status: 'ready',
-      stats: Object.fromEntries(
-        stats.filter((s) => s.is_active).map((s) => [s.stat_key, s]),
-      ),
+      stats: Object.fromEntries(stats.filter((s) => s.is_active).map((s) => [s.stat_key, s])),
       certifications: certifications.filter((c) => c.is_active).sort(bySortOrder),
+      products: activeProducts,
+      categories: categoriesById,
+      images: Object.fromEntries(images.map((i) => [i.image_key, i])),
+      content: Object.fromEntries(content.map((c) => [c.content_key, c.content_value])),
+      // Stored for its logo only. The colour fields describe the *old* brand
+      // (green #446931 / navy #0B4363) and applying them would overwrite the
+      // approved black-and-gold token system, so nothing reads them.
+      branding,
     })
   },
 }))
@@ -67,8 +114,7 @@ export const useCms = create<CmsState>((set, get) => ({
  * Digits are localized because the designed Arabic copy sets Arabic-Indic
  * numerals throughout and a Latin numeral beside them reads as a mistake.
  * The unit suffix is *not* translated — the API has no translation column
- * for it, so `t/day` stays as authored. Worth revisiting if the CMS ever
- * grows localized units.
+ * for it, so `t/day` stays as authored.
  */
 export const formatStat = (stat: Stat, locale: Locale): string => {
   const digitLocale = locale === 'ar' || locale === 'ku' ? 'ar-EG' : locale
