@@ -16,12 +16,20 @@ export function SmoothScroll() {
   useEffect(() => {
     if (reduce) return
 
+    // Read from the token rather than repeating the number, so the offset
+    // cannot drift out of step with the header's actual height.
+    const chromeHeight =
+      parseInt(getComputedStyle(document.documentElement).getPropertyValue('--chrome-h'), 10) || 64
+
     const lenis = new Lenis({
       duration: 1.05,
       // Critically damped, matching the --spring token's intent: settle,
       // never overshoot.
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
-      anchors: true,
+      // Stop short of the target by the height of the fixed chrome, which
+      // would otherwise cover the heading you just navigated to. The CSS
+      // `scroll-padding-top` does the same for the native scroll path.
+      anchors: { offset: -chromeHeight },
     })
 
     let id = requestAnimationFrame(function raf(time: number) {
