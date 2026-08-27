@@ -149,7 +149,9 @@ the API has no translation column for them.
   *Wheat Pellets*) with raw/fried photographs. The approved rail sells finished
   snack flavours with a cut, a heat level and a pack weight. Different product
   model, **no shared key**, and the CMS's photos are barred by the no-external-
-  images invariant. Needs a product decision, not a code change.
+  images invariant. The rail therefore still renders its designed six
+  flavours. See *What the rail needs from the CMS* below — the agreed plan is
+  to add the real product data to the CMS first, then wire the rail to it.
 - **`/public/content`** — keys target the old site's pages
   (`about.story.heading`); nothing corresponds to this design's copy.
 - **`/public/branding`** — returns the old green/navy palette (`#446931`,
@@ -158,6 +160,56 @@ the API has no translation column for them.
 - **`/public/site-images`**, `/public/page-heroes`, `/public/timeline`,
   `/public/news` — photographic or page-specific; this design is entirely
   hand-drawn SVG and single-page.
+
+### What the rail needs from the CMS
+
+Spec for the backend/admin work, so the rail can be wired the moment the data
+exists. The rail's shape is `Product` in `src/lib/products.ts`; the existing
+products table already covers `name`, `description`, `sort_order` and
+`is_active`.
+
+**Five fields to add.** None of them are images — the rail draws its own
+artwork and must keep doing so.
+
+| Field | Type | Notes |
+|---|---|---|
+| `cut` | text | The cut name, e.g. *Classic cut*, *Rings*, *Curls*. Shown above the product name. |
+| `glyph` | enum | Which hand-drawn crisp to render. Exactly one of `g-classic`, `g-ridged`, `g-ring`, `g-curl`, `g-stick`. **Not** a URL — these are SVG symbols in `Sprite.tsx`. Adding a new shape means drawing it there first. |
+| `tone` | hex colour | Per-product artwork glow, e.g. `#D4A017`. This is the only place colour variety lives, and it comes from the product rather than the interface. |
+| `weight_grams` | integer | Retail pack weight. Rendered as `45 g`. |
+| `heat_level` | integer 0–3 | `0` renders the word *mild*; `1`–`3` render filled dots. An empty meter reads as missing data, which is why zero is a word. |
+
+**Translations are the harder half.** The products table is English-only today
+— `js/cms.js` works around that with client-side overrides keyed by slug. The
+rail ships all four locales, so pulling names from the CMS as-is would *lose*
+Arabic, Kurdish and Turkish for every product. Either add translation columns
+(or a `product_translations` table) for `name`, `description` and `cut`, or
+accept English-only product copy on an otherwise fully localized page.
+
+A product the rail can render completely:
+
+```json
+{
+  "slug": "salt-sunflower",
+  "name": "Salt & Sunflower",
+  "description": "Three ingredients. Coarse sea salt applied warm so it lands in flakes, not dust.",
+  "cut": "Classic cut",
+  "glyph": "g-ridged",
+  "tone": "#D4A017",
+  "weight_grams": 45,
+  "heat_level": 0,
+  "sort_order": 1,
+  "is_active": true,
+  "translations": {
+    "ar": { "name": "ملح وزيت دوّار الشمس", "cut": "قصّة كلاسيكية", "description": "…" },
+    "ku": { "name": "خوێ و گوڵەبەڕۆژە", "cut": "قەدی کلاسیکی", "description": "…" },
+    "tr": { "name": "Tuz & Ayçiçeği", "cut": "Klasik kesim", "description": "…" }
+  }
+}
+```
+
+The designed copy for all six flavours, in all four locales, already exists in
+`src/lib/products.ts` and can be lifted straight into the CMS seed.
 
 ## Content status
 
