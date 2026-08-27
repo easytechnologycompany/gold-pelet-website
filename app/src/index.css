@@ -1,0 +1,606 @@
+@import "tailwindcss";
+
+/* ============================================================
+   GOLD PELET
+   Structure: Apple product page + bento showcase.
+   Motion: springs, interruptible, scroll-linked (WWDC "Fluid Interfaces").
+   Type: size-specific tracking — never one letter-spacing for all sizes.
+
+   Ported from the approved index.html. The token block below is the
+   contract; components read tokens and never name a literal colour.
+   ============================================================ */
+
+/* stack.md sketches this as `(&:where(.dark, .dark *))`, but this project
+   never had a `.dark` class — theming is three-state (explicit light,
+   explicit dark, unset/system) driven by data-theme plus a media query.
+   A `.dark` variant would compile fine and then silently never match, so
+   the variant is redefined here to track the model that actually ships. */
+@custom-variant dark {
+  &:where([data-theme="dark"] *) { @slot; }
+  @media (prefers-color-scheme: dark) {
+    &:where(html:not([data-theme="light"]) *) { @slot; }
+  }
+}
+
+:root {
+  /* light — Apple's neutral stack, warmed a few degrees toward the product */
+  --bg:        #FAFAF9;
+  --bg-2:      #F5F5F7;
+  --surface:   #FFFFFF;
+  --fg:        #0C0A09;
+  --fg-2:      #44403C;
+  --fg-3:      #78716C;
+  --hair:      #E7E5E4;
+  --hair-2:    #D6D3D1;
+
+  --accent:    #A16207;
+  --accent-2:  #854D0E;
+  --gold:      #D4A017;
+  --gold-lo:   #B4790C;
+
+  --on-accent: #FFFFFF;
+
+  --chrome:    rgba(250, 250, 249, .72);
+  --chrome-hair: rgba(0, 0, 0, .10);
+
+  --sh-1: 0 1px 2px rgba(12,10,9,.04), 0 4px 14px -4px rgba(12,10,9,.08);
+  --sh-2: 0 2px 6px rgba(12,10,9,.06), 0 24px 48px -20px rgba(12,10,9,.22);
+
+  /* type scale */
+  --t-caption: 0.75rem;
+  --t-small:   0.8125rem;
+  --t-body:    1.0625rem;
+  --t-lead:    clamp(1.125rem, 1.02rem + 0.5vw, 1.5rem);
+  --t-h3:      clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
+  --t-h2:      clamp(2rem, 1.35rem + 2.9vw, 3.75rem);
+  --t-h1:      clamp(2.75rem, 1.4rem + 6vw, 6.5rem);
+  --t-mega:    clamp(4rem, 1.5rem + 11vw, 11rem);
+
+  --r-lg: 22px;
+  --r-md: 16px;
+  --r-sm: 10px;
+
+  --gut: clamp(1.25rem, 4vw, 2rem);
+  --bay: clamp(4.5rem, 9vw, 9rem);
+
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  /* critically damped by default; bounce only after a real gesture */
+  --spring:   cubic-bezier(.32, .72, 0, 1);
+  --ease-out: cubic-bezier(.22, .61, .36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:      #0A0A0A;
+    --bg-2:    #141312;
+    --surface: #1C1B1A;
+    --fg:      #F5F5F4;
+    --fg-2:    #A8A29E;
+    --fg-3:    #78716C;
+    --hair:    #292524;
+    --hair-2:  #3A3532;
+
+    --accent:   #E3A008;
+    --accent-2: #FBBF24;
+    --gold:     #F0B429;
+    --gold-lo:  #B4790C;
+
+    --on-accent: #1C1310;
+
+    --chrome:      rgba(10, 10, 10, .68);
+    --chrome-hair: rgba(255, 255, 255, .10);
+
+    --sh-1: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px -4px rgba(0,0,0,.5);
+    --sh-2: 0 2px 8px rgba(0,0,0,.5), 0 28px 56px -22px rgba(0,0,0,.75);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #0A0A0A;
+  --bg-2:    #141312;
+  --surface: #1C1B1A;
+  --fg:      #F5F5F4;
+  --fg-2:    #A8A29E;
+  --fg-3:    #78716C;
+  --hair:    #292524;
+  --hair-2:  #3A3532;
+
+  --accent:   #E3A008;
+  --accent-2: #FBBF24;
+  --gold:     #F0B429;
+  --gold-lo:  #B4790C;
+
+  --on-accent: #1C1310;
+
+  --chrome:      rgba(10, 10, 10, .68);
+  --chrome-hair: rgba(255, 255, 255, .10);
+
+  --sh-1: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px -4px rgba(0,0,0,.5);
+  --sh-2: 0 2px 8px rgba(0,0,0,.5), 0 28px 56px -22px rgba(0,0,0,.75);
+}
+
+/* Expose the token layer as Tailwind utilities (bg-bg, text-fg-2,
+   border-hair, rounded-lg, font-sans …) without duplicating any value.
+   `inline` is what keeps these referencing the live var, so the three-state
+   swap above keeps working through the utilities too. */
+@theme inline {
+  --color-bg:        var(--bg);
+  --color-bg-2:      var(--bg-2);
+  --color-surface:   var(--surface);
+  --color-fg:        var(--fg);
+  --color-fg-2:      var(--fg-2);
+  --color-fg-3:      var(--fg-3);
+  --color-hair:      var(--hair);
+  --color-hair-2:    var(--hair-2);
+  --color-accent:    var(--accent);
+  --color-accent-2:  var(--accent-2);
+  --color-gold:      var(--gold);
+  --color-gold-lo:   var(--gold-lo);
+  --color-on-accent: var(--on-accent);
+
+  --font-sans: var(--font);
+
+  --text-caption: var(--t-caption);
+  --text-small:   var(--t-small);
+  --text-body:    var(--t-body);
+  --text-lead:    var(--t-lead);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+
+  --shadow-1: var(--sh-1);
+  --shadow-2: var(--sh-2);
+
+  --ease-spring: var(--spring);
+  --ease-out-ui: var(--ease-out);
+}
+
+/* ---------------- base ---------------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: var(--t-body);
+  line-height: 1.5;
+  letter-spacing: 0;            /* body sits at zero — tracking is size-specific */
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Tracking tightens as type grows; leading tightens with it. */
+h1, h2, h3, h4 { margin: 0; font-weight: 800; text-wrap: balance; }
+h1 { font-size: var(--t-h1); line-height: 1.04; letter-spacing: -0.035em; }
+h2 { font-size: var(--t-h2); line-height: 1.06; letter-spacing: -0.03em; }
+h3 { font-size: var(--t-h3); line-height: 1.2;  letter-spacing: -0.018em; font-weight: 700; }
+p  { margin: 0; }
+
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--accent); color: var(--on-accent); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--hair-2); border-radius: 999px; }
+
+/* ---------------- layout ---------------- */
+.bay { max-width: 1120px; margin-inline: auto; padding-inline: var(--gut); }
+.bay-wide { max-width: 1320px; margin-inline: auto; padding-inline: var(--gut); }
+.section { padding-block: var(--bay); }
+
+.eyebrow {
+  font-size: var(--t-small);
+  font-weight: 700;
+  letter-spacing: 0.02em;       /* small text gets a touch of positive tracking */
+  color: var(--accent);
+}
+.lead {
+  font-size: var(--t-lead);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--fg-2);
+  max-width: 34ch;
+}
+.center { text-align: center; }
+.center .lead { margin-inline: auto; }
+
+/* Apple's chevron link */
+.chev {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: var(--t-lead); font-weight: 500; letter-spacing: -0.01em;
+  color: var(--accent);
+  transition: opacity .2s var(--ease-out);
+}
+.chev:hover { opacity: .72; }
+.chev svg { transition: transform .3s var(--spring); }
+.chev:hover svg { transform: translateX(3px); }
+
+/* ---------------- buttons ---------------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 44px;                 /* touch target floor */
+  padding: .7rem 1.5rem;
+  border: 1px solid transparent; border-radius: 999px;
+  font-family: var(--font); font-size: var(--t-body); font-weight: 600;
+  letter-spacing: -0.01em; cursor: pointer;
+  transition: transform .1s var(--ease-out), background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+/* Feedback lives on the press, and it is instant. */
+.btn:active { transform: scale(.97); }
+.btn-fill { background: var(--accent); color: var(--on-accent); }
+.btn-fill:hover { background: var(--accent-2); }
+.btn-ghost { border-color: var(--hair-2); color: var(--fg); }
+.btn-ghost:hover { border-color: var(--fg-3); }
+
+/* ---------------- reveal — cross-fade + short rise, no overshoot ------- */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition: opacity .7s var(--spring), transform .7s var(--spring);
+  transition-delay: var(--d, 0ms);
+  will-change: transform, opacity;
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* Reduced motion is a gentler equivalent, not an absence of feedback. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transform: none; transition: opacity .3s linear; }
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+  html { scroll-behavior: auto; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .chrome { background: var(--bg) !important; backdrop-filter: none !important; }
+}
+@media (prefers-contrast: more) {
+  .bento .cell, .spec, .card { border-color: var(--fg-3); }
+}
+
+/* ---------------- chrome: translucent, content scrolls under ---------- */
+header.chrome {
+  position: fixed; inset-inline: 0; top: 0; z-index: 100;
+  height: 48px;
+  background: var(--chrome);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s var(--ease-out), background-color .3s var(--ease-out);
+}
+header.chrome.at-edge { border-bottom-color: var(--chrome-hair); }
+header.chrome .inner {
+  max-width: 1120px; height: 100%; margin-inline: auto; padding-inline: var(--gut);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.brand {
+  display: flex; align-items: center; gap: .45rem;
+  font-size: .95rem; font-weight: 800; letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.chrome nav { display: none; gap: 2.1rem; }
+@media (min-width: 900px) { .chrome nav { display: flex; } }
+.chrome nav a {
+  font-size: var(--t-caption); font-weight: 500; letter-spacing: .01em;
+  color: var(--fg-2);
+  transition: color .2s var(--ease-out);
+}
+.chrome nav a:hover { color: var(--fg); }
+.chrome .tools { display: flex; align-items: center; gap: .25rem; }
+.tap {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 34px; height: 34px; padding-inline: .45rem;
+  border: 0; border-radius: 999px; background: transparent;
+  color: var(--fg-2); font-family: var(--font); font-size: var(--t-caption); font-weight: 700;
+  cursor: pointer;
+  transition: color .2s var(--ease-out), background-color .2s var(--ease-out), transform .1s var(--ease-out);
+}
+.tap:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+.tap:active { transform: scale(.94); }
+
+/* ---------------- language menu ----------------
+   Four locales don't fit a binary toggle, so the button opens a small
+   listbox instead of cycling. Built from the existing tokens — no new
+   colours, radii or shadows. */
+.lang { position: relative; }
+.lang-menu {
+  position: absolute;
+  inset-block-start: calc(100% + .5rem);
+  inset-inline-end: 0;
+  z-index: 60;
+  min-inline-size: 10.5rem;
+  margin: 0; padding: .3rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-2);
+}
+.lang-menu[hidden] { display: none; }
+.lang-menu li {
+  display: flex; align-items: center; gap: .6rem;
+  min-height: 44px; padding-inline: .6rem;
+  border-radius: var(--r-sm);
+  font-size: var(--t-small); font-weight: 500; color: var(--fg-2);
+  cursor: pointer;
+  transition: background-color .15s var(--ease-out), color .15s var(--ease-out);
+}
+.lang-menu li span {
+  min-inline-size: 1.6rem;
+  font-size: var(--t-caption); font-weight: 700; color: var(--fg-3);
+}
+.lang-menu li:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--fg); }
+.lang-menu li[aria-selected="true"] { color: var(--accent); }
+.lang-menu li[aria-selected="true"] span { color: var(--accent); }
+.lang-menu li:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* ---------------- touch targets ----------------
+   .btn already declares the 44px floor; these four controls never got it.
+   Measured at 375px they were: .brand 23px, .tap 34px, .chev 27px and the
+   footer links 15px.
+
+   The two that cost no layout are unconditional. The two that do — .chev and
+   the footer column — are behind pointer:coarse, because the rule is about
+   *touch* accuracy and applying it to a mouse would have grown the footer by
+   338px and the hero link row by 34px on desktop, for no one's benefit. */
+
+.brand { min-height: 44px; }
+
+/* The pill stays visually 34px on purpose — a 44px circle would crowd the
+   48px bar. A transparent ::after grows only the hit area, 5px on every
+   side, so it is symmetric (no direction to get wrong) and costs no layout. */
+.tap { position: relative; }
+.tap::after { content: ''; position: absolute; inset: -5px; }
+
+@media (pointer: coarse) {
+  .chev { min-height: 44px; }
+  /* Footer links are 15px of text in a dense column. inline-flex plus the
+     44px floor makes each row a real target; the list gap drops to 0 so the
+     column grows by the target height instead of target + gap. */
+  footer ul { gap: 0; }
+  footer a { display: inline-flex; align-items: center; min-height: 44px; }
+}
+
+/* ---------------- hero ---------------- */
+.hero {
+  position: relative;
+  padding-top: calc(48px + clamp(3rem, 8vw, 6.5rem));
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  overflow: hidden;
+}
+.hero .kicker {
+  font-size: var(--t-lead); font-weight: 700; letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.hero h1 { margin-top: .35rem; }
+.hero h1 .grad {
+  background: linear-gradient(96deg, var(--gold-lo), var(--gold) 46%, var(--accent-2));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.hero .lead { margin-top: 1.1rem; max-width: 36ch; }
+.hero .links { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; }
+
+/* the product: scroll-linked, 1:1 with scroll position */
+.stage {
+  position: relative;
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  display: grid; place-items: center;
+  min-height: min(62vh, 34rem);
+}
+.stage .glow {
+  position: absolute; width: min(62%, 34rem); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--gold) 42%, transparent), transparent 66%);
+  filter: blur(60px);
+}
+.stage .pack {
+  position: relative; width: min(56%, 19rem);
+  transform-origin: 50% 62%;
+  filter: drop-shadow(0 34px 46px rgba(12,10,9,.34));
+  will-change: transform;
+}
+
+/* ---------------- big statement ---------------- */
+.statement {
+  background: var(--bg-2);
+  text-align: center;
+}
+.statement .mega {
+  font-size: var(--t-mega); font-weight: 800;
+  line-height: .92; letter-spacing: -0.05em;   /* tightest tracking at the largest size */
+  background: linear-gradient(178deg, var(--fg), color-mix(in srgb, var(--fg) 55%, var(--bg-2)));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.statement .sub { margin-top: 1.1rem; }
+
+/* ---------------- bento ---------------- */
+.bento {
+  display: grid; gap: 14px; margin-top: 3rem;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(150px, auto);
+}
+@media (min-width: 760px)  { .bento { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+@media (min-width: 1060px) { .bento { grid-template-columns: repeat(6, 1fr); } }
+
+.bento .cell {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: clamp(1.25rem, 2.4vw, 1.9rem);
+  border: 1px solid var(--hair); border-radius: var(--r-lg);
+  background: var(--surface);
+  grid-column: span 2;
+  transition: transform .35s var(--spring), box-shadow .35s var(--spring), border-color .35s var(--ease-out);
+}
+.bento .cell:hover { box-shadow: var(--sh-2); border-color: var(--hair-2); transform: translateY(-2px); }
+.bento .cell:active { transform: scale(.99); }
+
+@media (min-width: 760px) {
+  .bento .w3 { grid-column: span 2; }
+  .bento .w4 { grid-column: span 4; }
+  .bento .tall { grid-row: span 2; }
+}
+@media (min-width: 1060px) {
+  .bento .w3 { grid-column: span 3; }
+  .bento .w2 { grid-column: span 2; }
+  .bento .w4 { grid-column: span 4; }
+}
+
+.bento .num {
+  font-size: clamp(2.2rem, 1.5rem + 2.4vw, 3.4rem); font-weight: 800;
+  line-height: 1; letter-spacing: -0.04em; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.bento .cap { font-size: var(--t-small); font-weight: 600; letter-spacing: .01em; color: var(--fg-3); }
+.bento .cell p { font-size: .95rem; line-height: 1.5; color: var(--fg-2); }
+.bento .cell .ico { color: var(--accent); }
+.bento .cell.tint {
+  background: linear-gradient(150deg, color-mix(in srgb, var(--gold) 16%, var(--surface)), var(--surface) 62%);
+}
+.bento .art { margin-top: auto; align-self: center; width: min(66%, 11rem); color: var(--gold); }
+
+/* ---------------- product rail: scroll-snap carousel ---------------- */
+.rail {
+  display: flex; gap: 16px;
+  margin-top: 2.5rem; padding-inline: var(--gut); padding-block: .5rem 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gut);
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.rail::-webkit-scrollbar { display: none; }
+.card {
+  flex: 0 0 min(78vw, 20rem);
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--hair); border-radius: var(--r-lg);
+  background: var(--surface); overflow: hidden;
+  transition: transform .35s var(--spring), box-shadow .35s var(--spring);
+}
+.card:hover { box-shadow: var(--sh-2); }
+.card:active { transform: scale(.99); }
+.card .shot {
+  aspect-ratio: 1 / .82; display: grid; place-items: center;
+  background: radial-gradient(58% 56% at 50% 46%, color-mix(in srgb, var(--tone) 26%, transparent), transparent 72%), var(--bg-2);
+  border-bottom: 1px solid var(--hair);
+}
+.card .shot svg { width: 56%; }
+.card .body { padding: 1.15rem 1.3rem 1.4rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+.card .body .cut { font-size: var(--t-caption); font-weight: 600; letter-spacing: .04em; color: var(--fg-3); text-transform: uppercase; }
+.card .body p { font-size: .92rem; line-height: 1.5; color: var(--fg-2); }
+.card .body .foot {
+  margin-top: auto; padding-top: .9rem; display: flex; align-items: center; gap: .8rem;
+  font-size: var(--t-small); color: var(--fg-3); font-variant-numeric: tabular-nums;
+}
+.heat { display: inline-flex; gap: 3px; }
+.heat i { width: 5px; height: 5px; border-radius: 50%; background: var(--hair-2); }
+.heat i.on { background: #C2410C; }
+
+.rail-hint {
+  display: flex; align-items: center; gap: .4rem; justify-content: center;
+  margin-top: .25rem; font-size: var(--t-caption); color: var(--fg-3);
+}
+
+/* ---------------- specs ---------------- */
+/* The approved design leaned on the UA's `dl { margin-block-end: 1em }` for
+   the gap between the spec table and the section's bottom padding — the
+   original stylesheet set margin-top only. Tailwind's Preflight resets that,
+   which measured 17px shorter than the reference. Restored explicitly so the
+   section keeps its approved rhythm, and so the next person reading this
+   knows the value is deliberate rather than inherited. */
+.specs { display: grid; gap: 0; margin-top: 2.5rem; margin-bottom: 1em; border-top: 1px solid var(--hair); }
+.spec {
+  display: grid; gap: .35rem 2rem; align-items: baseline;
+  padding-block: 1.15rem; border-bottom: 1px solid var(--hair);
+}
+@media (min-width: 720px) { .spec { grid-template-columns: 15rem 1fr; } }
+.spec dt { font-size: var(--t-small); font-weight: 600; letter-spacing: .01em; color: var(--fg-3); }
+.spec dd { margin: 0; font-size: var(--t-body); color: var(--fg); }
+
+/* ---------------- CTA + footer ---------------- */
+.cta { background: var(--bg-2); text-align: center; }
+.cta .row { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
+
+footer { border-top: 1px solid var(--hair); font-size: var(--t-caption); color: var(--fg-3); }
+footer .cols {
+  display: grid; gap: 2rem; padding-block: 2.75rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+footer h4 { font-size: var(--t-caption); font-weight: 700; color: var(--fg); margin-bottom: .8rem; letter-spacing: .01em; }
+footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .55rem; }
+footer a { transition: color .2s var(--ease-out); }
+footer a:hover { color: var(--fg); }
+footer .base {
+  display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between;
+  padding-block: 1.25rem; border-top: 1px solid var(--hair); line-height: 1.6;
+}
+
+/* ---------------- 404 ----------------
+   Not part of the approved design — the router needs a terminal state and
+   this is the most restrained one available: page tokens, existing type
+   scale, one chevron back to the product. No new visual language. */
+.nf {
+  min-height: 100dvh;
+  display: grid; place-content: center; justify-items: center;
+  gap: 1rem; text-align: center; padding: var(--gut);
+}
+
+/* ---------------- Turkish ----------------
+   Latin script, so it keeps Plus Jakarta Sans and its tracking. Only the
+   display leading needs help: Turkish sets ş (cedilla below) and ğ (breve
+   above) in the same line, which English never does. "her şeyi değiştirir"
+   measures 1.069em against the hero's 1.04, so it overflowed by 1.3px.
+   Body copy already sits at 1.5 and needs nothing. */
+html[lang="tr"] h1,
+html[lang="tr"] h2 { line-height: 1.12; }
+
+/* ---------------- Arabic ---------------- */
+html[lang="ar"], html[lang="ku"] { --font: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
+html[lang="ar"] *,
+html[lang="ku"] * { letter-spacing: normal !important; }
+/* Arabic leading is measured, not guessed. Rendering all 92 data-ar strings
+   to a canvas and reading real ink extent gives a worst case of 1.554em at
+   400 weight and 1.679em at 700/800 — the Arabic-Indic numerals in the spec
+   table run deepest. The Latin values below those collided: the hero gradient
+   span overflowed its line by 3.1px, bento copy by 0.6px, spec values by
+   1.7px. These clear the measured need with headroom. */
+html[lang="ar"] h1,
+html[lang="ku"] h1 { line-height: 1.45; }
+html[lang="ar"] h2,
+html[lang="ku"] h2 { line-height: 1.35; }
+/* h3 was the one heading without an Arabic override, so it kept the Latin
+   1.2 — too tight for a script whose ink runs ~1.23em at this size, and it
+   collided by a pixel. Same reasoning as h1/h2 above. */
+html[lang="ar"] h3,
+html[lang="ku"] h3 { line-height: 1.45; }
+/* Sorani needs more than Arabic here, and only here. ڵ ڕ ۆ ژ stack taller
+   than anything in the Arabic copy — "گوڵەبەڕۆژە" measures 1.641em at 700
+   weight against the 1.45 above. Kept off the shared rule so the Arabic
+   headings keep the tighter value they were tuned to. */
+html[lang="ku"] h3 { line-height: 1.7; }
+html[lang="ku"] p,
+html[lang="ku"] dt,
+html[lang="ku"] dd,
+html[lang="ku"] li,
+html[lang="ar"] p,
+html[lang="ar"] dt,
+html[lang="ar"] dd,
+html[lang="ar"] li { line-height: 1.7; }
+/* These two component rules carry their own line-height and out-specify the
+   element selectors above (.bento .cell p is 2 classes + 1 element, versus
+   1 attribute + 2 elements), so Arabic needs them named explicitly. */
+html[lang="ku"] .bento .cell p,
+html[lang="ku"] .card .body p,
+html[lang="ar"] .bento .cell p,
+html[lang="ar"] .card .body p { line-height: 1.7; }
+html[lang="ar"] .statement .mega,
+html[lang="ku"] .statement .mega { line-height: 1.2; }
+html[lang="ar"] .card .body .cut,
+html[lang="ku"] .card .body .cut { text-transform: none; }
+[dir="rtl"] .flip { transform: scaleX(-1); }
+[dir="rtl"] .chev:hover svg { transform: scaleX(-1) translateX(3px); }
