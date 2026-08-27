@@ -1108,7 +1108,13 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
    shrunk copy of the desktop version.
    ============================================================ */
 .story-scroll-area { position: relative; background: var(--bg); }
-.story-head { padding: var(--space-9) 0 var(--space-7); }
+/* Longhand, never the `padding:` shorthand. This element is
+   `class="story-head container"`, and a shorthand's implicit 0 for the
+   sides overrode .container's own horizontal gutter — leaving the eyebrow
+   and heading flush against both screen edges while every other block on
+   the page stayed inset. Setting only the vertical sides leaves the gutter
+   alone, so this tracks .container's 24px (16px under 640px) on its own. */
+.story-head { padding-top: var(--space-9); padding-bottom: var(--space-7); }
 .story-head .section-head { margin-bottom: 0; }
 
 @media (min-width: 901px) {
