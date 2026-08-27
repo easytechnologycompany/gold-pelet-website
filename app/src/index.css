@@ -997,6 +997,31 @@ footer .base {
 .foot-blurb { max-width: 34ch; font-size: .95rem; color: var(--fg-2); }
 .foot-address { color: var(--fg-2); }
 
+/* ---------------- stats strip ----------------
+   The four supporting figures under the mega statement. Two columns on a
+   phone so the numbers stay large enough to read as a display element. */
+.stat-strip {
+  display: grid; gap: 14px; margin-top: clamp(2rem, 5vw, 3.25rem);
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 860px) { .stat-strip { grid-template-columns: repeat(4, 1fr); } }
+.stat-cell {
+  display: flex; flex-direction: column; gap: .3rem;
+  padding-top: 1.1rem; border-top: 1px solid var(--hair);
+}
+.stat-cell .num {
+  font-size: clamp(1.6rem, 1.1rem + 1.9vw, 2.4rem); font-weight: 800;
+  line-height: 1.1; letter-spacing: -0.03em; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.stat-cell .cap { font-size: var(--t-small); font-weight: 600; color: var(--fg-3); }
+
+/* The story rail now carries a description under each caption. */
+.story-card .label p { margin-top: .4rem; font-size: .9rem; color: var(--fg-2); }
+
+/* The capacity cell's link sits under the figure rather than beside it. */
+.bento .cell .chev { margin-top: auto; padding-top: .75rem; font-weight: 600; }
+
 /* ---------------- Turkish ----------------
    Latin script, so it keeps Plus Jakarta Sans and its tracking. Only the
    display leading needs help: Turkish sets ş (cedilla below) and ğ (breve
