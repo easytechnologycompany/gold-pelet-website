@@ -283,9 +283,14 @@ header.chrome .inner {
 }
 /* The CMS logo is a full wordmark — it already reads "GOLD PELET" — so it
    replaces the hand-drawn mark *and* the text rather than sitting beside
-   them. 28px in a 48px bar is the largest that leaves the chrome feeling
-   thin; the .brand wrapper keeps its own 44px touch floor around it. */
-.brand-logo { height: 28px; width: auto; }
+   them.
+
+   34px inside the 48px bar leaves 7px of air above and below. That is the
+   practical ceiling: past it the logo touches the chrome's edges and the bar
+   stops reading as the thin Apple-style header the design is built on.
+   Going larger means growing the header itself, which also means moving the
+   hero's padding-top — it is calc(48px + …) and the two have to agree. */
+.brand-logo { height: 34px; width: auto; }
 
 /* The artwork is navy and green — the previous brand's colours, which clash
    with this palette and, worse, all but vanish against a near-black ground.
