@@ -9,11 +9,11 @@ import { PackArt } from './PackArt'
  * The home hero, driven by the `home` page-hero record. English comes from the
  * admin dashboard, the other three locales from the `home.hero.*` keys.
  *
- * The heading is one CMS string, so the design's two-line split — plain line
- * over gradient line — is derived rather than authored: it breaks at the last
- * sentence boundary when there is one, and otherwise renders as a single line.
- * That keeps the gradient treatment without needing the admin to think about
- * where the line breaks.
+ * The whole heading carries the gradient. It used to split at the last comma
+ * so only the closing clause was gold, but that made the treatment depend on
+ * where an admin happened to punctuate — and a heading with no comma got no
+ * gradient at all. One span over the full string is both simpler and stable
+ * across all four locales, whatever the CMS holds.
  */
 export function Hero() {
   const { tk, cms } = useOverlay()
@@ -22,8 +22,6 @@ export function Hero() {
   const kicker = cms('home.hero.eyebrow', hero?.eyebrow ?? '')
   const heading = cms('home.hero.h1', hero?.heading ?? '')
   const lead = cms('home.hero.lede', hero?.subheading ?? '')
-
-  const [first, second] = splitHeading(heading)
 
   return (
     <section className="hero">
@@ -35,15 +33,7 @@ export function Hero() {
         )}
 
         <Reveal as="h1" delay={60}>
-          {second ? (
-            <>
-              <span>{first}</span>
-              <br />
-              <span className="grad">{second}</span>
-            </>
-          ) : (
-            <span className="grad">{first}</span>
-          )}
+          <span className="grad">{heading}</span>
         </Reveal>
 
         {lead && (
@@ -65,14 +55,3 @@ export function Hero() {
   )
 }
 
-/**
- * Splits on the last comma so the gradient falls on the closing clause, which
- * is where the design put it. Arabic and Kurdish use the same comma character
- * here; Arabic's own `،` is handled too. A heading with no comma stays whole
- * rather than being broken at an arbitrary word.
- */
-function splitHeading(heading: string): [string, string | null] {
-  const at = Math.max(heading.lastIndexOf(','), heading.lastIndexOf('،'))
-  if (at === -1 || at === heading.length - 1) return [heading, null]
-  return [heading.slice(0, at + 1), heading.slice(at + 1).trim()]
-}
