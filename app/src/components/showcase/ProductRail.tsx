@@ -4,7 +4,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { mediaURL, type ApiProduct } from '@/lib/api'
 import { useCms } from '@/lib/cms'
 import { useOverlay, overlayKey } from '@/lib/overlay'
-import type { GlyphId } from '@/lib/products'
+import type { GlyphId } from '@/lib/sprite-ids'
 
 /**
  * Scroll-snap carousel. The next card sits deliberately half-visible at the

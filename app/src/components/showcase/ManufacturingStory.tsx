@@ -1,38 +1,41 @@
 import { Reveal } from '@/components/motion/Reveal'
-import { copy } from '@/lib/content'
-import { useT, type Str } from '@/lib/i18n'
 import { mediaURL } from '@/lib/api'
 import { useCms } from '@/lib/cms'
+import { useOverlay } from '@/lib/overlay'
+import { useT } from '@/lib/i18n'
+import { copy } from '@/lib/content'
 
 /**
- * The process, in the CMS's own photography.
+ * The process, in the CMS's own photography — the live site's "From Field to
+ * Fryer" section, built from the existing rail (same scroll-snap, radius and
+ * hairline) so it reads as part of the system.
  *
- * Not part of the approved design — added so the `site-images` the admin
- * already manages have somewhere to live. It is built from the existing rail
- * (same scroll-snap, radius and hairline) rather than as a new component, so
- * it reads as part of the system.
+ * Each step pairs a `site-images` record the admin manages with the
+ * `story.steps.*` keys, so the caption and its description are translated in
+ * all four locales while the photograph stays admin-controlled.
  *
- * Renders nothing at all when the API is unreachable: an empty strip of
- * placeholder frames would be worse than the section simply not being there.
+ * Renders nothing when the API is unreachable: an empty strip of placeholder
+ * frames would be worse than the section simply not being there.
  */
 
-/** Ordered walk through production. The CMS labels these
- *  "Manufacturing Story - Drying" and so on, but those strings are English
- *  only, so the step names are kept here where all four locales exist. */
-const STEPS: { key: string; label: Str }[] = [
-  { key: 'story.raw', label: copy.stepRaw },
-  { key: 'story.formulation', label: copy.stepFormulation },
-  { key: 'story.extrusion', label: copy.stepExtrusion },
-  { key: 'story.drying', label: copy.stepDrying },
-  { key: 'story.frying_fried', label: copy.stepFrying },
-  { key: 'story.ready', label: copy.stepReady },
-]
+/** Ordered walk through production. `imageKey` is the CMS slot, `stepKey` the
+ *  translation stem — the two differ (`frying_fried` vs `frying`), so they are
+ *  named separately rather than derived from one another. */
+const STEPS = [
+  { imageKey: 'story.raw', stepKey: 'raw' },
+  { imageKey: 'story.formulation', stepKey: 'formulation' },
+  { imageKey: 'story.extrusion', stepKey: 'extrusion' },
+  { imageKey: 'story.drying', stepKey: 'drying' },
+  { imageKey: 'story.frying_fried', stepKey: 'frying' },
+  { imageKey: 'story.ready', stepKey: 'ready' },
+] as const
 
 export function ManufacturingStory() {
+  const { tk } = useOverlay()
   const { t, locale } = useT()
   const images = useCms((s) => s.images)
 
-  const steps = STEPS.map((step) => ({ ...step, image: images[step.key] })).filter(
+  const steps = STEPS.map((step) => ({ ...step, image: images[step.imageKey] })).filter(
     (step) => step.image,
   )
 
@@ -41,33 +44,32 @@ export function ManufacturingStory() {
   const digits = locale === 'ar' || locale === 'ku' ? 'ar-EG' : locale
 
   return (
-    <section className="section" style={{ paddingTop: 0 }}>
+    <section className="section" id="story" style={{ paddingTop: 0 }}>
       <div className="bay center">
         <Reveal as="p" className="eyebrow">
-          {t(copy.storyEyebrow)}
+          {tk('story.eyebrow')}
         </Reveal>
         <Reveal as="h2" delay={60}>
-          {t(copy.storyHeading)}
+          {tk('story.title')}
         </Reveal>
       </div>
 
       <div className="bay-wide" style={{ maxWidth: 1320, paddingInline: 0 }}>
         <div className="rail">
           {steps.map((step, i) => (
-            <article className="story-card" key={step.key}>
+            <article className="story-card" key={step.imageKey}>
               <div className="frame">
                 <img
                   src={mediaURL(step.image!.image_url)}
-                  alt={step.image!.label}
+                  alt={tk(`story.steps.${step.stepKey}.title`)}
                   loading="lazy"
                   decoding="async"
                 />
               </div>
               <div className="label">
-                <span className="step">
-                  {new Intl.NumberFormat(digits).format(i + 1)}
-                </span>
-                <h3>{t(step.label)}</h3>
+                <span className="step">{new Intl.NumberFormat(digits).format(i + 1)}</span>
+                <h3>{tk(`story.steps.${step.stepKey}.title`)}</h3>
+                <p>{tk(`story.steps.${step.stepKey}.description`)}</p>
               </div>
             </article>
           ))}

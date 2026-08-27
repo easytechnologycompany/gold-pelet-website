@@ -1,4 +1,4 @@
-import type { IconId, GlyphId } from '@/lib/products'
+import type { IconId, GlyphId } from '@/lib/sprite-ids'
 import { cn } from '@/lib/utils'
 
 type IconProps = {

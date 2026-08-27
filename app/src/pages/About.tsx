@@ -4,7 +4,7 @@ import { ButtonRoute } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
 import { useCms } from '@/lib/cms'
 import { useOverlay } from '@/lib/overlay'
-import type { IconId } from '@/lib/products'
+import type { IconId } from '@/lib/sprite-ids'
 
 /**
  * About Us. Two of the three sections are live records the admin dashboard
