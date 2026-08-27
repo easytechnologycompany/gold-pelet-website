@@ -63,6 +63,11 @@
   --gut: clamp(1.25rem, 4vw, 2rem);
   --bay: clamp(4.5rem, 9vw, 9rem);
 
+  /* The plate the brand mark sits on in dark mode. Fixed, not swapped: its
+     whole job is to stay light while everything around it goes dark, so it
+     is defined once here and never redefined in a theme block. */
+  --plate: #FAFAF9;
+
   /* Height of the fixed chrome. It was a literal 48px in three places that
      all had to agree — the header itself, the hero's padding-top, and the
      scroll offset for anchor links. One token instead, so raising the bar
@@ -321,16 +326,37 @@ header.chrome .inner {
   clip-path: polygon(0 0, 100% 0, 100% 65.97%, 46.81% 65.97%, 46.81% 100%, 0 100%);
 }
 
-/* The artwork is navy and green — the previous brand's colours, which clash
-   with this palette and, worse, all but vanish against a near-black ground.
-   Flattening it to the foreground colour keeps it legible in both themes and
-   consistent with a design that carries exactly one accent. Declared across
-   all three theme states so the unset/system case is covered too. */
-.brand-logo { filter: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .brand-logo { filter: brightness(0) invert(1); }
+/* The artwork is navy and green, and measured against the dark ground the
+   navy lands at 1.88:1 — under the 3:1 floor for non-text graphics, i.e.
+   genuinely unreadable, not merely dull. On the light ground it is fine
+   (10.07:1 navy, 6.07:1 green).
+
+   So dark mode gives it a light plate to sit on rather than recolouring it:
+   the brand's navy and green survive intact at the same contrast they enjoy
+   in light mode. The plate colour is deliberately NOT a theme token — it has
+   to stay light in the dark theme, which is exactly what a swapping token
+   would not do.
+
+   Declared in all three theme states, base included, so the unset/system
+   case resolves and no value lives only inside a media query. */
+.brand-plate {
+  display: inline-flex;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
 }
-:root[data-theme="dark"] .brand-logo { filter: brightness(0) invert(1); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-plate {
+    padding: 4px 7px;
+    border-radius: 9px;
+    background: var(--plate);
+  }
+}
+:root[data-theme="dark"] .brand-plate {
+  padding: 4px 7px;
+  border-radius: 9px;
+  background: var(--plate);
+}
 
 .chrome nav { display: none; gap: 2.1rem; }
 @media (min-width: 900px) { .chrome nav { display: flex; } }

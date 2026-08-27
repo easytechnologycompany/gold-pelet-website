@@ -71,8 +71,13 @@ function BrandMark() {
   return (
     <>
       {logo ? (
-        <span className="brand-logo">
-          <img src={logo} alt="" aria-hidden="true" />
+        // The plate is a separate element from the crop box: .brand-logo's
+        // size *is* the crop viewport, so padding it would shift what the
+        // overflow actually clips.
+        <span className="brand-plate">
+          <span className="brand-logo">
+            <img src={logo} alt="" aria-hidden="true" />
+          </span>
         </span>
       ) : (
         <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
