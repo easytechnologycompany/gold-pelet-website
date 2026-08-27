@@ -66,6 +66,43 @@ export type Stat = {
   is_active: boolean
 }
 
+/**
+ * A page's hero block. `/public/page-heroes/{page_key}` — one record per page,
+ * admin-editable. English only, like every other table; the translation
+ * overlay supplies the other three locales.
+ */
+export type PageHero = {
+  id: string
+  page_key: string
+  image_url: string | null
+  eyebrow: string
+  heading: string
+  subheading: string
+}
+
+/** An About-page milestone. `/public/timeline`, ordered by sort_order. */
+export type Milestone = {
+  id: string
+  year_label: string
+  title: string
+  description: string
+  sort_order: number
+  is_active: boolean
+}
+
+/** An Events & News entry. `/public/news`; `is_featured` marks the lead item. */
+export type NewsItem = {
+  id: string
+  title: string
+  description: string
+  date_label: string
+  icon_key: string
+  image_url: string | null
+  is_featured: boolean
+  sort_order: number
+  is_active: boolean
+}
+
 export type Certification = {
   id: string
   name: string

@@ -717,6 +717,286 @@ footer .base {
   gap: 1rem; text-align: center; padding: var(--gut);
 }
 
+/* ---------------- sub-page hero ----------------
+   Deliberately quieter than the home hero: no artwork, no gradient split and
+   less vertical air. These pages are read, not admired. */
+.page-hero {
+  padding-top: calc(var(--chrome-h) + clamp(2.25rem, 6vw, 4.5rem));
+  padding-bottom: clamp(1.75rem, 4vw, 3.25rem);
+  border-bottom: 1px solid var(--hair);
+}
+.page-hero .lead { margin-inline: auto; max-width: 48ch; }
+
+/* ---------------- numbered flow ----------------
+   Services' four stages and Contact's three days. Rendered from an <ol>, so
+   the sequence lives in the markup and not only in the numerals. auto-fit
+   rather than a fixed count because the two lists are different lengths. */
+.flow {
+  list-style: none; margin: 3rem 0 0; padding: 0;
+  display: grid; gap: 14px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 760px) {
+  .flow { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+}
+.flow-item {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: clamp(1.25rem, 2.4vw, 1.9rem);
+  border: 1px solid var(--hair); border-radius: var(--r-lg);
+  background: var(--surface);
+  transition: transform .35s var(--spring), box-shadow .35s var(--spring), border-color .35s var(--ease-out);
+}
+.flow-item:hover { box-shadow: var(--sh-2); border-color: var(--hair-2); transform: translateY(-2px); }
+/* "Stage 01" / "Day 2-3" / "اليوم 2–3" — a label, not a digit, so this is a
+   caption rather than the round badge the numerals alone would have allowed. */
+.flow-num {
+  font-size: var(--t-small); font-weight: 700; letter-spacing: .01em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.flow-item p { font-size: .95rem; color: var(--fg-2); }
+
+/* ---------------- tick list ---------------- */
+.ticks { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: .9rem; }
+.ticks li { display: flex; align-items: flex-start; gap: .7rem; color: var(--fg-2); }
+.ticks li svg { flex: none; width: 20px; height: 20px; margin-top: .2rem; color: var(--accent); }
+
+/* A lead item that takes the whole row. The base .cell already spans the full
+   two-column grid below 760, so this only needs to say so further up. */
+@media (min-width: 760px) { .bento .w6 { grid-column: 1 / -1; } }
+
+/* About's milestones put a title and a note in one <dd>. */
+.spec dd strong { display: block; }
+.spec dd span { display: block; margin-top: .3rem; font-size: .95rem; color: var(--fg-2); }
+
+/* ---------------- enquiry form ----------------
+   `min-width: 0` on both the field and the control: a grid track's automatic
+   minimum is its content's intrinsic width, and a bare <input>'s is wide
+   enough to push the whole row past a phone's viewport. */
+.form {
+  display: grid; gap: 1.15rem 1.25rem; margin-top: 2.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .form { grid-template-columns: repeat(2, 1fr); } }
+.field { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: var(--t-small); font-weight: 600; color: var(--fg-3); }
+.field input,
+.field select,
+.field textarea {
+  width: 100%; min-width: 0;
+  padding: .75rem .9rem;
+  font: inherit; font-size: var(--t-body); color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--hair); border-radius: var(--r-md);
+  transition: border-color .2s var(--ease-out), box-shadow .2s var(--ease-out);
+}
+.field textarea { min-height: 8rem; resize: vertical; }
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+/* Firefox dims placeholders past the contrast floor without this. */
+.field ::placeholder { color: var(--fg-3); opacity: 1; }
+.form-status { margin-top: .9rem; font-size: var(--t-small); font-weight: 600; color: var(--fg); }
+/* role="status" needs the node in the DOM before the message arrives, so it
+   starts empty — and an empty <p> would still take its margin. */
+.form-status:empty { display: none; margin: 0; }
+.consent { margin-top: .9rem; font-size: var(--t-caption); color: var(--fg-3); }
+
+/* ---------------- header CTA + mobile nav ----------------
+   Six nav items do not fit a phone, and the desktop row is display:none
+   below 900px — so without this the nav is simply unreachable there. */
+.nav-cta {
+  display: none;
+  align-items: center; justify-content: center;
+  min-height: 34px; padding-inline: .85rem; margin-inline-end: .35rem;
+  border-radius: 999px;
+  background: var(--accent); color: var(--on-accent);
+  font-size: var(--t-caption); font-weight: 600;
+  transition: filter .2s var(--ease-out);
+}
+.nav-cta:hover { filter: brightness(1.08); }
+@media (min-width: 900px) { .nav-cta { display: inline-flex; } }
+
+.nav-burger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; margin-inline-start: .1rem;
+  border: 0; border-radius: 999px;
+  background: transparent; color: var(--fg);
+  cursor: pointer;
+}
+@media (min-width: 900px) { .nav-burger { display: none; } }
+
+/* Anchored under the header rather than inside it: the chrome carries a
+   backdrop-filter, which creates a containing block for fixed descendants
+   and would otherwise trap this panel inside the 64px bar. */
+.nav-sheet {
+  position: fixed; inset-inline: 0; top: var(--chrome-h);
+  max-height: calc(100dvh - var(--chrome-h));
+  overflow-y: auto;
+  padding: .75rem var(--gut) 1.5rem;
+  background: var(--bg); border-bottom: 1px solid var(--hair);
+  display: grid; gap: .15rem;
+}
+@media (min-width: 900px) { .nav-sheet { display: none; } }
+.nav-sheet a {
+  display: flex; align-items: center; min-height: 48px;
+  font-size: var(--t-body); font-weight: 500; color: var(--fg-2);
+  border-bottom: 1px solid var(--hair);
+}
+.nav-sheet a:last-child { border-bottom: 0; }
+.nav-sheet a.active { color: var(--fg); font-weight: 650; }
+.chrome nav a.active { color: var(--fg); }
+
+/* ---------------- product catalogue ---------------- */
+.pgrid {
+  display: grid; gap: 16px; margin-top: 2.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) { .pgrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .pgrid { grid-template-columns: repeat(3, 1fr); } }
+
+.pcard {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--hair); border-radius: var(--r-lg);
+  background: var(--surface); overflow: hidden;
+  transition: transform .35s var(--spring), box-shadow .35s var(--spring), border-color .35s var(--ease-out);
+}
+.pcard:hover { box-shadow: var(--sh-2); border-color: var(--hair-2); transform: translateY(-2px); }
+
+.pcard-media {
+  position: relative; aspect-ratio: 4 / 3;
+  display: grid; place-items: center;
+  background: var(--bg-2);
+}
+.pcard-media img { width: 100%; height: 100%; object-fit: cover; }
+.pcard-empty { padding: 1rem; font-size: var(--t-small); color: var(--fg-3); text-align: center; }
+.pcard .tag {
+  position: absolute; inset-block-start: .7rem; inset-inline-start: .7rem;
+  padding: .25rem .6rem; border-radius: 999px;
+  background: var(--gold); color: #1C1B1A;
+  font-size: var(--t-caption); font-weight: 700;
+}
+
+/* RAW / FRIED. The active button carries its own background — there is no
+   measured sliding pill, so there are no coordinates to get backwards in
+   Arabic or Kurdish, and the labels may change width freely. */
+.media-toggle {
+  position: absolute; inset-block-end: .7rem; inset-inline-start: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 2px; padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid var(--hair);
+  backdrop-filter: blur(8px);
+}
+[dir="rtl"] .media-toggle { transform: translateX(50%); }
+.media-toggle button {
+  min-height: 30px; padding-inline: .8rem;
+  border: 0; border-radius: 999px;
+  background: transparent; color: var(--fg-2);
+  font: inherit; font-size: var(--t-caption); font-weight: 600;
+  cursor: pointer;
+  transition: background .2s var(--ease-out), color .2s var(--ease-out);
+}
+.media-toggle button.is-active { background: var(--fg); color: var(--bg); }
+
+.pcard-body { display: flex; flex-direction: column; gap: .5rem; padding: 1.25rem; }
+.pcard-body p { font-size: .95rem; color: var(--fg-2); }
+.chips { list-style: none; margin: .25rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.chips li {
+  padding: .2rem .55rem; border-radius: var(--r-sm);
+  border: 1px solid var(--hair); background: var(--bg-2);
+  font-size: var(--t-caption); color: var(--fg-3);
+}
+.pcard-cta {
+  margin-top: auto; padding-top: .85rem;
+  font-size: var(--t-small); font-weight: 600; color: var(--accent);
+}
+
+/* ---------------- load calculator ---------------- */
+.calc {
+  margin-top: 2.5rem; padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--hair); border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.calc-grid { display: grid; gap: 1.15rem 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .calc-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* `min-width: 0` again: the stepper holds a number input, whose intrinsic
+   width is what pushed the old layout past the viewport on a phone. */
+.calc-qty-row { display: flex; gap: .6rem; min-width: 0; }
+.calc-qty-row select { flex: 1 1 auto; min-width: 0; }
+.calc-qty-stepper {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center; gap: .2rem; padding: 3px;
+  border: 1px solid var(--hair); border-radius: 999px; background: var(--surface);
+}
+.calc-qty-stepper input {
+  flex: 1 1 auto; width: 100%; min-width: 0;
+  border: 0; background: transparent; text-align: center;
+  font: inherit; font-size: var(--t-body); color: var(--fg);
+  -moz-appearance: textfield; appearance: textfield;
+}
+.calc-qty-stepper input::-webkit-outer-spin-button,
+.calc-qty-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.calc-qty-stepper input:focus-visible { outline: none; }
+.calc-qty-btn {
+  flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px;
+  border: 0; border-radius: 999px;
+  background: var(--bg-2); color: var(--fg); cursor: pointer;
+  transition: background .2s var(--ease-out);
+}
+.calc-qty-btn:hover { background: var(--hair); }
+
+.calc-out {
+  display: grid; gap: 14px; margin-top: 1.75rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 1060px) { .calc-out { grid-template-columns: repeat(4, 1fr); } }
+.calc-stat {
+  display: flex; flex-direction: column; gap: .35rem;
+  padding: 1rem; border-radius: var(--r-md); background: var(--bg-2);
+}
+.calc-stat .cap { font-size: var(--t-caption); font-weight: 600; color: var(--fg-3); }
+.calc-stat strong {
+  font-size: var(--t-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.calc-bar { height: 6px; border-radius: 999px; background: var(--hair); overflow: hidden; }
+.calc-bar span {
+  display: block; height: 100%; border-radius: 999px; background: var(--accent);
+  transition: inline-size .3s var(--ease-out);
+}
+.calc-bar span.is-low { background: var(--fg-3); }
+.calc-note { margin-top: 1.1rem; font-size: var(--t-small); color: var(--fg-2); }
+.calc-foot {
+  margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--hair);
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+}
+.calc-foot .consent { margin: 0; max-width: 52ch; }
+
+/* ---------------- contact extras ---------------- */
+.prefer-email {
+  margin-top: 2.5rem; padding: 1.25rem;
+  border: 1px solid var(--hair); border-radius: var(--r-lg); background: var(--bg-2);
+}
+.prefer-email p { margin-top: .35rem; color: var(--fg-2); }
+.prefer-email a { color: var(--accent); font-weight: 600; }
+.form-status.ok { color: var(--accent); }
+.form-status.fail { color: #B91C1C; }
+
+/* ---------------- footer extras ---------------- */
+.foot-blurb { max-width: 34ch; font-size: .95rem; color: var(--fg-2); }
+.foot-address { color: var(--fg-2); }
+
 /* ---------------- Turkish ----------------
    Latin script, so it keeps Plus Jakarta Sans and its tracking. Only the
    display leading needs help: Turkish sets ş (cedilla below) and ğ (breve

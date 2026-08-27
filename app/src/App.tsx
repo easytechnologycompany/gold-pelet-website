@@ -7,8 +7,14 @@ import { LocaleProvider } from '@/components/layout/LocaleProvider'
 import { Sprite } from '@/components/layout/Sprite'
 import { ThemeProvider } from '@/components/layout/ThemeProvider'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
+import { RouteScroll } from '@/components/layout/RouteScroll'
+import { About } from '@/pages/About'
+import { Contact } from '@/pages/Contact'
 import { Home } from '@/pages/Home'
+import { News } from '@/pages/News'
 import { NotFound } from '@/pages/NotFound'
+import { Products } from '@/pages/Products'
+import { Services } from '@/pages/Services'
 
 export default function App() {
   const hydrate = useCms((s) => s.hydrate)
@@ -24,11 +30,20 @@ export default function App() {
     <ThemeProvider>
       <LocaleProvider>
         <SmoothScroll />
+        <RouteScroll />
         {/* Rendered once; every `<use href="#id">` on the page resolves here. */}
         <Sprite />
         <Chrome />
+        {/* The six pages the finished site publishes, in the same order
+            as the header nav. Each reads its content from the live CMS
+            through the translation overlay — see lib/overlay.ts. */}
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
