@@ -1,0 +1,30 @@
+# Kept in the repo, kept out of the runtime image.
+#
+# Everything listed here is referenced by no page on the site, but it is not
+# junk — most of it is the provenance for what does ship (see
+# assets/images/products/CREDITS.md). It stays in git; it just has no reason
+# to sit in the deployed image, where the repo root doubles as the public
+# document root and main.go's denyBuildFiles only guards the build files at
+# the top level, not anything under assets/.
+#
+# BEWARE the two near-identical directory names:
+#   assets/images/products/   SHIPS  — the product photos the site renders
+#   assets/img/products/      excluded — the full-size originals those
+#                                       photos were cropped from
+# Excluding the wrong one silently blanks every product card.
+
+# Full-size originals behind the shipped product crops.
+assets/img/products/
+
+# Internal working files: the brand source PDF and the untrimmed logo.
+# These would otherwise be fetchable at a guessable URL once deployed.
+assets/source/
+
+# Superseded stand-in photography from before the real product shoot.
+assets/img/rice.jpg
+assets/img/wheat.jpg
+
+# Never needed to build or run the image.
+.git
+.gitignore
+.claude
