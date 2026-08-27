@@ -294,14 +294,32 @@ header.chrome .inner {
   font-size: .95rem; font-weight: 800; letter-spacing: -0.02em;
   white-space: nowrap;
 }
-/* The CMS logo is a full wordmark — it already reads "GOLD PELET" — so it
-   replaces the hand-drawn mark *and* the text rather than sitting beside
-   them.
+/* The CMS ships one logo: a full lockup reading "GOLD PELET", where the
+   navy graphic *is* the P. At header size the "ELET" lettering is what
+   forces the whole thing small, so the header shows the mark only — leaf,
+   P and dot — and the wordmark returns as live text beside it. That is the
+   lockup the design always had; only the glyph is now the real one.
 
-   46px inside the 64px bar leaves 9px of air above and below. Both are
-   driven by --chrome-h, so the bar and the hero's padding-top can no longer
-   disagree. */
-.brand-logo { height: 46px; width: auto; }
+   The crop is done here rather than by committing a cropped asset, so the
+   header keeps following whatever the admin uploads. Measured off the
+   artwork (910×576): the mark ends at x=475, and the leaf's tip overhangs
+   the "E", which starts at x=426 and sits below y=380. So the box crops to
+   the first, and the polygon notches out the second — the notch contains
+   only the E's navy and transparency, no leaf. */
+.brand-logo {
+  display: block;
+  height: 40px;
+  aspect-ratio: 475 / 576;   /* the mark's own proportion */
+  overflow: hidden;
+}
+.brand-logo img {
+  height: 100%;
+  width: auto;
+  /* The base rule sets img { max-width: 100% }, which inside this narrow
+     box would squash the artwork instead of cropping it. */
+  max-width: none;
+  clip-path: polygon(0 0, 100% 0, 100% 65.97%, 46.81% 65.97%, 46.81% 100%, 0 100%);
+}
 
 /* The artwork is navy and green — the previous brand's colours, which clash
    with this palette and, worse, all but vanish against a near-black ground.
