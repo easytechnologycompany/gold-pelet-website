@@ -1472,6 +1472,10 @@ html[dir="rtl"] .timeline-item::before { left: auto; right: -25px; }
   width: 32px;
   display: grid;
   place-items: center;
+  /* Matches the pill around it. Without this the button stays square inside
+     a fully rounded container that doesn't clip, so its corners sit outside
+     the curve and the hover/active background shows them at the ends. */
+  border-radius: 999px;
   color: var(--ink-700);
   font-size: 1.15rem;
   font-weight: 700;
