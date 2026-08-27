@@ -197,11 +197,23 @@ Not code problems — things to fix in the admin dashboard.
   second. Those ratios hold for any re-upload of the same artwork at any
   resolution, but a genuinely different logo design would need re-measuring.
 
-  Second: the navy would all but vanish on the dark theme's near-black
-  ground, so the mark is flattened to the foreground colour with
-  `brightness(0) invert(1)` in dark mode. That drops the green and navy. If
-  the brand colours must survive literally, upload a light-on-dark variant to
-  the CMS, the way the old site ships `assets/img/logo-white.png`.
+  Second: measured against the dark ground the logo's navy lands at
+  **1.88:1**, under the 3:1 floor for non-text graphics — unreadable, not
+  merely dull. On the light ground it is fine (10.07:1 navy, 6.07:1 green).
+  So dark mode sits the mark on a **light plate** rather than recolouring it,
+  and the brand's navy and green survive intact.
+
+  The plate colour is deliberately not a theme token: its whole job is to
+  stay light while everything around it goes dark, which is exactly what a
+  swapping token would not do. It is `--plate`, defined once and never
+  redefined in a theme block.
+
+  Worth recording, since it came up: `assets/img/logo-white.png` in the old
+  site is **pixel-for-pixel the same artwork** as the colour logo, just
+  filled flat white — 100% identical alpha silhouette, no green, no navy.
+  Uploading a white variant to the CMS would therefore add nothing the old
+  `brightness(0) invert(1)` filter did not already produce, which is why the
+  plate exists instead.
 - **`/public/page-heroes`, `/public/timeline`, `/public/news`** — page-specific
   content for the old multi-page site. This design is a single page with no
   section that corresponds.
