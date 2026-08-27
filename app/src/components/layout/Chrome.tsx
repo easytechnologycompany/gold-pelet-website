@@ -67,7 +67,8 @@ function BrandMark() {
   const logo = branding?.logo_url ? mediaURL(branding.logo_url) : null
 
   if (logo) {
-    return <img className="brand-logo" src={logo} alt={t(copy.brand)} width={44} height={28} />
+    // Intrinsic ratio is 910×576; these keep the box reserved before load.
+    return <img className="brand-logo" src={logo} alt={t(copy.brand)} width={54} height={34} />
   }
 
   return (
