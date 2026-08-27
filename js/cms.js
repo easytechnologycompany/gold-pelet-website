@@ -311,6 +311,11 @@ function productCardHTML(p) {
 // English until the visitor manually touched the language switcher again.
 function retranslate() {
   window.applyTranslations && window.applyTranslations(document.documentElement.lang || 'en');
+  // Product cards injected above bring their own RAW/FRIED toggle, whose
+  // sliding pill is sized from the active button — so it has to be measured
+  // once the card is in the DOM and once the labels above are in their
+  // final language. This is the one place where both are true.
+  window.initMediaToggles && window.initMediaToggles(document);
 }
 
 /** Home page: a flat preview grid of the first few active products. */

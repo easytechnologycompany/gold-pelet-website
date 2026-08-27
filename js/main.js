@@ -135,6 +135,82 @@
   }
 
   /* ---------------- Product card raw/fried image toggle ---------------- */
+
+  // Moves the sliding pill onto whichever button is currently active, by
+  // copying that button's real width and offset rather than assuming the
+  // two halves are equal and that "second" means "to the right".
+  //
+  // offsetLeft is measured against .media-toggle (its offsetParent, since
+  // that element is positioned) and is already resolved for the writing
+  // direction — so in RTL, where the flex row reverses and RAW sits on the
+  // physical right, this reports the physical position the button actually
+  // occupies. No dir branch, and nothing here depends on the label text:
+  // the state lives in data-state, which stays "raw"/"fried" in every
+  // language while only the label is translated.
+  // `animate` is false for anything that isn't a deliberate toggle. Re-fitting
+  // after a language switch or a resize is a correction, not a state change —
+  // letting the pill glide to its new size there reads as though the control
+  // changed by itself. It should only travel when the reader moves it.
+  function syncMediaTogglePill(toggle, animate) {
+    const pill = toggle.querySelector('.media-toggle-pill');
+    const active = toggle.querySelector('.media-toggle-btn.is-active');
+    if (!pill || !active) return;
+    if (!animate) pill.style.transition = 'none';
+    pill.style.width = `${active.offsetWidth}px`;
+    pill.style.transform = `translateX(${active.offsetLeft}px)`;
+    if (!animate) {
+      void pill.offsetWidth;   // flush the suppressed transition before restoring it
+      pill.style.transition = '';
+    }
+  }
+
+  // Backup only. The pill is kept correct by the explicit calls below and in
+  // i18n.js and cms.js, because those fire at known moments and can be
+  // verified; this catches the leftovers — a page zoom, a font swapping in
+  // late. It is deliberately not the primary mechanism: ResizeObserver
+  // delivers its callbacks as part of the rendering steps, so anything that
+  // stops the page rendering also stops this, and a control that silently
+  // mis-renders is worse than one that never animates.
+  const toggleResizeObserver =
+    'ResizeObserver' in window
+      ? new ResizeObserver((entries) => {
+          const seen = new Set();
+          entries.forEach((entry) => {
+            const toggle = entry.target.closest('.media-toggle');
+            if (toggle && !seen.has(toggle)) {
+              seen.add(toggle);
+              syncMediaTogglePill(toggle);
+            }
+          });
+        })
+      : null;
+
+  function initMediaToggles(root) {
+    const scope = root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll('.media-toggle').forEach((toggle) => {
+      syncMediaTogglePill(toggle);
+      if (!toggleResizeObserver || toggle.dataset.pillObserved) return;
+      toggle.dataset.pillObserved = '1';
+      toggle.querySelectorAll('.media-toggle-btn').forEach((b) => toggleResizeObserver.observe(b));
+    });
+  }
+
+  initMediaToggles(document);
+  // Exposed for cms.js, which injects product cards after its fetches resolve,
+  // and for i18n.js, whose language switch gives the buttons new labels and so
+  // new widths — same arrangement as window.applyScrollReveal above.
+  window.initMediaToggles = initMediaToggles;
+  // A webfont swapping in changes label widths after first paint.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => initMediaToggles(document));
+  // Card widths are fluid, so a viewport change moves the buttons out from
+  // under the pill. Debounced — this only needs to be right once the resize
+  // settles, not on every intermediate frame.
+  let toggleResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(toggleResizeTimer);
+    toggleResizeTimer = setTimeout(() => initMediaToggles(document), 120);
+  }, { passive: true });
+
   // Delegated on document, not per-card, so it works for both the static
   // fallback markup and cards cms.js injects later via mount.innerHTML.
   // Real <button> elements mean Tab + Enter/Space already work for free;
@@ -153,6 +229,7 @@
       b.setAttribute('aria-pressed', String(isActive));
     });
     media.querySelectorAll('.media-state').forEach((s) => s.classList.toggle('is-active', s.dataset.state === state));
+    syncMediaTogglePill(toggle, true);   // a deliberate toggle — let the pill travel
   });
 
   /* ---------------- RFQ / contact form ---------------- */
