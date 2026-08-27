@@ -24,6 +24,13 @@
         <li><a href="news.html" data-i18n="nav.news">Events &amp; News</a></li>
         <li><a href="contact.html" data-i18n="nav.contact">Contact Us</a></li>
       </ul>
+      <!-- Mobile-only stand-in for the header's "Get a Quote" button, which
+           .header-actions hides below 900px for space, leaving the primary
+           CTA unreachable on phones. Lives inside .main-nav so main.js's
+           existing "close the menu when a nav link is tapped" handler picks
+           it up for free. display:none above 900px keeps it out of the
+           accessibility tree there, so it is never announced twice. -->
+      <a href="contact.html" class="btn btn--outline btn--block nav-cta" data-i18n="header.cta">Get a Quote</a>
     </nav>
     <div class="header-actions">
       <div class="lang-switcher" id="lang-switcher">
@@ -58,7 +65,7 @@
 </header>
 
 <section class="page-hero">
-  <div class="hero-bg" style="background-image:url('assets/img/farm-tractor.jpg');"></div>
+  <div class="hero-bg" data-hero="tractor"></div>
   <div class="container">
     <p class="breadcrumb"><a href="index.html" style="color:inherit;" data-i18n="nav.home">Home</a> / <span data-i18n="nav.services">Services</span></p>
     <p class="eyebrow" data-i18n="services.hero.eyebrow">Our Solutions</p>
@@ -138,7 +145,7 @@
         </ul>
       </div>
       <div class="split-media">
-        <img data-image-key="split.services_capacity" src="assets/img/wheat-wide.jpg" alt="Wheat grain, raw material for production" loading="lazy">
+        <img data-image-key="split.services_capacity" src="assets/img/wheat-wide.jpg" srcset="assets/img/wheat-wide-800w.jpg 800w, assets/img/wheat-wide.jpg 1400w" sizes="(max-width: 860px) calc(100vw - 32px), 600px" alt="Wheat grain, raw material for production" loading="lazy">
         <div class="split-badge">
           <div class="stat-num">4</div>
           <div class="stat-label" data-i18n="services.capacity.badgeLabel">Extrusion Lines</div>

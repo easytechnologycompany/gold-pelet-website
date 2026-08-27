@@ -282,7 +282,11 @@ p { margin: 0; }
   display: flex;
   gap: var(--space-6);
 }
-.main-nav a {
+/* Scoped to the <ul> rather than the whole nav: .nav-cta below is an <a>
+   that is a direct child of .main-nav, and it needs .btn's own padding,
+   weight and color — a bare `.main-nav a` here would outrank .btn on
+   every one of those and flatten the button back into a text link. */
+.main-nav ul a {
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--ink-700);
@@ -290,11 +294,14 @@ p { margin: 0; }
   border-bottom: 2px solid transparent;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
-.main-nav a:hover,
-.main-nav a[aria-current="page"] {
+.main-nav ul a:hover,
+.main-nav ul a[aria-current="page"] {
   color: var(--green-700);
   border-color: var(--navy-600);
 }
+
+/* Shown only in the mobile menu panel — see the @media block below. */
+.nav-cta { display: none; }
 
 .header-actions { display: flex; align-items: center; gap: var(--space-4); }
 
@@ -398,7 +405,23 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
 @media (max-width: 900px) {
   .main-nav {
     position: fixed;
-    inset: 84px 0 0 0;
+    /* NOT `inset: 84px 0 0 0`. .site-header carries backdrop-filter,
+       which makes it the containing block for its own fixed-position
+       descendants — so a `bottom: 0` here resolved against the 84px-tall
+       header instead of the viewport, collapsing this panel to a 64px
+       sliver while its links spilled out below it with no background
+       behind them. Anchor to the header's bottom edge and state the
+       height explicitly so the panel's size never depends on which
+       ancestor happens to be the containing block.
+       dvh, so the panel doesn't run under mobile Safari's toolbar; the
+       vh line above it is the fallback for browsers without dvh. */
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: calc(100vh - 84px);
+    height: calc(100dvh - 84px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--surface);
     padding: var(--space-6) var(--space-5);
     transform: translateY(-8px);
@@ -408,7 +431,10 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   }
   .main-nav.is-open { opacity: 1; transform: translateY(0); visibility: visible; }
   .main-nav ul { flex-direction: column; gap: var(--space-2); }
-  .main-nav a { display: block; padding: var(--space-3) 0; font-size: 1.1rem; }
+  .main-nav ul a { display: block; padding: var(--space-3) 0; font-size: 1.1rem; }
+  .nav-cta { display: inline-flex; margin-top: var(--space-5); }
+  /* The header's own copy of this button; .nav-cta above replaces it
+     inside the menu panel, where there's room for it. */
   .header-actions .btn--outline { display: none; }
   .nav-toggle { display: flex; }
 }
@@ -428,6 +454,28 @@ html[dir="rtl"] .lang-switcher-menu { right: auto; left: 0; }
   background-size: cover;
   background-position: center;
   z-index: -2;
+}
+
+/* Each page's hero photo, keyed by a data-hero name on the element rather
+   than an inline style="background-image:...". A background can't carry
+   srcset, and an inline style can't be overridden by a media query — so
+   naming the slot here is what lets a phone fetch the narrow file and only
+   desktop pay for the wide one. Mobile-first on purpose: the small file is
+   the default and the big one is opt-in above 900px, so a phone never
+   requests the large image at all.
+   cms.js's applyPageHero() still sets .style.backgroundImage directly when
+   an admin has uploaded a hero, and that inline value deliberately wins
+   over everything here. */
+.hero-bg[data-hero="field"] { background-image: url('../assets/img/hero-field-800w.jpg'); }
+.hero-bg[data-hero="potatoes"] { background-image: url('../assets/img/potatoes-800w.jpg'); }
+.hero-bg[data-hero="wheat"] { background-image: url('../assets/img/wheat-wide-800w.jpg'); }
+/* No narrow variant: the source is already 750px / 85KB. */
+.hero-bg[data-hero="tractor"] { background-image: url('../assets/img/farm-tractor.jpg'); }
+
+@media (min-width: 901px) {
+  .hero-bg[data-hero="field"] { background-image: url('../assets/img/hero-field.jpg'); }
+  .hero-bg[data-hero="potatoes"] { background-image: url('../assets/img/potatoes.jpg'); }
+  .hero-bg[data-hero="wheat"] { background-image: url('../assets/img/wheat-wide.jpg'); }
 }
 .hero-bg::after {
   content: '';
@@ -890,6 +938,15 @@ html[dir="rtl"] .split-badge { right: auto; left: -22px; }
 .field select,
 .field textarea {
   font: inherit;
+  /* A form control's default intrinsic width (~20 characters, ~272px
+     here) is a *minimum* the browser will not shrink past on its own.
+     Inside a grid track, whose default `min-width: auto` refuses to go
+     below its content's min-content width, that floor propagated up
+     .field -> .form-grid -> .form-card and forced the whole two-column
+     .grid-2 wider than the phone viewport — 10px of sideways scroll on
+     the page that matters most. Letting the controls shrink removes the
+     floor at its source; they're width-constrained by the grid anyway. */
+  min-width: 0;
   padding: 12px 14px;
   border: 1.5px solid var(--line);
   border-radius: var(--radius-sm);
@@ -1569,4 +1626,50 @@ html[dir="rtl"] .custom-select-trigger { text-align: right; }
 .text-center { text-align: center; }
 .mt-7 { margin-top: var(--space-7); }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+/* Grid tracks default to `min-width: auto`, so one stubborn descendant
+   can push a track past its container instead of the track clamping it.
+   This makes the columns actually honor 1fr. */
+.grid-2 > * { min-width: 0; }
 @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   Touch targets
+   Keyed on the input device, not the breakpoint: a tablet in landscape
+   is wide enough to get the desktop layout but is still driven by a
+   finger, so a max-width query would miss exactly the case that needs
+   this most. Nothing here restyles anything — every rule only grows hit
+   area — so the design is untouched for mouse users.
+   Target is 44px (Apple HIG / WCAG 2.5.5 AAA); the AA floor, WCAG
+   2.5.8, is 24px, which the smallest controls here already cleared.
+   ============================================================ */
+@media (pointer: coarse) {
+  .nav-toggle { width: 44px; height: 44px; }
+
+  .lang-switcher-btn { min-height: 44px; min-width: 44px; justify-content: center; }
+  .lang-switcher-menu li { min-height: 44px; }
+
+  /* The RAW/FRIED pill was the worst offender at 30px, and it's a
+     signature interaction on every product card. Grow the padding
+     rather than the type — the small uppercase label is part of the
+     card's look, and .media-toggle-pill is sized in % so the sliding
+     pill follows without further change. */
+  .media-toggle-btn { padding: 13px 18px; }
+
+  /* Covers .request-sample-btn, which is .btn--sm at full width. */
+  .btn--sm { padding: 12px 16px; }
+
+  /* Footer link rows were 17px — the bare line box of the text. Pad
+     them into real rows; the li > * selector catches the address, which
+     is a <span> rather than a link, so the column keeps one rhythm. */
+  .footer-col ul { gap: 0; }
+  .footer-col li > * { display: block; padding: 14px 0; }
+
+  .footer-social a { width: 44px; height: 44px; }
+
+  /* The contact cards' mailto:/tel: links are the whole point of that
+     section on a phone — tap to call, tap to mail — and they were the
+     smallest targets on the site at 15-24px. */
+  .info-card a { display: block; padding: 11px 0; }
+
+  .breadcrumb a { display: inline-block; padding: 14px 0; }
+}
