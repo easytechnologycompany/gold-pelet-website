@@ -13,9 +13,29 @@ export type IconId = 'i-chev' | 'i-check' | 'i-cert' | 'i-leaf' | 'i-scan' | 'i-
  * grid never leaves a dead cell (a bug found and fixed in the design session).
  */
 export type BentoCell =
-  | { kind: 'num'; cls: string; num: string; cap: Str; p: Str }
+  | {
+      kind: 'num'
+      cls: string
+      num: string
+      cap: Str
+      p: Str
+      /** When set, the live value for this `stat_key` replaces `num`. The
+       *  designed figure stays as the fallback — see CLAUDE.md §4, which
+       *  marks every number on this page as a placeholder awaiting real
+       *  data. Cells without a CMS counterpart simply omit this. */
+      statKey?: string
+    }
   | { kind: 'art'; cls: string; glyph: GlyphId; h: Str; p: Str }
-  | { kind: 'ico'; cls: string; icon: IconId; h: Str; p: Str }
+  | {
+      kind: 'ico'
+      cls: string
+      icon: IconId
+      h: Str
+      p: Str
+      /** When true, the heading is built from the live certifications list
+       *  instead of the designed string. */
+      fromCertifications?: boolean
+    }
 
 export const bento: BentoCell[] = [
   {
@@ -51,6 +71,7 @@ export const bento: BentoCell[] = [
     kind: 'num',
     cls: 'w2',
     num: '14t',
+    statKey: 'daily_capacity',
     cap: { en: 'Daily capacity', ar: 'الطاقة اليومية', ku: 'توانای ڕۆژانە', tr: 'Günlük kapasite' },
     p: {
       en: 'Three lines, single shift, with headroom for a second.',
@@ -63,6 +84,7 @@ export const bento: BentoCell[] = [
     kind: 'ico',
     cls: 'w2',
     icon: 'i-cert',
+    fromCertifications: true,
     h: {
       en: 'ISO 22000 · HACCP',
       ar: 'آيزو ٢٢٠٠٠ · هاسب',
