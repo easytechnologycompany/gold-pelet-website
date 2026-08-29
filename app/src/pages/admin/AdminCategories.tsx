@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 import type { Category } from '@/lib/api'
 import { draftFrom, emptyDraft, getToken, type CategoryDraft } from '@/lib/admin'
 import { useAdminCategories } from '@/lib/admin-store'
-import { useAdminT } from '@/lib/admin-i18n'
+import { useAdminLower, useAdminT } from '@/lib/admin-i18n'
 
 /**
  * Product categories — the Products page's groupings (Potato Pellets, Wheat
@@ -39,6 +39,7 @@ function StatusBadge({ active, t }: { active: boolean; t: Translate }) {
 export function AdminCategories() {
   const navigate = useNavigate()
   const t = useAdminT()
+  const lower = useAdminLower()
 
   const categories = useAdminCategories((s) => s.categories)
   const status = useAdminCategories((s) => s.status)
@@ -279,7 +280,7 @@ export function AdminCategories() {
             />
             {slugTaken && (
               <span className="field-error" id="cat-slug-error">
-                {t('categories.slugTaken')}
+                {t('crud.slugTaken', { item: lower(resource) })}
               </span>
             )}
           </div>
@@ -350,7 +351,7 @@ export function AdminCategories() {
               it instead, where it is also easier to scan. */}
           <p className="admin-confirm-name">{confirming?.name}</p>
           <p className="admin-confirm-text">
-            {t('crud.deleteConfirm', { item: resource.toLocaleLowerCase() })}
+            {t('crud.deleteConfirm', { item: lower(resource) })}
           </p>
           <div className="admin-modal-actions">
             <Button variant="ghost" onClick={() => setConfirming(null)} disabled={deleting}>

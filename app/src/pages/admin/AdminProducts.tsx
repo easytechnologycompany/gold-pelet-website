@@ -14,7 +14,7 @@ import {
   type ProductDraft,
 } from '@/lib/admin'
 import { useAdminProducts } from '@/lib/admin-products-store'
-import { useAdminT } from '@/lib/admin-i18n'
+import { useAdminLower, useAdminT } from '@/lib/admin-i18n'
 
 /**
  * The product catalogue — every item on the Products page, with its category,
@@ -47,6 +47,7 @@ function StatusBadge({ active, t }: { active: boolean; t: Translate }) {
 export function AdminProducts() {
   const navigate = useNavigate()
   const t = useAdminT()
+  const lower = useAdminLower()
 
   const products = useAdminProducts((s) => s.products)
   const categories = useAdminProducts((s) => s.categories)
@@ -366,7 +367,7 @@ export function AdminProducts() {
               />
               {slugTaken && (
                 <span className="field-error" id="product-slug-error">
-                  {t('categories.slugTaken')}
+                  {t('crud.slugTaken', { item: lower(resource) })}
                 </span>
               )}
             </div>
@@ -496,7 +497,7 @@ export function AdminProducts() {
               it instead, where it is also easier to scan. */}
           <p className="admin-confirm-name">{confirming?.name}</p>
           <p className="admin-confirm-text">
-            {t('crud.deleteConfirm', { item: resource.toLocaleLowerCase() })}
+            {t('crud.deleteConfirm', { item: lower(resource) })}
           </p>
           <div className="admin-modal-actions">
             <Button variant="ghost" onClick={() => setConfirming(null)} disabled={deleting}>

@@ -447,3 +447,18 @@
   font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em;
   color: var(--fg); margin-bottom: .4rem;
 }
+
+/* Figures line up in a column, and read as values rather than prose. */
+.admin-num { font-variant-numeric: tabular-nums; font-weight: 650; }
+.admin-stat-unit { margin-inline-start: .15rem; color: var(--fg-3); font-size: var(--t-body); font-weight: 600; }
+
+/* A consequence the operator should see before saving, not an error: the
+   field is still valid, the effect is elsewhere. */
+.admin-field-warning {
+  display: block;
+  padding: .55rem .7rem; border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  font-size: var(--t-small); font-weight: 600; line-height: 1.5;
+  color: var(--fg);
+}

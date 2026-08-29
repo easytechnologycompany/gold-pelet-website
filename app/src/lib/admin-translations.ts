@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 227, tr: 227).
+ * 2 locales (en: 230, tr: 230).
  * 0 key(s) fall back to English.
  */
 
@@ -195,6 +195,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "resource.product": "Product",
     "stats.field.key": "Key",
     "stats.field.keyHint": "Internal identifier, e.g. \"years_in_operation\" — not shown on the site.",
+    "stats.field.keyChanged": "Changing the key drops the Arabic, Kurdish and Turkish label for this stat until the translations are updated to match.",
     "stats.field.label": "Label (shown under the number)",
     "stats.field.unitSuffix": "Unit suffix (e.g. \"+ yrs\", \"%\", \"+\")",
     "timeline.field.year": "Year (or \"Today\")",
@@ -203,6 +204,8 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "certifications.field.iconHint": "shield-check / shield-tick / circle-check / document-check",
     "categories.field.slugHint": "Slug (URL-friendly, e.g. \"potato\")",
     "categories.slugTaken": "Another category already uses this slug.",
+    "crud.slugTaken": "Another {item} already uses this slug.",
+    "crud.keyTaken": "Another {item} already uses this key.",
     "news.field.dateLabel": "Date label (e.g. \"March 2026\" or \"Upcoming · March 2026\")",
     "news.field.featuredCheckbox": "Featured (shown as the large top card)",
     "news.field.photo": "Photo",
@@ -424,6 +427,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "resource.product": "Ürün",
     "stats.field.key": "Anahtar",
     "stats.field.keyHint": "Dahili tanımlayıcı, örn. \"years_in_operation\" — sitede gösterilmez.",
+    "stats.field.keyChanged": "Anahtarı değiştirmek, çeviriler güncellenene kadar bu istatistiğin Arapça, Kürtçe ve Türkçe etiketini düşürür.",
     "stats.field.label": "Etiket (sayının altında gösterilir)",
     "stats.field.unitSuffix": "Birim eki (örn. \"+ yıl\", \"%\", \"+\")",
     "timeline.field.year": "Yıl (veya \"Bugün\")",
@@ -432,6 +436,8 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "certifications.field.iconHint": "shield-check / shield-tick / circle-check / document-check",
     "categories.field.slugHint": "Slug (URL uyumlu, örn. \"potato\")",
     "categories.slugTaken": "Bu slug başka bir kategori tarafından kullanılıyor.",
+    "crud.slugTaken": "Bu slug başka bir {item} tarafından kullanılıyor.",
+    "crud.keyTaken": "Bu anahtar başka bir {item} tarafından kullanılıyor.",
     "news.field.dateLabel": "Tarih etiketi (örn. \"Mart 2026\" veya \"Yakında · Mart 2026\")",
     "news.field.featuredCheckbox": "Öne çıkan (büyük üst kart olarak gösterilir)",
     "news.field.photo": "Fotoğraf",

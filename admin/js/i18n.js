@@ -200,6 +200,7 @@ const ADMIN_TRANSLATIONS = {
 
     'stats.field.key': 'Key',
     'stats.field.keyHint': 'Internal identifier, e.g. "years_in_operation" — not shown on the site.',
+    'stats.field.keyChanged': 'Changing the key drops the Arabic, Kurdish and Turkish label for this stat until the translations are updated to match.',
     'stats.field.label': 'Label (shown under the number)',
     'stats.field.unitSuffix': 'Unit suffix (e.g. "+ yrs", "%", "+")',
 
@@ -211,6 +212,8 @@ const ADMIN_TRANSLATIONS = {
 
     'categories.field.slugHint': 'Slug (URL-friendly, e.g. "potato")',
     'categories.slugTaken': 'Another category already uses this slug.',
+    'crud.slugTaken': 'Another {item} already uses this slug.',
+    'crud.keyTaken': 'Another {item} already uses this key.',
 
     'news.field.dateLabel': 'Date label (e.g. "March 2026" or "Upcoming · March 2026")',
     'news.field.featuredCheckbox': 'Featured (shown as the large top card)',
@@ -448,6 +451,7 @@ const ADMIN_TRANSLATIONS = {
 
     'stats.field.key': 'Anahtar',
     'stats.field.keyHint': 'Dahili tanımlayıcı, örn. "years_in_operation" — sitede gösterilmez.',
+    'stats.field.keyChanged': 'Anahtarı değiştirmek, çeviriler güncellenene kadar bu istatistiğin Arapça, Kürtçe ve Türkçe etiketini düşürür.',
     'stats.field.label': 'Etiket (sayının altında gösterilir)',
     'stats.field.unitSuffix': 'Birim eki (örn. "+ yıl", "%", "+")',
 
@@ -459,6 +463,8 @@ const ADMIN_TRANSLATIONS = {
 
     'categories.field.slugHint': 'Slug (URL uyumlu, örn. "potato")',
     'categories.slugTaken': 'Bu slug başka bir kategori tarafından kullanılıyor.',
+    'crud.slugTaken': 'Bu slug başka bir {item} tarafından kullanılıyor.',
+    'crud.keyTaken': 'Bu anahtar başka bir {item} tarafından kullanılıyor.',
 
     'news.field.dateLabel': 'Tarih etiketi (örn. "Mart 2026" veya "Yakında · Mart 2026")',
     'news.field.featuredCheckbox': 'Öne çıkan (büyük üst kart olarak gösterilir)',

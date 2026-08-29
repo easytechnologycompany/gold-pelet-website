@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { useCms } from '@/lib/cms'
 import { Chrome } from '@/components/layout/Chrome'
@@ -17,10 +17,27 @@ import { News } from '@/pages/News'
 import { NotFound } from '@/pages/NotFound'
 import { Products } from '@/pages/Products'
 import { Services } from '@/pages/Services'
-import { AdminCategories } from '@/pages/admin/AdminCategories'
-import { AdminNews } from '@/pages/admin/AdminNews'
-import { AdminProducts } from '@/pages/admin/AdminProducts'
-import { AdminLogin } from '@/pages/admin/AdminLogin'
+
+/**
+ * The admin is lazy-loaded, and that is the point: it is roughly a third of
+ * the source and no public visitor can use a byte of it. Bundled eagerly it
+ * pushed the single chunk past 500kB, which every reader of the marketing
+ * site would have paid for. Each screen now arrives only once someone
+ * actually navigates to it.
+ */
+const AdminCategories = lazy(() =>
+  import('@/pages/admin/AdminCategories').then((m) => ({ default: m.AdminCategories })),
+)
+const AdminLogin = lazy(() =>
+  import('@/pages/admin/AdminLogin').then((m) => ({ default: m.AdminLogin })),
+)
+const AdminNews = lazy(() => import('@/pages/admin/AdminNews').then((m) => ({ default: m.AdminNews })))
+const AdminProducts = lazy(() =>
+  import('@/pages/admin/AdminProducts').then((m) => ({ default: m.AdminProducts })),
+)
+const AdminStats = lazy(() =>
+  import('@/pages/admin/AdminStats').then((m) => ({ default: m.AdminStats })),
+)
 
 /**
  * The public site: header, footer, head metadata and smoothed scrolling.
@@ -43,6 +60,19 @@ function PublicLayout() {
       <Outlet />
       <Footer />
     </>
+  )
+}
+
+/**
+ * One boundary for every admin screen. The fallback is deliberately bare: the
+ * chunk is small and local, so a spinner would flash rather than inform, and
+ * each screen renders its own skeleton once it mounts.
+ */
+function AdminChunk() {
+  return (
+    <Suspense fallback={<div className="admin" />}>
+      <Outlet />
+    </Suspense>
   )
 }
 
@@ -76,13 +106,16 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
 
-          {/* Admin. Authenticated, English-only and noindex by nature — it is
-              a tool, not a page of the site. */}
-          <Route path="/admin" element={<Navigate to="/admin/categories" replace />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/categories" element={<AdminCategories />} />
-          <Route path="/admin/products" element={<AdminProducts />} />
-          <Route path="/admin/news" element={<AdminNews />} />
+          {/* Admin. Authenticated and noindex by nature — a tool, not a page
+              of the site, and code-split for the same reason. */}
+          <Route element={<AdminChunk />}>
+            <Route path="/admin" element={<Navigate to="/admin/categories" replace />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/news" element={<AdminNews />} />
+            <Route path="/admin/stats" element={<AdminStats />} />
+          </Route>
         </Routes>
       </LocaleProvider>
     </ThemeProvider>
