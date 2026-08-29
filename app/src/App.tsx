@@ -59,6 +59,9 @@ const AdminBranding = lazy(() =>
 const AdminEnquiries = lazy(() =>
   import('@/pages/admin/AdminEnquiries').then((m) => ({ default: m.AdminEnquiries })),
 )
+const AdminOverview = lazy(() =>
+  import('@/pages/admin/AdminOverview').then((m) => ({ default: m.AdminOverview })),
+)
 
 /**
  * The public site: header, footer, head metadata and smoothed scrolling.
@@ -130,7 +133,7 @@ export default function App() {
           {/* Admin. Authenticated and noindex by nature — a tool, not a page
               of the site, and code-split for the same reason. */}
           <Route element={<AdminChunk />}>
-            <Route path="/admin" element={<Navigate to="/admin/categories" replace />} />
+            <Route path="/admin" element={<Navigate to="/admin/overview" replace />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/products" element={<AdminProducts />} />
@@ -143,6 +146,7 @@ export default function App() {
             <Route path="/admin/images" element={<AdminImages />} />
             <Route path="/admin/branding" element={<AdminBranding />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
+            <Route path="/admin/overview" element={<AdminOverview />} />
           </Route>
         </Routes>
       </LocaleProvider>

@@ -1061,3 +1061,70 @@ export async function deleteEnquiry(id: string, filter: EnquiryStatus | ''): Pro
   }
   return filter ? all.filter((e) => e.status === filter) : all
 }
+
+// ---------------- overview ----------------
+
+export type Overview = {
+  newEnquiries: number
+  products: number
+  news: number
+  certifications: number
+  /** Most recent first, capped by the caller. */
+  recent: Enquiry[]
+}
+
+/**
+ * Everything the dashboard shows, in one pass.
+ *
+ * Four requests, not the old page's five. It asked for
+ * `/admin/enquiries?status=new` to count them and then fetched the full list
+ * again for the recent rows; the full list already contains the new ones, so
+ * the count is derived from it. That also makes the two agree: taken from two
+ * separate requests, a submission arriving between them would leave the tile
+ * and the table telling different stories.
+ *
+ * `Promise.allSettled`, because a dashboard is a summary — one endpoint being
+ * down should cost that number, not the page. Each failure is reported so the
+ * tile can say it is unknown rather than show a confident zero.
+ */
+export async function getOverview(
+  recentLimit: number,
+  signal?: AbortSignal,
+): Promise<{ overview: Partial<Overview>; failed: string[] }> {
+  const [enquiries, products, news, certifications] = await Promise.allSettled([
+    listEnquiries('', signal),
+    listProducts(signal),
+    listNews(signal),
+    listCertifications(signal),
+  ])
+
+  // A 401 anywhere means the session is gone, and that outranks any partial
+  // result: the caller has to route to sign-in rather than render a page of
+  // unknowns.
+  for (const result of [enquiries, products, news, certifications]) {
+    if (result.status === 'rejected' && result.reason instanceof UnauthorizedError) {
+      throw result.reason
+    }
+  }
+
+  const overview: Partial<Overview> = {}
+  const failed: string[] = []
+
+  if (enquiries.status === 'fulfilled') {
+    overview.newEnquiries = enquiries.value.filter((e) => e.status === 'new').length
+    overview.recent = enquiries.value.slice(0, recentLimit)
+  } else {
+    failed.push('enquiries')
+  }
+
+  if (products.status === 'fulfilled') overview.products = products.value.length
+  else failed.push('products')
+
+  if (news.status === 'fulfilled') overview.news = news.value.length
+  else failed.push('news')
+
+  if (certifications.status === 'fulfilled') overview.certifications = certifications.value.length
+  else failed.push('certifications')
+
+  return { overview, failed }
+}

@@ -26,7 +26,7 @@ export function AdminLogin() {
 
   // Already signed in: skip the form rather than asking again.
   useEffect(() => {
-    if (getToken()) navigate('/admin/categories', { replace: true })
+    if (getToken()) navigate('/admin/overview', { replace: true })
   }, [navigate])
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -36,7 +36,7 @@ export function AdminLogin() {
     setError('')
     try {
       await login(email.trim(), password)
-      navigate('/admin/categories', { replace: true })
+      navigate('/admin/overview', { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : t('login.failed'))
     } finally {
