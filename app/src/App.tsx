@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { useCms } from '@/lib/cms'
 import { Chrome } from '@/components/layout/Chrome'
 import { Footer } from '@/components/layout/Footer'
@@ -17,6 +17,32 @@ import { News } from '@/pages/News'
 import { NotFound } from '@/pages/NotFound'
 import { Products } from '@/pages/Products'
 import { Services } from '@/pages/Services'
+import { AdminCategories } from '@/pages/admin/AdminCategories'
+import { AdminLogin } from '@/pages/admin/AdminLogin'
+
+/**
+ * The public site: header, footer, head metadata and smoothed scrolling.
+ *
+ * These sit in a layout route rather than around <Routes> so the admin
+ * screens can opt out of all four. The marketing header over a data table
+ * would be wrong on its own, but Seo and SmoothScroll are the ones that would
+ * actually misbehave: Seo maps an unrouted path to the 404 title, and Lenis
+ * keeps scrolling the page underneath an open dialog.
+ */
+function PublicLayout() {
+  return (
+    <>
+      <SmoothScroll />
+      {/* Head metadata for the active route and locale, and the
+          Organization block built from the CMS's contact record. */}
+      <Seo />
+      <StructuredData />
+      <Chrome />
+      <Outlet />
+      <Footer />
+    </>
+  )
+}
 
 export default function App() {
   const hydrate = useCms((s) => s.hydrate)
@@ -31,28 +57,29 @@ export default function App() {
   return (
     <ThemeProvider>
       <LocaleProvider>
-        <SmoothScroll />
         <RouteScroll />
-        {/* Head metadata for the active route and locale, and the
-            Organization block built from the CMS's contact record. */}
-        <Seo />
-        <StructuredData />
         {/* Rendered once; every `<use href="#id">` on the page resolves here. */}
         <Sprite />
-        <Chrome />
-        {/* The six pages the finished site publishes, in the same order
-            as the header nav. Each reads its content from the live CMS
-            through the translation overlay — see lib/overlay.ts. */}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<NotFound />} />
+          {/* The six pages the finished site publishes, in the same order
+              as the header nav. Each reads its content from the live CMS
+              through the translation overlay — see lib/overlay.ts. */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+
+          {/* Admin. Authenticated, English-only and noindex by nature — it is
+              a tool, not a page of the site. */}
+          <Route path="/admin" element={<Navigate to="/admin/categories" replace />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/categories" element={<AdminCategories />} />
         </Routes>
-        <Footer />
       </LocaleProvider>
     </ThemeProvider>
   )
