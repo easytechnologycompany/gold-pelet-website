@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Minus, Plus } from 'lucide-react'
+import { useMemo, useState, type ReactNode } from 'react'
+import { ChevronDown, Minus, Plus } from 'lucide-react'
 import { Reveal } from '@/components/motion/Reveal'
 import { ButtonRoute } from '@/components/ui/Button'
 import {
@@ -71,6 +71,8 @@ export function LoadCalculator() {
     : ''
 
   const dash = '—'
+  const number = (n: number) =>
+    new Intl.NumberFormat(locale === 'en' ? 'en-US' : locale).format(n)
 
   return (
     <section className="section bay" id="load-calculator">
@@ -88,43 +90,32 @@ export function LoadCalculator() {
 
       <Reveal className="calc" delay={160}>
         <div className="calc-grid">
-          <div className="field">
-            <label htmlFor="calc-category">{tk('products.calc.productLine')}</label>
-            <select
-              id="calc-category"
-              value={densityKgM3}
-              onChange={(e) => setDensity(Number(e.target.value))}
-            >
+          <Field id="calc-category" label={tk('products.calc.productLine')}>
+            <Select id="calc-category" value={densityKgM3} onChange={(v) => setDensity(Number(v))}>
               {PRODUCT_LINES.map((l) => (
                 <option key={l.densityKgM3} value={l.densityKgM3}>
                   {tk(l.labelKey)}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Field>
 
-          <div className="field">
-            <label htmlFor="calc-packaging">{tk('products.calc.packagingFormat')}</label>
-            <select
-              id="calc-packaging"
-              value={bagKg}
-              onChange={(e) => setBagKg(Number(e.target.value))}
-            >
+          <Field id="calc-packaging" label={tk('products.calc.packagingFormat')}>
+            <Select id="calc-packaging" value={bagKg} onChange={(v) => setBagKg(Number(v))}>
               {PACKAGING.map((p) => (
                 <option key={p.bagKg} value={p.bagKg}>
                   {tk(p.labelKey)}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Field>
 
-          <div className="field">
-            <label htmlFor="calc-quantity">{tk('products.calc.orderQuantity')}</label>
-            <div className="calc-qty-row">
-              <div className="calc-qty-stepper">
+          <Field id="calc-quantity" label={tk('products.calc.orderQuantity')}>
+            <div className="qty-row">
+              <div className="qty">
                 <button
                   type="button"
-                  className="calc-qty-btn"
+                  className="qty-btn"
                   aria-label={tk('products.calc.decreaseQty')}
                   onClick={() => step(-1)}
                 >
@@ -141,41 +132,49 @@ export function LoadCalculator() {
                 />
                 <button
                   type="button"
-                  className="calc-qty-btn"
+                  className="qty-btn"
                   aria-label={tk('products.calc.increaseQty')}
                   onClick={() => step(1)}
                 >
                   <Plus size={16} aria-hidden="true" />
                 </button>
               </div>
-              <select value={multiplier} onChange={(e) => setMultiplier(Number(e.target.value))}>
-                {UNITS.map((u) => (
-                  <option key={u.multiplier} value={u.multiplier}>
-                    {tk(u.labelKey)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
 
-          <div className="field">
-            <label htmlFor="calc-container">{tk('products.calc.containerTypeLabel')}</label>
-            <select
+              {/* Two options, so both stay visible instead of hiding behind a
+                  dropdown. State is the multiplier, never the label. */}
+              <div className="seg" role="group" aria-label={tk('products.calc.orderQuantity')}>
+                {UNITS.map((u) => (
+                  <button
+                    key={u.multiplier}
+                    type="button"
+                    className={multiplier === u.multiplier ? 'is-active' : undefined}
+                    aria-pressed={multiplier === u.multiplier}
+                    onClick={() => setMultiplier(u.multiplier)}
+                  >
+                    {tk(u.labelKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Field>
+
+          <Field id="calc-container" label={tk('products.calc.containerTypeLabel')}>
+            <Select
               id="calc-container"
               value={containerId}
-              onChange={(e) => setContainerId(e.target.value as ContainerId)}
+              onChange={(v) => setContainerId(v as ContainerId)}
             >
               {(Object.keys(CONTAINERS) as ContainerId[]).map((id) => (
                 <option key={id} value={id}>
                   {tk(CONTAINERS[id].labelKey)}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Field>
         </div>
 
         <div className="calc-out">
-          <div className="calc-stat">
+          <div className="calc-stat lead">
             <span className="cap">{tk('products.calc.containersNeeded')}</span>
             <strong>
               {result
@@ -194,9 +193,7 @@ export function LoadCalculator() {
             <span className="cap">
               {tk('products.calc.unitsTotal', { unit: tk(packaging.unitLabelKey) })}
             </span>
-            <strong>
-              {result ? new Intl.NumberFormat(locale === 'en' ? 'en-US' : locale).format(result.totalUnits) : dash}
-            </strong>
+            <strong>{result ? number(result.totalUnits) : dash}</strong>
           </div>
           <div className="calc-stat">
             <span className="cap">{tk('products.calc.lastFill')}</span>
@@ -220,5 +217,41 @@ export function LoadCalculator() {
         </div>
       </Reveal>
     </section>
+  )
+}
+
+function Field({ id, label, children }: { id: string; label: string; children: ReactNode }) {
+  return (
+    <div className="calc-field">
+      <label htmlFor={id}>{label}</label>
+      {children}
+    </div>
+  )
+}
+
+/**
+ * A select with the OS chevron replaced by our own, so the control matches the
+ * rest of the system. The native `<select>` is kept — its menu is the one the
+ * platform already makes accessible, and on a phone that is the wheel picker a
+ * custom listbox would have to reimplement badly.
+ */
+function Select({
+  id,
+  value,
+  onChange,
+  children,
+}: {
+  id: string
+  value: string | number
+  onChange: (value: string) => void
+  children: ReactNode
+}) {
+  return (
+    <div className="pick">
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+        {children}
+      </select>
+      <ChevronDown className="chev" size={18} aria-hidden="true" />
+    </div>
   )
 }
