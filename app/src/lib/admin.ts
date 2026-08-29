@@ -7,6 +7,7 @@ import type {
   Milestone,
   NewsItem,
   PageHero,
+  SiteImage,
   Stat,
 } from './api'
 
@@ -921,4 +922,35 @@ export async function saveContent(
   }
 
   return { list, report }
+}
+
+// ---------------- site images ----------------
+
+export const listSiteImages = (signal?: AbortSignal) =>
+  adminFetch<{ data: SiteImage[] }>('/admin/site-images', { signal }).then((r) => r?.data ?? [])
+
+/**
+ * Points one slot at a new file and confirms it stuck.
+ *
+ * The slots are fixed: ten of them, each with a key and a label, and the only
+ * thing an operator can change is which upload a slot points at. So there is
+ * no create and no delete here, only this.
+ *
+ * The re-read is the same rule as everywhere else in this client, and it
+ * matters more here than most: the card shows the new photo the moment the
+ * upload returns, so without a check a slot that failed to save would sit
+ * there looking exactly like one that had, until someone reloaded.
+ */
+export async function updateSiteImage(key: string, imageUrl: string): Promise<SiteImage[]> {
+  await adminFetch<SiteImage>(`/admin/site-images/${encodeURIComponent(key)}`, {
+    method: 'PUT',
+    body: { image_url: imageUrl },
+  })
+  const list = await listSiteImages()
+  const stored = list.find((image) => image.image_key === key)
+  if (!stored) throw new AdminError('The image slot disappeared after saving. Reload and check.')
+  if ((stored.image_url ?? '') !== imageUrl) {
+    throw new AdminError('The server accepted the image but did not save it. The slot is unchanged.')
+  }
+  return list
 }
