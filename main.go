@@ -1,9 +1,14 @@
-// Gold Pelet frontend service — serves the public static site at / and
-// the admin dashboard at /admin, as two plain multi-page HTML sites (no
-// SPA routing needed). This is a separate Railway service from the Go API
-// backend; the split exists purely for hosting, not application logic —
-// every admin page talks to the API backend cross-origin via its own
-// explicit BACKEND_ORIGIN (see admin/js/api.js), not through this server.
+// Gold Pelet frontend service — serves the public static site at /, as a
+// plain multi-page HTML site (no SPA routing needed). This is a separate
+// Railway service from the Go API backend; the split exists purely for
+// hosting, not application logic.
+//
+// It used to serve the admin dashboard at /admin as well. That dashboard has
+// been rebuilt in the React app (app/src/pages/admin) and is served from
+// there, so this no longer ships it. The original files stay in admin/ as the
+// reference the port was made from, and because app/scripts/
+// sync-admin-translations.mjs still reads admin/js/i18n.js as the source of
+// the admin dictionary — they are simply no longer deployed.
 package main
 
 import (
@@ -17,7 +22,7 @@ import (
 // server's own source — block direct requests for the build/source files
 // that happen to live alongside the HTML rather than moving the whole
 // site into a public/ subdirectory just to avoid this.
-var denyPrefixes = []string{"/main.go", "/go.mod", "/go.sum", "/Dockerfile", "/.git", "/.gitignore", "/railway.json"}
+var denyPrefixes = []string{"/main.go", "/go.mod", "/go.sum", "/Dockerfile", "/.git", "/.gitignore", "/railway.json", "/admin", "/app"}
 
 func denyBuildFiles(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +51,6 @@ func noCache(next http.Handler) http.Handler {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.Handle("/admin/", noCache(http.StripPrefix("/admin/", http.FileServer(http.Dir("./admin")))))
 	mux.Handle("/", noCache(denyBuildFiles(http.FileServer(http.Dir(".")))))
 
 	port := os.Getenv("PORT")

@@ -15,6 +15,5 @@ COPY index.html about.html services.html products.html contact.html news.html ./
 COPY css ./css
 COPY js ./js
 COPY assets ./assets
-COPY admin ./admin
 EXPOSE 8123
 CMD ["./frontend"]
