@@ -1,6 +1,7 @@
 import { API_BASE } from './api'
 import type {
   ApiProduct,
+  Branding,
   Category,
   Certification,
   ContentEntry,
@@ -953,4 +954,59 @@ export async function updateSiteImage(key: string, imageUrl: string): Promise<Si
     throw new AdminError('The server accepted the image but did not save it. The slot is unchanged.')
   }
   return list
+}
+
+// ---------------- branding ----------------
+
+/** The single branding record: four brand colours and the logo. */
+export type BrandingDraft = {
+  primary_hex: string
+  primary_dark_hex: string
+  primary_light_hex: string
+  accent_navy_hex: string
+  logo_url: string
+}
+
+export const BRANDING_COLOURS = [
+  'primary_hex',
+  'primary_dark_hex',
+  'primary_light_hex',
+  'accent_navy_hex',
+] as const
+
+export const brandingDraftFrom = (b: Branding | null | undefined): BrandingDraft => ({
+  // The old page fell back to #000000 for a missing colour, so the picker had
+  // something valid to show rather than an empty value it would reject.
+  primary_hex: b?.primary_hex || '#000000',
+  primary_dark_hex: b?.primary_dark_hex || '#000000',
+  primary_light_hex: b?.primary_light_hex || '#000000',
+  accent_navy_hex: b?.accent_navy_hex || '#000000',
+  logo_url: b?.logo_url ?? '',
+})
+
+export const getBranding = (signal?: AbortSignal) =>
+  adminFetch<Branding>('/admin/branding', { signal })
+
+/**
+ * PUT the whole record, then re-read and confirm.
+ *
+ * Whole record because the endpoint takes one: there is a single row, and a
+ * partial body would blank whatever it omitted. Both callers therefore send
+ * every field — the colour form sends the logo it loaded, and the logo
+ * upload sends the colours it loaded — which is also why the draft is held in
+ * state rather than, as the old page did, scraped back out of the preview
+ * image's `src` at submit time. A preview that had not loaded yielded an
+ * empty string there, and saving colours would then clear the logo.
+ */
+export async function updateBranding(draft: BrandingDraft): Promise<Branding> {
+  await adminFetch<Branding>('/admin/branding', { method: 'PUT', body: draft })
+  const stored = await getBranding()
+  if (!stored) throw new AdminError('The branding record disappeared after saving. Reload and check.')
+  const mismatch =
+    BRANDING_COLOURS.some((key) => (stored[key] ?? '') !== draft[key]) ||
+    (stored.logo_url ?? '') !== draft.logo_url
+  if (mismatch) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return stored
 }

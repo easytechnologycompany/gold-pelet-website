@@ -25,6 +25,7 @@ import { useAdminHead } from './useAdminHead'
 
 /** Ported admin pages, in the old sidebar's Catalog order. */
 const NAV = [
+  { to: '/admin/branding', key: 'nav.branding' },
   { to: '/admin/heroes', key: 'nav.heroes' },
   { to: '/admin/content', key: 'nav.content' },
   { to: '/admin/images', key: 'nav.siteImages' },
