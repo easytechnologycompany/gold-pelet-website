@@ -512,6 +512,16 @@ header.chrome .inner {
   background: linear-gradient(178deg, var(--fg), color-mix(in srgb, var(--fg) 55%, var(--bg-2)));
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
+  /* Same clipping as the headings above, and the worst case on the site:
+     line-height .92 against 1.0em of ink put the descenders 10.6px outside
+     the box at 64px, and this scales to --t-mega's 11rem ceiling. Wants more
+     room than the 0.2em the headings take, for the tighter leading. */
+  padding-block: 0.26em;
+  margin-block: -0.26em;
+  /* and the same inline allowance the headings take, for the same reason:
+     the -0.05em tracking pulls the last glyph's ink past its advance. */
+  padding-inline: 0.06em;
+  margin-inline: -0.06em;
 }
 .statement .sub { margin-top: 1.1rem; }
 
@@ -1213,6 +1223,53 @@ h3 {
   color: transparent;
   width: max-content;
   max-width: 100%;
+}
+
+/* Ink room for the clip.
+
+   A background only paints inside its own element's box, and the rule above
+   clips that background to the glyphs -- so any ink falling outside the box
+   is never painted and the letter renders sliced off. Leading this tight
+   guarantees it. Latin ink at 800 weight measures a full 1.0em; h1 sets
+   line-height 1.04 and h2 1.06, which leaves under a pixel of room, and the
+   part that does not fit is the descender. Measured on the home page at 800
+   weight, the last line's descenders fell outside the box by 5.1px on h1,
+   3.0px on h2 and 1.5px on h3: 18 of the 29 gradient headings were losing
+   part of a g, y or p. Horizontally the overhang is smaller but real, up to
+   1.0px past the advance width, which shaves the edge of the last glyph --
+   the negative tracking these headings carry pulls ink past it.
+
+   The leading is not the bug and is not what changes here. Opening h1 to the
+   ~1.28 its ink actually needs would fix the clip and give a different-
+   looking page; the tight display leading is the design. What was wrong is
+   the size of the box the gradient is allowed to paint into, so that is what
+   grows. Padding enlarges it and an equal negative margin takes the same
+   amount back off the margin box. Both values are em, so they scale with the
+   clamped font size and stay correct at every viewport without a second
+   breakpoint.
+
+   That compensation is exact for 24 of the 29 gradient headings on the home
+   page but not for all of them, so this is very nearly free rather than
+   actually free. Where a heading is the first or last child of its
+   container, its negative margin collapses with the container's own rather
+   than being absorbed by a sibling gap, and a few pixels escape. Measured,
+   the whole home page grows 15px against 7019 -- 0.2%, with no single
+   element moving more than 14.6px and no heading rewrapping. Worth stating
+   plainly: the alternative that leaks nothing is to leave the descenders
+   sliced off.
+
+   The inline half is deliberately left overridable: the centring rule below
+   sets `margin-inline: auto`, which drops the negative compensation, but the
+   padding is symmetric so the box stays centred and nothing moves. Where a
+   heading is not centred the negative margin holds its text to the same
+   start edge it had before. */
+h1,
+h2,
+h3 {
+  padding-block: 0.2em;
+  padding-inline: 0.06em;
+  margin-block: -0.2em;
+  margin-inline: -0.06em;
 }
 
 /* Every width-constrained text block inside a centred section centres its
