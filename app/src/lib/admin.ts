@@ -1,5 +1,5 @@
 import { API_BASE } from './api'
-import type { ApiProduct, Category, NewsItem } from './api'
+import type { ApiProduct, Category, NewsItem, Stat } from './api'
 
 /**
  * Admin API client — the authenticated half of the backend, ported from
@@ -477,6 +477,105 @@ export async function deleteNews(id: string): Promise<NewsItem[]> {
   const list = await listNews()
   if (list.some((n) => n.id === id)) {
     throw new AdminError('The server accepted the delete but the news item is still there.')
+  }
+  return list
+}
+
+// ---------------- stats ----------------
+
+/** The six fields admin/stats.html configures crud.js with. */
+export type StatDraft = {
+  stat_key: string
+  label: string
+  value_number: number
+  unit_suffix: string
+  sort_order: number
+  is_active: boolean
+}
+
+/** Matches the old page's `defaults: { is_active: true, sort_order: 0 }`. */
+export const emptyStatDraft = (): StatDraft => ({
+  stat_key: '',
+  label: '',
+  value_number: 0,
+  unit_suffix: '',
+  sort_order: 0,
+  is_active: true,
+})
+
+export const statDraftFrom = (s: Stat): StatDraft => ({
+  stat_key: s.stat_key,
+  label: s.label,
+  value_number: s.value_number,
+  unit_suffix: s.unit_suffix ?? '',
+  sort_order: s.sort_order,
+  is_active: s.is_active,
+})
+
+export const listStats = (signal?: AbortSignal) =>
+  adminFetch<{ data: Stat[] }>('/admin/stats', { signal }).then((r) => r?.data ?? [])
+
+const statPayload = (draft: StatDraft) => ({
+  stat_key: draft.stat_key.trim(),
+  label: draft.label.trim(),
+  value_number: draft.value_number,
+  unit_suffix: draft.unit_suffix.trim(),
+  sort_order: draft.sort_order,
+  is_active: draft.is_active,
+})
+
+/**
+ * `value_number` is compared exactly rather than with a tolerance. The field
+ * takes two decimals, and a backend that rounded 12.34 to 12.3 has changed
+ * the number the site displays — that is precisely the case the operator
+ * needs told about, not smoothed over.
+ */
+function matchesStatDraft(stored: Stat, draft: StatDraft): boolean {
+  const want = statPayload(draft)
+  return (
+    stored.stat_key === want.stat_key &&
+    stored.label === want.label &&
+    stored.value_number === want.value_number &&
+    (stored.unit_suffix ?? '') === want.unit_suffix &&
+    stored.sort_order === want.sort_order &&
+    stored.is_active === want.is_active
+  )
+}
+
+export async function createStat(draft: StatDraft): Promise<Stat[]> {
+  const created = await adminFetch<Stat>('/admin/stats', {
+    method: 'POST',
+    body: statPayload(draft),
+  })
+  const list = await listStats()
+  // stat_key is the unique key here, the way slug is for categories.
+  const stored =
+    list.find((s) => s.id === created?.id) ?? list.find((s) => s.stat_key === statPayload(draft).stat_key)
+  if (!stored) {
+    throw new AdminError('The server accepted the stat but it is not in the list. Nothing was saved.')
+  }
+  if (!matchesStatDraft(stored, draft)) {
+    throw new AdminError('The stat was created but saved with different values. Check the fields and try again.')
+  }
+  return list
+}
+
+export async function updateStat(id: string, draft: StatDraft): Promise<Stat[]> {
+  await adminFetch<Stat>(`/admin/stats/${id}`, { method: 'PUT', body: statPayload(draft) })
+  const list = await listStats()
+  const stored = list.find((s) => s.id === id)
+  if (!stored) throw new AdminError('The stat disappeared after saving. Reload and check the list.')
+  if (!matchesStatDraft(stored, draft)) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return list
+}
+
+export async function deleteStat(id: string): Promise<Stat[]> {
+  await adminFetch<void>(`/admin/stats/${id}`, { method: 'DELETE' })
+  const list = await listStats()
+  if (list.some((s) => s.id === id)) {
+    throw new AdminError('The server accepted the delete but the stat is still there.')
   }
   return list
 }

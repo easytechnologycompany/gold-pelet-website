@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { mediaURL, type NewsItem } from '@/lib/api'
 import { emptyNewsDraft, getToken, newsDraftFrom, uploadMedia, type NewsDraft } from '@/lib/admin'
 import { useAdminNews } from '@/lib/admin-news-store'
-import { useAdminT } from '@/lib/admin-i18n'
+import { useAdminLower, useAdminT } from '@/lib/admin-i18n'
 
 /**
  * Events & News — the cards on the public Events & News page.
@@ -36,6 +36,7 @@ function StatusBadge({ active, t }: { active: boolean; t: Translate }) {
 export function AdminNews() {
   const navigate = useNavigate()
   const t = useAdminT()
+  const lower = useAdminLower()
 
   const news = useAdminNews((s) => s.news)
   const status = useAdminNews((s) => s.status)
@@ -374,7 +375,7 @@ export function AdminNews() {
         <div className="admin-form">
           <p className="admin-confirm-name">{confirming?.title}</p>
           <p className="admin-confirm-text">
-            {t('crud.deleteConfirm', { item: resource.toLocaleLowerCase() })}
+            {t('crud.deleteConfirm', { item: lower(resource) })}
           </p>
           <div className="admin-modal-actions">
             <Button variant="ghost" onClick={() => setConfirming(null)} disabled={deleting}>

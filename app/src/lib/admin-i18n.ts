@@ -77,3 +77,17 @@ export function useAdminT() {
   return (key: string, vars?: Record<string, string | number>) =>
     translateAdmin(locale, key, vars)
 }
+
+/**
+ * Lowercases a string under the *admin* locale.
+ *
+ * Turkish has a dotted capital I, and its lowercase is a plain `i`. The
+ * default `toLocaleLowerCase()` uses the runtime's locale, which for an
+ * English runtime maps `İ` to `i` plus a combining dot above — so
+ * "İstatistik" came out as "i̇statistik" inside sentences that lowercase a
+ * resource name. Passing the locale explicitly is the fix.
+ */
+export function useAdminLower() {
+  const locale = useAdminLang((s) => s.locale)
+  return (value: string) => value.toLocaleLowerCase(locale)
+}
