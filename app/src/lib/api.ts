@@ -159,6 +159,32 @@ export type ContentEntry = {
 
 /** Note: the colour fields are read but deliberately never applied — see
  *  the note in cms.ts. Only `logo_url` is usable here. */
+/**
+ * An RFQ or contact-form submission. Written by the public Contact page (see
+ * pages/Contact.tsx, which posts these exact field names to
+ * `/public/enquiries`) and read back only by the admin — there is no public
+ * endpoint that lists them, which is why this type arrives with the admin
+ * screen rather than with the rest of the CMS shapes.
+ */
+export type Enquiry = {
+  id: string
+  company_name: string
+  contact_name: string
+  email: string
+  phone: string
+  country: string
+  product_interest: string
+  estimated_volume: string
+  message: string
+  status: EnquiryStatus
+  created_at: string
+}
+
+/** The four states the admin can move an enquiry between. */
+export type EnquiryStatus = 'new' | 'contacted' | 'won' | 'lost'
+
+export const ENQUIRY_STATUSES: readonly EnquiryStatus[] = ['new', 'contacted', 'won', 'lost']
+
 export type Branding = {
   id: number
   primary_hex: string

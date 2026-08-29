@@ -56,6 +56,9 @@ const AdminImages = lazy(() =>
 const AdminBranding = lazy(() =>
   import('@/pages/admin/AdminBranding').then((m) => ({ default: m.AdminBranding })),
 )
+const AdminEnquiries = lazy(() =>
+  import('@/pages/admin/AdminEnquiries').then((m) => ({ default: m.AdminEnquiries })),
+)
 
 /**
  * The public site: header, footer, head metadata and smoothed scrolling.
@@ -139,6 +142,7 @@ export default function App() {
             <Route path="/admin/content" element={<AdminContent />} />
             <Route path="/admin/images" element={<AdminImages />} />
             <Route path="/admin/branding" element={<AdminBranding />} />
+            <Route path="/admin/enquiries" element={<AdminEnquiries />} />
           </Route>
         </Routes>
       </LocaleProvider>
