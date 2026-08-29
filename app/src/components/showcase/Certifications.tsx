@@ -1,8 +1,8 @@
 import { Reveal } from '@/components/motion/Reveal'
 import { Icon } from '@/components/ui/Icon'
+import { certIcon } from '@/lib/cert-icons'
 import { useCms } from '@/lib/cms'
 import { useOverlay } from '@/lib/overlay'
-import type { IconId } from '@/lib/sprite-ids'
 
 /**
  * Certifications — the live home page's `home.certs` section.
@@ -17,15 +17,6 @@ import type { IconId } from '@/lib/sprite-ids'
  * no overrides in js/i18n.js, so they read the same in all four locales —
  * matching the live site. Only the section heading is translated.
  */
-
-/** The CMS stores an `icon_key` per certification; anything unrecognised falls
- *  back to the generic tick rather than rendering an empty box. */
-const CERT_ICON: Record<string, IconId> = {
-  'shield-check': 'i-cert',
-  'shield-tick': 'i-cert',
-  'circle-check': 'i-check',
-  'document-check': 'i-scan',
-}
 
 export function Certifications() {
   const { tk } = useOverlay()
@@ -48,7 +39,7 @@ export function Certifications() {
         {certifications.map((c, i) => (
           <Reveal key={c.id} as="article" className="cell w3" delay={i * 55}>
             <span className="ico">
-              <Icon id={CERT_ICON[c.icon_key] ?? 'i-check'} />
+              <Icon id={certIcon(c.icon_key)} />
             </span>
             <h3>{c.name}</h3>
             <p>{c.description}</p>

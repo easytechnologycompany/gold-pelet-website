@@ -209,6 +209,7 @@ const ADMIN_TRANSLATIONS = {
     'certifications.field.name': 'Name (e.g. "ISO 22000")',
     'certifications.field.description': 'Description (e.g. "Food Safety Management")',
     'certifications.field.iconHint': 'shield-check / shield-tick / circle-check / document-check',
+    'certifications.field.iconFallback': 'This key is not recognised, so the site will draw the generic tick icon.',
 
     'categories.field.slugHint': 'Slug (URL-friendly, e.g. "potato")',
     'categories.slugTaken': 'Another category already uses this slug.',
@@ -460,6 +461,7 @@ const ADMIN_TRANSLATIONS = {
     'certifications.field.name': 'Ad (örn. "ISO 22000")',
     'certifications.field.description': 'Açıklama (örn. "Gıda Güvenliği Yönetimi")',
     'certifications.field.iconHint': 'shield-check / shield-tick / circle-check / document-check',
+    'certifications.field.iconFallback': 'Bu anahtar tanınmıyor, bu yüzden site genel onay simgesini çizecek.',
 
     'categories.field.slugHint': 'Slug (URL uyumlu, örn. "potato")',
     'categories.slugTaken': 'Bu slug başka bir kategori tarafından kullanılıyor.',

@@ -1,22 +1,27 @@
-import type { Category, Milestone, NewsItem, Stat } from './api'
+import type { Category, Certification, Milestone, NewsItem, Stat } from './api'
 import {
   createCategory,
+  createCertification,
   createMilestone,
   createNews,
   createStat,
   deleteCategory,
+  deleteCertification,
   deleteMilestone,
   deleteNews,
   deleteStat,
   listCategories,
+  listCertifications,
   listNews,
   listStats,
   listTimeline,
   updateCategory,
+  updateCertification,
   updateMilestone,
   updateNews,
   updateStat,
   type CategoryDraft,
+  type CertificationDraft,
   type MilestoneDraft,
   type NewsDraft,
   type StatDraft,
@@ -37,6 +42,13 @@ export const useAdminCategories = createAdminListStore<Category, CategoryDraft>(
   create: createCategory,
   update: updateCategory,
   remove: deleteCategory,
+})
+
+export const useAdminCertifications = createAdminListStore<Certification, CertificationDraft>({
+  list: listCertifications,
+  create: createCertification,
+  update: updateCertification,
+  remove: deleteCertification,
 })
 
 export const useAdminNews = createAdminListStore<NewsItem, NewsDraft>({

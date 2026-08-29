@@ -466,3 +466,17 @@
 /* The year reads as a marker, not prose: tabular so a column of them aligns. */
 .admin-year { font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: -0.01em; }
 .admin-card-title { margin-top: .5rem; font-weight: 650; letter-spacing: -0.01em; }
+
+/* The icon the public page will draw for this certification's key. */
+.admin-cert-icon {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 40px; height: 40px;
+  border: 1px solid var(--hair); border-radius: var(--r-sm);
+  background: var(--bg-2); color: var(--accent);
+}
+.admin-cert-icon svg { width: 20px; height: 20px; }
+/* Same shape, muted, when the key is not one the site recognises. */
+.admin-cert-icon--fallback { color: var(--fg-3); border-style: dashed; }
+
+.admin-icon-field { display: flex; gap: .6rem; align-items: center; }
+.admin-icon-field input { flex: 1 1 auto; min-width: 0; }
