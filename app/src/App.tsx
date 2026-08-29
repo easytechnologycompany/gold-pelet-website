@@ -18,6 +18,7 @@ import { NotFound } from '@/pages/NotFound'
 import { Products } from '@/pages/Products'
 import { Services } from '@/pages/Services'
 import { AdminCategories } from '@/pages/admin/AdminCategories'
+import { AdminNews } from '@/pages/admin/AdminNews'
 import { AdminProducts } from '@/pages/admin/AdminProducts'
 import { AdminLogin } from '@/pages/admin/AdminLogin'
 
@@ -81,6 +82,7 @@ export default function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/categories" element={<AdminCategories />} />
           <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/news" element={<AdminNews />} />
         </Routes>
       </LocaleProvider>
     </ThemeProvider>

@@ -27,6 +27,7 @@ import { useAdminHead } from './useAdminHead'
 const NAV = [
   { to: '/admin/categories', key: 'nav.categories' },
   { to: '/admin/products', key: 'nav.products' },
+  { to: '/admin/news', key: 'nav.news' },
 ] as const
 export function AdminShell({
   title,

@@ -1,5 +1,5 @@
 import { API_BASE } from './api'
-import type { ApiProduct, Category } from './api'
+import type { ApiProduct, Category, NewsItem } from './api'
 
 /**
  * Admin API client — the authenticated half of the backend, ported from
@@ -361,6 +361,122 @@ export async function deleteProduct(id: string): Promise<ApiProduct[]> {
   const list = await listProducts()
   if (list.some((p) => p.id === id)) {
     throw new AdminError('The server accepted the delete but the product is still there.')
+  }
+  return list
+}
+
+// ---------------- news ----------------
+
+/** The eight fields admin/news.html configures crud.js with. */
+export type NewsDraft = {
+  image_url: string
+  title: string
+  description: string
+  date_label: string
+  icon_key: string
+  is_featured: boolean
+  sort_order: number
+  is_active: boolean
+}
+
+/**
+ * Matches the old page's
+ * `defaults: { is_active: true, is_featured: false, sort_order: 0, icon_key: 'flag' }`.
+ * `icon_key` defaulting to a value rather than empty is the reason this is a
+ * function per resource rather than one generic empty-object helper.
+ */
+export const emptyNewsDraft = (): NewsDraft => ({
+  image_url: '',
+  title: '',
+  description: '',
+  date_label: '',
+  icon_key: 'flag',
+  is_featured: false,
+  sort_order: 0,
+  is_active: true,
+})
+
+export const newsDraftFrom = (n: NewsItem): NewsDraft => ({
+  image_url: n.image_url ?? '',
+  title: n.title,
+  description: n.description ?? '',
+  date_label: n.date_label,
+  icon_key: n.icon_key ?? '',
+  is_featured: n.is_featured,
+  sort_order: n.sort_order,
+  is_active: n.is_active,
+})
+
+export const listNews = (signal?: AbortSignal) =>
+  adminFetch<{ data: NewsItem[] }>('/admin/news', { signal }).then((r) => r?.data ?? [])
+
+const newsPayload = (draft: NewsDraft) => ({
+  image_url: draft.image_url,
+  title: draft.title.trim(),
+  description: draft.description.trim(),
+  date_label: draft.date_label.trim(),
+  icon_key: draft.icon_key.trim(),
+  is_featured: draft.is_featured,
+  sort_order: draft.sort_order,
+  is_active: draft.is_active,
+})
+
+/**
+ * The news equivalent of matchesDraft. `image_url` is compared against `?? ''`
+ * because the API omits the field entirely when it is null, so a record with
+ * no photo comes back without the key rather than with an explicit null.
+ */
+function matchesNewsDraft(stored: NewsItem, draft: NewsDraft): boolean {
+  const want = newsPayload(draft)
+  return (
+    (stored.image_url ?? '') === want.image_url &&
+    stored.title === want.title &&
+    (stored.description ?? '').trim() === want.description &&
+    stored.date_label === want.date_label &&
+    (stored.icon_key ?? '') === want.icon_key &&
+    stored.is_featured === want.is_featured &&
+    stored.sort_order === want.sort_order &&
+    stored.is_active === want.is_active
+  )
+}
+
+export async function createNews(draft: NewsDraft): Promise<NewsItem[]> {
+  const created = await adminFetch<NewsItem>('/admin/news', {
+    method: 'POST',
+    body: newsPayload(draft),
+  })
+  const list = await listNews()
+  // News has no slug, so there is no natural unique key to fall back on: the
+  // id the POST returned is the only reliable way to find the new row, and
+  // title is the tie-breaker because two items may legitimately share one.
+  const stored =
+    list.find((n) => n.id === created?.id) ??
+    list.find((n) => n.title === newsPayload(draft).title && matchesNewsDraft(n, draft))
+  if (!stored) {
+    throw new AdminError('The server accepted the news item but it is not in the list. Nothing was saved.')
+  }
+  if (!matchesNewsDraft(stored, draft)) {
+    throw new AdminError('The news item was created but saved with different values. Check the fields and try again.')
+  }
+  return list
+}
+
+export async function updateNews(id: string, draft: NewsDraft): Promise<NewsItem[]> {
+  await adminFetch<NewsItem>(`/admin/news/${id}`, { method: 'PUT', body: newsPayload(draft) })
+  const list = await listNews()
+  const stored = list.find((n) => n.id === id)
+  if (!stored) throw new AdminError('The news item disappeared after saving. Reload and check the list.')
+  if (!matchesNewsDraft(stored, draft)) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return list
+}
+
+export async function deleteNews(id: string): Promise<NewsItem[]> {
+  await adminFetch<void>(`/admin/news/${id}`, { method: 'DELETE' })
+  const list = await listNews()
+  if (list.some((n) => n.id === id)) {
+    throw new AdminError('The server accepted the delete but the news item is still there.')
   }
   return list
 }
