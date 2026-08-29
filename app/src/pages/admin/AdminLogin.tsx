@@ -2,7 +2,9 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LangSwitch } from '@/components/admin/LangSwitch'
 import { useAdminHead } from '@/components/admin/useAdminHead'
+import { mediaURL } from '@/lib/api'
 import { getToken, login } from '@/lib/admin'
+import { useCms } from '@/lib/cms'
 import { useAdminT } from '@/lib/admin-i18n'
 
 /**
@@ -19,6 +21,17 @@ export function AdminLogin() {
   const navigate = useNavigate()
   const t = useAdminT()
   useAdminHead(t('login.signIn'))
+
+  /**
+   * The real brand logo, as the old login.html showed.
+   *
+   * No request of its own: App hydrates the public CMS store on every route,
+   * admin included, and `/public/branding` is part of that. So this is a read
+   * of something already in flight, and the lettermark below stands in until
+   * it lands — or permanently, if the API is unreachable, which is exactly
+   * when a sign-in screen most needs to still render.
+   */
+  const logo = useCms((s) => s.branding?.logo_url)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -48,9 +61,17 @@ export function AdminLogin() {
     <div className="admin admin-login">
       <div className="admin-login-card">
         <span className="admin-brand">
-          <span className="admin-brand-mark" aria-hidden="true">
-            GP
-          </span>
+          {logo ? (
+            // On a fixed light plate: the mark is drawn for a light ground
+            // and would vanish against the dark surface in dark mode.
+            <span className="admin-brand-logo">
+              <img src={mediaURL(logo)} alt="" aria-hidden="true" />
+            </span>
+          ) : (
+            <span className="admin-brand-mark" aria-hidden="true">
+              GP
+            </span>
+          )}
           <span className="admin-brand-text">
             Gold Pelet <span>{t('sidebar.admin')}</span>
           </span>
