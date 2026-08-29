@@ -545,3 +545,38 @@
 .admin-save-bar-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 .admin-save-bar-actions .btn { min-height: 38px; padding: .4rem 1rem; font-size: var(--t-small); }
 @media (pointer: coarse) { .admin-save-bar-actions .btn { min-height: 44px; } }
+
+/* ---------------- site images: fixed slots ---------------- */
+
+.admin-image-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+}
+.admin-image-card { display: flex; flex-direction: column; overflow: hidden; }
+.admin-image-card.is-failed { border-color: color-mix(in srgb, #DC2626 40%, var(--hair)); }
+
+.admin-image-shot {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--hair);
+}
+.admin-image-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.admin-image-shot .admin-upload-empty { display: block; width: 100%; height: 100%; border-radius: 0; }
+
+/* Over the photo, because the photo is what is being replaced. */
+.admin-image-busy {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+  font-size: var(--t-small); font-weight: 700; color: var(--fg);
+}
+
+.admin-image-body { display: grid; gap: .45rem; padding: .9rem 1rem 1rem; }
+.admin-image-label { font-weight: 650; letter-spacing: -0.01em; line-height: 1.35; }
+.admin-image-body .admin-slug { justify-self: start; }
+.admin-image-pick input[type='file'] {
+  margin-top: .35rem; max-width: 100%;
+  font-size: var(--t-small); color: var(--fg-2);
+}

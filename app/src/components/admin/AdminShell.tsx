@@ -27,6 +27,7 @@ import { useAdminHead } from './useAdminHead'
 const NAV = [
   { to: '/admin/heroes', key: 'nav.heroes' },
   { to: '/admin/content', key: 'nav.content' },
+  { to: '/admin/images', key: 'nav.siteImages' },
   { to: '/admin/categories', key: 'nav.categories' },
   { to: '/admin/products', key: 'nav.products' },
   { to: '/admin/news', key: 'nav.news' },
