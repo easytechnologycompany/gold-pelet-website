@@ -1,5 +1,5 @@
 import { API_BASE } from './api'
-import type { ApiProduct, Category, NewsItem, Stat } from './api'
+import type { ApiProduct, Category, Milestone, NewsItem, Stat } from './api'
 
 /**
  * Admin API client — the authenticated half of the backend, ported from
@@ -576,6 +576,96 @@ export async function deleteStat(id: string): Promise<Stat[]> {
   const list = await listStats()
   if (list.some((s) => s.id === id)) {
     throw new AdminError('The server accepted the delete but the stat is still there.')
+  }
+  return list
+}
+
+// ---------------- timeline ----------------
+
+/** The five fields admin/timeline.html configures crud.js with. */
+export type MilestoneDraft = {
+  year_label: string
+  title: string
+  description: string
+  sort_order: number
+  is_active: boolean
+}
+
+/** Matches the old page's `defaults: { is_active: true, sort_order: 0 }`. */
+export const emptyMilestoneDraft = (): MilestoneDraft => ({
+  year_label: '',
+  title: '',
+  description: '',
+  sort_order: 0,
+  is_active: true,
+})
+
+export const milestoneDraftFrom = (m: Milestone): MilestoneDraft => ({
+  year_label: m.year_label,
+  title: m.title,
+  description: m.description ?? '',
+  sort_order: m.sort_order,
+  is_active: m.is_active,
+})
+
+export const listTimeline = (signal?: AbortSignal) =>
+  adminFetch<{ data: Milestone[] }>('/admin/timeline', { signal }).then((r) => r?.data ?? [])
+
+const milestonePayload = (draft: MilestoneDraft) => ({
+  year_label: draft.year_label.trim(),
+  title: draft.title.trim(),
+  description: draft.description.trim(),
+  sort_order: draft.sort_order,
+  is_active: draft.is_active,
+})
+
+function matchesMilestoneDraft(stored: Milestone, draft: MilestoneDraft): boolean {
+  const want = milestonePayload(draft)
+  return (
+    stored.year_label === want.year_label &&
+    stored.title === want.title &&
+    (stored.description ?? '').trim() === want.description &&
+    stored.sort_order === want.sort_order &&
+    stored.is_active === want.is_active
+  )
+}
+
+export async function createMilestone(draft: MilestoneDraft): Promise<Milestone[]> {
+  const created = await adminFetch<Milestone>('/admin/timeline', {
+    method: 'POST',
+    body: milestonePayload(draft),
+  })
+  const list = await listTimeline()
+  // Like news, a milestone has no unique key of its own: the id the POST
+  // returned is the reliable lookup, and a full field match is the fallback
+  // because two milestones may share a year and a title.
+  const stored =
+    list.find((m) => m.id === created?.id) ?? list.find((m) => matchesMilestoneDraft(m, draft))
+  if (!stored) {
+    throw new AdminError('The server accepted the milestone but it is not in the list. Nothing was saved.')
+  }
+  if (!matchesMilestoneDraft(stored, draft)) {
+    throw new AdminError('The milestone was created but saved with different values. Check the fields and try again.')
+  }
+  return list
+}
+
+export async function updateMilestone(id: string, draft: MilestoneDraft): Promise<Milestone[]> {
+  await adminFetch<Milestone>(`/admin/timeline/${id}`, { method: 'PUT', body: milestonePayload(draft) })
+  const list = await listTimeline()
+  const stored = list.find((m) => m.id === id)
+  if (!stored) throw new AdminError('The milestone disappeared after saving. Reload and check the list.')
+  if (!matchesMilestoneDraft(stored, draft)) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return list
+}
+
+export async function deleteMilestone(id: string): Promise<Milestone[]> {
+  await adminFetch<void>(`/admin/timeline/${id}`, { method: 'DELETE' })
+  const list = await listTimeline()
+  if (list.some((m) => m.id === id)) {
+    throw new AdminError('The server accepted the delete but the milestone is still there.')
   }
   return list
 }

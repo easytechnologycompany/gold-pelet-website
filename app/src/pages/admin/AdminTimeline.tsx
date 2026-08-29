@@ -1,26 +1,25 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AdminShell } from '@/components/admin/AdminShell'
-import { ImageField } from '@/components/admin/ImageField'
 import { Modal } from '@/components/admin/Modal'
 import { Toast, type ToastState } from '@/components/admin/Toast'
 import { Button } from '@/components/ui/Button'
-import { mediaURL, type NewsItem } from '@/lib/api'
-import { emptyNewsDraft, getToken, newsDraftFrom, uploadMedia, type NewsDraft } from '@/lib/admin'
-import { useAdminNews } from '@/lib/admin-resources'
+import type { Milestone } from '@/lib/api'
+import { emptyMilestoneDraft, getToken, milestoneDraftFrom, type MilestoneDraft } from '@/lib/admin'
+import { useAdminTimeline } from '@/lib/admin-resources'
 import { useAdminLower, useAdminT } from '@/lib/admin-i18n'
 
 /**
- * Events & News — the cards on the public Events & News page.
+ * About Timeline — the company milestones on the About page.
  *
- * A port of admin/news.html, which drove crud.js with an eight-field config
- * including its `image` field type. Fields, columns, defaults, endpoints and
- * strings carry over unchanged; lib/admin.ts is the API half and
- * lib/admin-news-store.ts holds the state.
+ * A port of admin/timeline.html, a five-field crud.js config and the
+ * simplest of the ported screens: no upload, no relation, no unique key.
+ * Fields, columns, defaults, endpoints and strings carry over unchanged;
+ * lib/admin.ts is the API half and lib/admin-resources.ts the store.
  *
- * Same deliberate change as the other two ported screens: the old engine
- * toasted on `res.ok`, so a write the backend accepted and dropped still read
- * as success. Every mutation here re-reads and verifies first.
+ * Same deliberate change as the other ported screens: the old engine toasted
+ * on `res.ok`, so a write the backend accepted and dropped still read as
+ * success. Every mutation here re-reads and verifies first.
  */
 
 type Translate = (key: string, vars?: Record<string, string | number>) => string
@@ -33,34 +32,33 @@ function StatusBadge({ active, t }: { active: boolean; t: Translate }) {
   )
 }
 
-export function AdminNews() {
+export function AdminTimeline() {
   const navigate = useNavigate()
   const t = useAdminT()
   const lower = useAdminLower()
 
-  const news = useAdminNews((s) => s.items)
-  const status = useAdminNews((s) => s.status)
-  const loadError = useAdminNews((s) => s.error)
-  const expired = useAdminNews((s) => s.expired)
-  const load = useAdminNews((s) => s.load)
-  const reload = useAdminNews((s) => s.reload)
-  const create = useAdminNews((s) => s.create)
-  const update = useAdminNews((s) => s.update)
-  const remove = useAdminNews((s) => s.remove)
+  const milestones = useAdminTimeline((s) => s.items)
+  const status = useAdminTimeline((s) => s.status)
+  const loadError = useAdminTimeline((s) => s.error)
+  const expired = useAdminTimeline((s) => s.expired)
+  const load = useAdminTimeline((s) => s.load)
+  const reload = useAdminTimeline((s) => s.reload)
+  const create = useAdminTimeline((s) => s.create)
+  const update = useAdminTimeline((s) => s.update)
+  const remove = useAdminTimeline((s) => s.remove)
 
   const [toast, setToast] = useState<ToastState>(null)
 
-  const [editing, setEditing] = useState<NewsItem | null>(null)
-  const [draft, setDraft] = useState<NewsDraft>(emptyNewsDraft)
+  const [editing, setEditing] = useState<Milestone | null>(null)
+  const [draft, setDraft] = useState<MilestoneDraft>(emptyMilestoneDraft)
   const [formOpen, setFormOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
-  const [uploading, setUploading] = useState(false)
 
-  const [confirming, setConfirming] = useState<NewsItem | null>(null)
+  const [confirming, setConfirming] = useState<Milestone | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  const resource = t('resource.newsItem')
+  const resource = t('resource.milestone')
   const addLabel = t('crud.addItem', { item: resource })
 
   useEffect(() => {
@@ -79,34 +77,21 @@ export function AdminNews() {
 
   const openAdd = () => {
     setEditing(null)
-    setDraft(emptyNewsDraft())
+    setDraft(emptyMilestoneDraft())
     setFormError('')
     setFormOpen(true)
   }
 
-  const openEdit = (item: NewsItem) => {
-    setEditing(item)
-    setDraft(newsDraftFrom(item))
+  const openEdit = (milestone: Milestone) => {
+    setEditing(milestone)
+    setDraft(milestoneDraftFrom(milestone))
     setFormError('')
     setFormOpen(true)
-  }
-
-  const onPickImage = async (file: File) => {
-    setUploading(true)
-    setFormError('')
-    try {
-      const url = await uploadMedia(file)
-      setDraft((d) => ({ ...d, image_url: url }))
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'The upload failed.')
-    } finally {
-      setUploading(false)
-    }
   }
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (saving || uploading) return
+    if (saving) return
 
     setSaving(true)
     setFormError('')
@@ -144,15 +129,15 @@ export function AdminNews() {
 
   return (
     <AdminShell
-      title={t('page.news.title')}
-      description={t('page.news.desc')}
+      title={t('page.timeline.title')}
+      description={t('page.timeline.desc')}
       actions={
         <Button onClick={openAdd} disabled={status === 'loading'}>
           {addLabel}
         </Button>
       }
     >
-      {status === 'loading' && <NewsSkeleton label={t('crud.loading')} />}
+      {status === 'loading' && <TimelineSkeleton label={t('crud.loading')} />}
 
       {status === 'error' && (
         <div className="admin-panel admin-state">
@@ -162,50 +147,46 @@ export function AdminNews() {
         </div>
       )}
 
-      {status === 'ready' && news.length === 0 && (
+      {status === 'ready' && milestones.length === 0 && (
         <div className="admin-panel admin-state">
           <h2>{t('crud.empty')}</h2>
-          <p>{t('page.news.desc')}</p>
+          <p>{t('page.timeline.desc')}</p>
           <Button onClick={openAdd}>{addLabel}</Button>
         </div>
       )}
 
-      {status === 'ready' && news.length > 0 && (
+      {status === 'ready' && milestones.length > 0 && (
         <div className="admin-panel">
           <table className="admin-table">
             <thead>
               <tr>
-                <th>{t('news.field.photo')}</th>
+                <th>{t('field.year')}</th>
                 <th>{t('field.title')}</th>
-                <th>{t('field.date')}</th>
-                <th>{t('crud.featured')}</th>
                 <th>{t('field.order')}</th>
                 <th>{t('crud.status')}</th>
                 <th className="admin-col-actions">{t('crud.actions')}</th>
               </tr>
             </thead>
             <tbody>
-              {news.map((n) => (
-                <tr key={n.id}>
+              {milestones.map((m) => (
+                <tr key={m.id}>
                   <td>
-                    <NewsThumb item={n} />
+                    <span className="admin-year">{m.year_label}</span>
                   </td>
                   <td>
-                    <span className="admin-cell-title">{n.title}</span>
-                    {n.description && <span className="admin-cell-sub">{n.description}</span>}
+                    <span className="admin-cell-title">{m.title}</span>
+                    {m.description && <span className="admin-cell-sub">{m.description}</span>}
                   </td>
-                  <td>{n.date_label}</td>
-                  <td>{n.is_featured ? t('crud.yes') : ''}</td>
-                  <td>{n.sort_order}</td>
+                  <td className="admin-num">{m.sort_order}</td>
                   <td>
-                    <StatusBadge active={n.is_active} t={t} />
+                    <StatusBadge active={m.is_active} t={t} />
                   </td>
                   <td className="admin-col-actions">
                     <div className="admin-row-actions">
-                      <Button variant="ghost" onClick={() => openEdit(n)}>
+                      <Button variant="ghost" onClick={() => openEdit(m)}>
                         {t('crud.edit')}
                       </Button>
-                      <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(n)}>
+                      <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(m)}>
                         {t('crud.delete')}
                       </Button>
                     </div>
@@ -216,37 +197,27 @@ export function AdminNews() {
           </table>
 
           <ul className="admin-cards">
-            {news.map((n) => (
-              <li key={n.id} className="admin-card">
+            {milestones.map((m) => (
+              <li key={m.id} className="admin-card">
                 <div className="admin-card-head">
-                  <div className="admin-product-cell">
-                    <NewsThumb item={n} />
-                    <h3>{n.title}</h3>
-                  </div>
-                  <StatusBadge active={n.is_active} t={t} />
+                  <h3>
+                    <span className="admin-year">{m.year_label}</span>
+                  </h3>
+                  <StatusBadge active={m.is_active} t={t} />
                 </div>
-                {n.description && <p className="admin-card-desc">{n.description}</p>}
+                <p className="admin-card-title">{m.title}</p>
+                {m.description && <p className="admin-card-desc">{m.description}</p>}
                 <dl className="admin-card-meta">
                   <div>
-                    <dt>{t('field.date')}</dt>
-                    <dd>{n.date_label}</dd>
-                  </div>
-                  <div>
                     <dt>{t('field.order')}</dt>
-                    <dd>{n.sort_order}</dd>
+                    <dd>{m.sort_order}</dd>
                   </div>
-                  {n.is_featured && (
-                    <div>
-                      <dt>{t('crud.featured')}</dt>
-                      <dd>{t('crud.yes')}</dd>
-                    </div>
-                  )}
                 </dl>
                 <div className="admin-row-actions">
-                  <Button variant="ghost" onClick={() => openEdit(n)}>
+                  <Button variant="ghost" onClick={() => openEdit(m)}>
                     {t('crud.edit')}
                   </Button>
-                  <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(n)}>
+                  <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(m)}>
                     {t('crud.delete')}
                   </Button>
                 </div>
@@ -262,20 +233,20 @@ export function AdminNews() {
         onClose={() => !saving && setFormOpen(false)}
       >
         <form className="admin-form" onSubmit={onSubmit} noValidate>
-          <ImageField
-            id="news-image"
-            label={t('news.field.photoHint')}
-            url={draft.image_url}
-            busy={uploading}
-            disabled={uploading}
-            onPick={(file) => void onPickImage(file)}
-            onClear={() => setDraft((d) => ({ ...d, image_url: '' }))}
-          />
+          <div className="field full">
+            <label htmlFor="milestone-year">{t('timeline.field.year')} *</label>
+            <input
+              id="milestone-year"
+              value={draft.year_label}
+              required
+              onChange={(e) => setDraft({ ...draft, year_label: e.target.value })}
+            />
+          </div>
 
           <div className="field full">
-            <label htmlFor="news-title">{t('field.title')} *</label>
+            <label htmlFor="milestone-title">{t('field.title')} *</label>
             <input
-              id="news-title"
+              id="milestone-title"
               value={draft.title}
               required
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
@@ -283,37 +254,19 @@ export function AdminNews() {
           </div>
 
           <div className="field full">
-            <label htmlFor="news-description">{t('field.description')}</label>
+            <label htmlFor="milestone-description">{t('field.description')}</label>
             <textarea
-              id="news-description"
+              id="milestone-description"
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
             />
           </div>
 
-          <div className="field full">
-            <label htmlFor="news-date">{t('news.field.dateLabel')} *</label>
-            <input
-              id="news-date"
-              value={draft.date_label}
-              required
-              onChange={(e) => setDraft({ ...draft, date_label: e.target.value })}
-            />
-          </div>
-
           <div className="admin-form-row">
             <div className="field">
-              <label htmlFor="news-icon">{t('field.iconKey')}</label>
+              <label htmlFor="milestone-order">{t('field.sortOrder')}</label>
               <input
-                id="news-icon"
-                value={draft.icon_key}
-                onChange={(e) => setDraft({ ...draft, icon_key: e.target.value })}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="news-order">{t('field.sortOrder')}</label>
-              <input
-                id="news-order"
+                id="milestone-order"
                 type="number"
                 value={draft.sort_order}
                 onChange={(e) =>
@@ -324,30 +277,17 @@ export function AdminNews() {
                 }
               />
             </div>
-          </div>
-
-          <div className="field admin-check">
-            <label htmlFor="news-featured">
-              <input
-                id="news-featured"
-                type="checkbox"
-                checked={draft.is_featured}
-                onChange={(e) => setDraft({ ...draft, is_featured: e.target.checked })}
-              />
-              <span>{t('news.field.featuredCheckbox')}</span>
-            </label>
-          </div>
-
-          <div className="field admin-check">
-            <label htmlFor="news-active">
-              <input
-                id="news-active"
-                type="checkbox"
-                checked={draft.is_active}
-                onChange={(e) => setDraft({ ...draft, is_active: e.target.checked })}
-              />
-              <span>{t('field.visibleOnSite')}</span>
-            </label>
+            <div className="field admin-check">
+              <label htmlFor="milestone-active">
+                <input
+                  id="milestone-active"
+                  type="checkbox"
+                  checked={draft.is_active}
+                  onChange={(e) => setDraft({ ...draft, is_active: e.target.checked })}
+                />
+                <span>{t('field.visibleOnSite')}</span>
+              </label>
+            </div>
           </div>
 
           {formError && (
@@ -360,7 +300,7 @@ export function AdminNews() {
             <Button variant="ghost" onClick={() => setFormOpen(false)} disabled={saving}>
               {t('crud.cancel')}
             </Button>
-            <button type="submit" className="btn btn-fill" disabled={saving || uploading}>
+            <button type="submit" className="btn btn-fill" disabled={saving}>
               {saving ? `${t('crud.save')}…` : t('crud.save')}
             </button>
           </div>
@@ -398,22 +338,14 @@ export function AdminNews() {
   )
 }
 
-/** The card photo if set, else a plate — the public page falls back to a
- *  decorative pattern, so a missing photo is normal, not an error. */
-function NewsThumb({ item }: { item: NewsItem }) {
-  if (!item.image_url) return <span className="admin-thumb admin-thumb--empty" aria-hidden="true" />
-  return <img className="admin-thumb" src={mediaURL(item.image_url)} alt="" loading="lazy" />
-}
-
-function NewsSkeleton({ label }: { label: string }) {
+function TimelineSkeleton({ label }: { label: string }) {
   return (
     <div className="admin-panel" aria-busy="true" aria-live="polite">
       <span className="admin-sr-only">{label}</span>
       {[0, 1, 2, 3].map((i) => (
         <div className="admin-skeleton-row" key={i}>
-          <span className="admin-skeleton admin-skeleton--thumb" />
-          <span className="admin-skeleton" style={{ width: '34%' }} />
-          <span className="admin-skeleton" style={{ width: '18%' }} />
+          <span className="admin-skeleton" style={{ width: '10%' }} />
+          <span className="admin-skeleton" style={{ width: '40%' }} />
           <span className="admin-skeleton" style={{ width: '10%' }} />
         </div>
       ))}

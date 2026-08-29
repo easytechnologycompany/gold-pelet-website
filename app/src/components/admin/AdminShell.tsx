@@ -29,6 +29,7 @@ const NAV = [
   { to: '/admin/products', key: 'nav.products' },
   { to: '/admin/news', key: 'nav.news' },
   { to: '/admin/stats', key: 'nav.stats' },
+  { to: '/admin/timeline', key: 'nav.timeline' },
 ] as const
 export function AdminShell({
   title,

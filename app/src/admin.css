@@ -462,3 +462,7 @@
   font-size: var(--t-small); font-weight: 600; line-height: 1.5;
   color: var(--fg);
 }
+
+/* The year reads as a marker, not prose: tabular so a column of them aligns. */
+.admin-year { font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: -0.01em; }
+.admin-card-title { margin-top: .5rem; font-weight: 650; letter-spacing: -0.01em; }

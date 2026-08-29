@@ -6,7 +6,7 @@ import { Toast, type ToastState } from '@/components/admin/Toast'
 import { Button } from '@/components/ui/Button'
 import type { Category } from '@/lib/api'
 import { draftFrom, emptyDraft, getToken, type CategoryDraft } from '@/lib/admin'
-import { useAdminCategories } from '@/lib/admin-store'
+import { useAdminCategories } from '@/lib/admin-resources'
 import { useAdminLower, useAdminT } from '@/lib/admin-i18n'
 
 /**
@@ -41,7 +41,7 @@ export function AdminCategories() {
   const t = useAdminT()
   const lower = useAdminLower()
 
-  const categories = useAdminCategories((s) => s.categories)
+  const categories = useAdminCategories((s) => s.items)
   const status = useAdminCategories((s) => s.status)
   const loadError = useAdminCategories((s) => s.error)
   const expired = useAdminCategories((s) => s.expired)
