@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { LangSwitch } from '@/components/admin/LangSwitch'
 import { useAdminHead } from '@/components/admin/useAdminHead'
 import { getToken, login } from '@/lib/admin'
+import { useAdminT } from '@/lib/admin-i18n'
 
 /**
  * Sign-in for the admin screens — a port of admin/login.html, same endpoint
@@ -15,7 +17,8 @@ import { getToken, login } from '@/lib/admin'
  */
 export function AdminLogin() {
   const navigate = useNavigate()
-  useAdminHead('Sign in')
+  const t = useAdminT()
+  useAdminHead(t('login.signIn'))
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -35,7 +38,7 @@ export function AdminLogin() {
       await login(email.trim(), password)
       navigate('/admin/categories', { replace: true })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed.')
+      setError(err instanceof Error ? err.message : t('login.failed'))
     } finally {
       setBusy(false)
     }
@@ -49,16 +52,17 @@ export function AdminLogin() {
             GP
           </span>
           <span className="admin-brand-text">
-            Gold Pelet <span>Admin</span>
+            Gold Pelet <span>{t('sidebar.admin')}</span>
           </span>
         </span>
+        <LangSwitch />
 
-        <h1>Sign in</h1>
-        <p className="admin-login-sub">Sign in to manage the Gold Pelet website.</p>
+        <h1>{t('login.title')}</h1>
+        <p className="admin-login-sub">{t('login.sub')}</p>
 
         <form className="admin-form" onSubmit={onSubmit}>
           <div className="field full">
-            <label htmlFor="admin-email">Email</label>
+            <label htmlFor="admin-email">{t('login.email')}</label>
             <input
               id="admin-email"
               type="email"
@@ -69,7 +73,7 @@ export function AdminLogin() {
             />
           </div>
           <div className="field full">
-            <label htmlFor="admin-password">Password</label>
+            <label htmlFor="admin-password">{t('login.password')}</label>
             <input
               id="admin-password"
               type="password"
@@ -87,7 +91,7 @@ export function AdminLogin() {
           )}
 
           <button type="submit" className="btn btn-fill admin-login-submit" disabled={busy}>
-            {busy ? 'Signing in…' : 'Sign in'}
+            {busy ? t('login.signingIn') : t('login.signIn')}
           </button>
         </form>
       </div>

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import type { Category } from '@/lib/api'
 import { draftFrom, emptyDraft, getToken, type CategoryDraft } from '@/lib/admin'
 import { useAdminCategories } from '@/lib/admin-store'
+import { useAdminT } from '@/lib/admin-i18n'
 
 /**
  * Product categories — the Products page's groupings (Potato Pellets, Wheat
@@ -14,9 +15,9 @@ import { useAdminCategories } from '@/lib/admin-store'
  *
  * A port of admin/categories.html, which drove the generic engine in
  * admin/js/crud.js with a five-field config. The fields, the columns, the
- * defaults, the endpoints and the payload shape are all carried over
- * unchanged; only the presentation is new. lib/admin.ts is the API half and
- * lib/admin-store.ts holds the state.
+ * defaults, the endpoints, the payload shape and the strings are all carried
+ * over unchanged; only the presentation is new. lib/admin.ts is the API half,
+ * lib/admin-store.ts holds the state, lib/admin-i18n.ts the dictionary.
  *
  * The one behavioural change is deliberate and required: the old engine
  * toasted on `res.ok` and then reloaded, so a write the backend accepted but
@@ -24,17 +25,20 @@ import { useAdminCategories } from '@/lib/admin-store'
  * list and verifies the record before anything is called a success.
  */
 
+type Translate = (key: string, vars?: Record<string, string | number>) => string
+
 /** Mirrors the old table's `is_active` column renderer. */
-function StatusBadge({ active }: { active: boolean }) {
+function StatusBadge({ active, t }: { active: boolean; t: Translate }) {
   return (
     <span className={`admin-badge admin-badge--${active ? 'active' : 'hidden'}`}>
-      {active ? 'Active' : 'Hidden'}
+      {t(active ? 'crud.active' : 'crud.hidden')}
     </span>
   )
 }
 
 export function AdminCategories() {
   const navigate = useNavigate()
+  const t = useAdminT()
 
   const categories = useAdminCategories((s) => s.categories)
   const status = useAdminCategories((s) => s.status)
@@ -56,6 +60,14 @@ export function AdminCategories() {
 
   const [confirming, setConfirming] = useState<Category | null>(null)
   const [deleting, setDeleting] = useState(false)
+
+  // Whole templates, not verb + noun glued together at the call site. The old
+  // crud.js built these as `${t('crud.add')} ${titleSingular}`, which is fine
+  // in English and wrong in Turkish, where the object precedes the verb:
+  // that produced "+ Ekle Kategori" instead of "+ Kategori Ekle".
+  const resource = t('resource.category')
+  const addLabel = t('crud.addItem', { item: resource })
+  const addTitle = addLabel.replace('+', '').trim()
 
   // The backend enforces slug uniqueness too, but catching it here turns a
   // failed round trip into an inline message beside the field that caused it.
@@ -105,7 +117,10 @@ export function AdminCategories() {
     if (result.ok) {
       const name = draft.name.trim()
       setFormOpen(false)
-      setToast({ kind: 'success', message: editing ? `"${name}" saved.` : `"${name}" created.` })
+      setToast({
+        kind: 'success',
+        message: t(editing ? 'crud.updated' : 'crud.created', { item: `"${name}"` }),
+      })
       return
     }
     if (result.expired) return // the effect above routes to sign-in
@@ -121,7 +136,7 @@ export function AdminCategories() {
     setDeleting(false)
 
     if (result.ok) {
-      setToast({ kind: 'success', message: `"${confirming.name}" deleted.` })
+      setToast({ kind: 'success', message: t('crud.deleted', { item: `"${confirming.name}"` }) })
       setConfirming(null)
       return
     }
@@ -132,29 +147,29 @@ export function AdminCategories() {
 
   return (
     <AdminShell
-      title="Categories"
-      description="Product categories on the Products page (Potato Pellets, Wheat Pellets, …)."
+      title={t('page.categories.title')}
+      description={t('page.categories.desc')}
       actions={
         <Button onClick={openAdd} disabled={status === 'loading'}>
-          Add category
+          {addLabel}
         </Button>
       }
     >
-      {status === 'loading' && <CategoriesSkeleton />}
+      {status === 'loading' && <CategoriesSkeleton label={t('crud.loading')} />}
 
       {status === 'error' && (
         <div className="admin-panel admin-state">
-          <h2>Could not load categories</h2>
+          <h2>{t('crud.failedToLoad')}</h2>
           <p>{loadError}</p>
-          <Button onClick={() => void reload()}>Try again</Button>
+          <Button onClick={() => void reload()}>{t('crud.retry')}</Button>
         </div>
       )}
 
       {status === 'ready' && categories.length === 0 && (
         <div className="admin-panel admin-state">
-          <h2>No categories yet</h2>
-          <p>Categories group the products shown on the Products page. Add the first one to begin.</p>
-          <Button onClick={openAdd}>Add category</Button>
+          <h2>{t('crud.empty')}</h2>
+          <p>{t('page.categories.desc')}</p>
+          <Button onClick={openAdd}>{addLabel}</Button>
         </div>
       )}
 
@@ -166,11 +181,11 @@ export function AdminCategories() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Slug</th>
-                <th>Order</th>
-                <th>Status</th>
-                <th className="admin-col-actions">Actions</th>
+                <th>{t('field.name')}</th>
+                <th>{t('field.slug')}</th>
+                <th>{t('field.order')}</th>
+                <th>{t('crud.status')}</th>
+                <th className="admin-col-actions">{t('crud.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -185,15 +200,15 @@ export function AdminCategories() {
                   </td>
                   <td>{c.sort_order}</td>
                   <td>
-                    <StatusBadge active={c.is_active} />
+                    <StatusBadge active={c.is_active} t={t} />
                   </td>
                   <td className="admin-col-actions">
                     <div className="admin-row-actions">
                       <Button variant="ghost" onClick={() => openEdit(c)}>
-                        Edit
+                        {t('crud.edit')}
                       </Button>
                       <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(c)}>
-                        Delete
+                        {t('crud.delete')}
                       </Button>
                     </div>
                   </td>
@@ -207,27 +222,27 @@ export function AdminCategories() {
               <li key={c.id} className="admin-card">
                 <div className="admin-card-head">
                   <h3>{c.name}</h3>
-                  <StatusBadge active={c.is_active} />
+                  <StatusBadge active={c.is_active} t={t} />
                 </div>
                 {c.description && <p className="admin-card-desc">{c.description}</p>}
                 <dl className="admin-card-meta">
                   <div>
-                    <dt>Slug</dt>
+                    <dt>{t('field.slug')}</dt>
                     <dd>
                       <code className="admin-slug">{c.slug}</code>
                     </dd>
                   </div>
                   <div>
-                    <dt>Order</dt>
+                    <dt>{t('field.order')}</dt>
                     <dd>{c.sort_order}</dd>
                   </div>
                 </dl>
                 <div className="admin-row-actions">
                   <Button variant="ghost" onClick={() => openEdit(c)}>
-                    Edit
+                    {t('crud.edit')}
                   </Button>
                   <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(c)}>
-                    Delete
+                    {t('crud.delete')}
                   </Button>
                 </div>
               </li>
@@ -238,12 +253,12 @@ export function AdminCategories() {
 
       <Modal
         open={formOpen}
-        title={editing ? 'Edit category' : 'Add category'}
+        title={editing ? t('crud.editItem', { item: resource }) : addTitle}
         onClose={() => !saving && setFormOpen(false)}
       >
         <form className="admin-form" onSubmit={onSubmit} noValidate>
           <div className="field full">
-            <label htmlFor="cat-name">Name *</label>
+            <label htmlFor="cat-name">{t('field.name')} *</label>
             <input
               id="cat-name"
               value={draft.name}
@@ -253,7 +268,7 @@ export function AdminCategories() {
           </div>
 
           <div className="field full">
-            <label htmlFor="cat-slug">Slug (used in the URL, e.g. potato) *</label>
+            <label htmlFor="cat-slug">{t('categories.field.slugHint')} *</label>
             <input
               id="cat-slug"
               value={draft.slug}
@@ -264,13 +279,13 @@ export function AdminCategories() {
             />
             {slugTaken && (
               <span className="field-error" id="cat-slug-error">
-                Another category already uses this slug.
+                {t('categories.slugTaken')}
               </span>
             )}
           </div>
 
           <div className="field full">
-            <label htmlFor="cat-description">Description</label>
+            <label htmlFor="cat-description">{t('field.description')}</label>
             <textarea
               id="cat-description"
               value={draft.description}
@@ -279,7 +294,7 @@ export function AdminCategories() {
           </div>
 
           <div className="field">
-            <label htmlFor="cat-order">Sort order</label>
+            <label htmlFor="cat-order">{t('field.sortOrder')}</label>
             <input
               id="cat-order"
               type="number"
@@ -302,7 +317,7 @@ export function AdminCategories() {
                 checked={draft.is_active}
                 onChange={(e) => setDraft({ ...draft, is_active: e.target.checked })}
               />
-              <span>Visible on the site</span>
+              <span>{t('field.visibleOnSite')}</span>
             </label>
           </div>
 
@@ -314,10 +329,10 @@ export function AdminCategories() {
 
           <div className="admin-modal-actions">
             <Button variant="ghost" onClick={() => setFormOpen(false)} disabled={saving}>
-              Cancel
+              {t('crud.cancel')}
             </Button>
             <button type="submit" className="btn btn-fill" disabled={saving || slugTaken}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? `${t('crud.save')}…` : t('crud.save')}
             </button>
           </div>
         </form>
@@ -325,17 +340,16 @@ export function AdminCategories() {
 
       <Modal
         open={Boolean(confirming)}
-        title="Delete category"
+        title={t('crud.deleteItem', { item: resource })}
         onClose={() => !deleting && setConfirming(null)}
       >
         <div className="admin-form">
           <p className="admin-confirm-text">
-            Delete <strong>{confirming?.name}</strong>? Products in this category will no longer be
-            grouped under it on the Products page. This cannot be undone.
+            {t('crud.deleteConfirm', { item: confirming?.name ?? '' })}
           </p>
           <div className="admin-modal-actions">
             <Button variant="ghost" onClick={() => setConfirming(null)} disabled={deleting}>
-              Cancel
+              {t('crud.cancel')}
             </Button>
             <button
               type="button"
@@ -343,7 +357,7 @@ export function AdminCategories() {
               onClick={() => void onDelete()}
               disabled={deleting}
             >
-              {deleting ? 'Deleting…' : 'Delete'}
+              {deleting ? `${t('crud.delete')}…` : t('crud.delete')}
             </button>
           </div>
         </div>
@@ -355,10 +369,10 @@ export function AdminCategories() {
 }
 
 /** Shape-of-the-content placeholder, so the layout does not jump on load. */
-function CategoriesSkeleton() {
+function CategoriesSkeleton({ label }: { label: string }) {
   return (
     <div className="admin-panel" aria-busy="true" aria-live="polite">
-      <span className="admin-sr-only">Loading categories…</span>
+      <span className="admin-sr-only">{label}</span>
       {[0, 1, 2].map((i) => (
         <div className="admin-skeleton-row" key={i}>
           <span className="admin-skeleton" style={{ width: '38%' }} />

@@ -44,8 +44,34 @@
 }
 .admin-brand-text span { color: var(--fg-3); font-weight: 600; }
 
+.admin-bar-actions { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+
 /* The bar is 64px tall; a 44px pill inside it leaves 10px of air. */
 .admin .admin-signout { min-height: 38px; padding: .4rem 1.05rem; font-size: var(--t-small); }
+
+/* Language switch. Same segmented pattern as the calculator's RAW/FRIED
+   control: the active state is carried by a background rather than a
+   measured sliding pill, so there is nothing to place on the wrong side. */
+.admin-lang {
+  display: inline-flex; gap: 2px; padding: 3px;
+  background: var(--bg-2); border: 1px solid var(--hair);
+  border-radius: 999px;
+}
+.admin-lang button {
+  min-height: 32px; padding: .3rem .7rem;
+  border: 0; border-radius: 999px; background: transparent;
+  font: inherit; font-size: var(--t-caption); font-weight: 700; letter-spacing: .03em;
+  color: var(--fg-3); cursor: pointer;
+  transition: background-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+.admin-lang button:hover { color: var(--fg); }
+.admin-lang button.is-active { background: var(--surface); color: var(--fg); box-shadow: var(--sh-1); }
+.admin-lang button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (pointer: coarse) { .admin-lang button { min-height: 40px; padding: .4rem .9rem; } }
+
+/* The login card centres its brand row; the switch sits beside it. */
+.admin-login-card .admin-brand { display: flex; }
+.admin-login-card .admin-lang { margin-top: 1rem; }
 
 /* ---------------- page head ---------------- */
 
