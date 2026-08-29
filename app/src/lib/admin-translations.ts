@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 231, tr: 231).
+ * 2 locales (en: 232, tr: 232).
  * 0 key(s) fall back to English.
  */
 
@@ -226,6 +226,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "branding.logoShownHint": "Shown in the header and footer of every page.",
     "branding.logoUploadHint": "JPG, PNG, WEBP or SVG, up to 8MB. Uploading replaces the logo immediately.",
     "branding.colorsTitle": "Colors",
+    "branding.colorsScopeNote": "These colours are applied by the previous site. The redesigned pages use their own palette, so changes here do not affect them.",
     "branding.primary": "Primary (green)",
     "branding.primaryDark": "Primary Dark",
     "branding.primaryLight": "Primary Light",
@@ -459,6 +460,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "branding.logoShownHint": "Her sayfanın üst ve alt kısmında gösterilir.",
     "branding.logoUploadHint": "JPG, PNG, WEBP veya SVG, 8MB'a kadar. Yükleme, logoyu hemen değiştirir.",
     "branding.colorsTitle": "Renkler",
+    "branding.colorsScopeNote": "Bu renkler önceki site tarafından uygulanır. Yeniden tasarlanan sayfalar kendi paletini kullanır, bu nedenle buradaki değişiklikler onları etkilemez.",
     "branding.primary": "Ana Renk (yeşil)",
     "branding.primaryDark": "Ana Renk Koyu",
     "branding.primaryLight": "Ana Renk Açık",

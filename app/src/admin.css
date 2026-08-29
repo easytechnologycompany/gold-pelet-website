@@ -580,3 +580,34 @@
   margin-top: .35rem; max-width: 100%;
   font-size: var(--t-small); color: var(--fg-2);
 }
+
+/* ---------------- branding ---------------- */
+
+.admin-logo-preview {
+  width: 96px; height: 96px; flex-shrink: 0;
+  object-fit: contain;
+  padding: .5rem;
+  border: 1px solid var(--hair); border-radius: var(--r-sm);
+  /* A fixed light plate: the logo is drawn for a light ground and would
+     disappear against the dark surface in dark mode. Same reasoning as the
+     --plate token the public header uses for the brand mark. */
+  background: var(--plate);
+}
+
+.admin-colour-field { display: flex; align-items: center; gap: .6rem; }
+.admin-colour-field input[type='color'] {
+  inline-size: 3.25rem; block-size: 2.75rem;
+  padding: 2px; cursor: pointer;
+  border: 1px solid var(--hair); border-radius: var(--r-sm);
+  background: var(--surface);
+}
+/* Chrome and Safari draw the swatch in a padded wrapper; trim it so the
+   colour fills the control rather than floating in a box. */
+.admin-colour-field input[type='color']::-webkit-color-swatch-wrapper { padding: 0; }
+.admin-colour-field input[type='color']::-webkit-color-swatch { border: 0; border-radius: 6px; }
+.admin-colour-field input[type='color']::-moz-color-swatch { border: 0; border-radius: 6px; }
+@media (pointer: coarse) { .admin-colour-field input[type='color'] { block-size: 44px; } }
+
+/* `role="note"` rather than a live region: this is standing context, not an
+   event, so it must not be announced as something that just happened. */
+.admin-group > .admin-field-warning { margin-block: -.35rem .2rem; }
