@@ -480,3 +480,18 @@
 
 .admin-icon-field { display: flex; gap: .6rem; align-items: center; }
 .admin-icon-field input { flex: 1 1 auto; min-width: 0; }
+
+/* A single-record editor (Page Heroes): a form in a panel, not a table. */
+.admin-single { padding: var(--gut); display: grid; gap: 1.1rem; max-width: 44rem; }
+.admin-form--flush { padding: 0; }
+.admin-single-actions {
+  display: flex; align-items: center; justify-content: flex-end; gap: .9rem;
+  flex-wrap: wrap; padding-top: .35rem;
+}
+.admin-dirty { font-size: var(--t-small); font-weight: 600; color: var(--fg-3); }
+.admin-dirty:not(:empty)::before {
+  content: ''; display: inline-block; vertical-align: middle;
+  width: 7px; height: 7px; margin-inline-end: .4rem;
+  border-radius: 50%; background: var(--accent);
+}
+.admin-textarea-tall { min-height: 9rem; }
