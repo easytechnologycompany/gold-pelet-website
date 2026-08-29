@@ -8,27 +8,108 @@
    overrides below, all scoped under .admin, land last.
    ============================================================ */
 
+/* The shell is one grid: sidebar, then page. Below the breakpoint the
+   sidebar column collapses to nothing and the sidebar itself becomes an
+   off-canvas drawer, so the page always owns the full width it is given and
+   can never sit underneath the nav. */
 .admin {
+  --admin-sidebar-w: 15.5rem;
   min-height: 100dvh;
   background: var(--bg-2);
   color: var(--fg);
   font-family: var(--font);
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1024px) {
+  .admin { grid-template-columns: var(--admin-sidebar-w) 1fr; }
 }
 
-/* ---------------- bar ---------------- */
+/* ---------------- sidebar ---------------- */
 
-.admin-bar {
+.admin-sidebar {
+  display: flex; flex-direction: column; gap: 1.25rem;
+  padding: 1.15rem 1rem 1.25rem;
+  background: var(--surface);
+  border-inline-end: 1px solid var(--hair);
+}
+@media (min-width: 1024px) {
+  /* Its own scroller, pinned for the height of the viewport, so a long page
+     scrolls under a nav that stays put. */
+  .admin-sidebar {
+    position: sticky; top: 0;
+    height: 100dvh; overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+.admin-sidebar-head { padding-inline: .35rem; }
+.admin-sidebar-foot {
+  margin-top: auto;
+  display: flex; flex-direction: column; align-items: flex-start; gap: .6rem;
+  padding: 1rem .35rem 0;
+  border-top: 1px solid var(--hair);
+}
+
+/* ---------------- drawer (below 1024px) ---------------- */
+
+/* The bar that replaces the sidebar on a narrow screen: brand and a toggle,
+   nothing else -- the links live in the drawer it opens. */
+.admin-topbar {
   position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: .75rem;
+  min-height: var(--chrome-h);
+  padding-inline: var(--gut);
   background: var(--chrome);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--chrome-hair);
 }
-.admin-bar-inner {
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  min-height: var(--chrome-h);
-  max-width: 84rem; margin-inline: auto;
-  padding-inline: var(--gut);
+@media (min-width: 1024px) { .admin-topbar { display: none; } }
+
+.admin-burger {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; flex-shrink: 0; margin-inline-start: -.35rem;
+  border: 1px solid transparent; border-radius: var(--r-sm);
+  background: transparent; color: var(--fg); cursor: pointer;
+  transition: background-color .2s var(--ease-out);
+}
+.admin-burger:hover { background: var(--bg-2); }
+.admin-burger svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+@media (pointer: coarse) { .admin-burger { width: 44px; height: 44px; } }
+
+@media (max-width: 1023px) {
+  /* Off-canvas rather than display:none, so it slides rather than appears,
+     and so its focusable contents leave the tab order while it is shut. */
+  .admin-sidebar {
+    position: fixed; inset-block: 0; inset-inline-start: 0; z-index: 60;
+    width: min(17rem, 82vw);
+    transform: translateX(-100%);
+    visibility: hidden;
+    overflow-y: auto; overscroll-behavior: contain;
+    box-shadow: var(--sh-2);
+    transition: transform .24s var(--spring), visibility .24s;
+  }
+  /* translate, not an inset, so the same rule is correct in RTL without a
+     second one flipping the sign. */
+  [dir='rtl'] .admin-sidebar { transform: translateX(100%); }
+  .admin.is-drawer-open .admin-sidebar,
+  [dir='rtl'] .admin.is-drawer-open .admin-sidebar {
+    transform: translateX(0);
+    visibility: visible;
+  }
+}
+
+.admin-backdrop-nav {
+  position: fixed; inset: 0; z-index: 50;
+  border: 0; padding: 0;
+  background: color-mix(in srgb, var(--fg) 45%, transparent);
+  cursor: pointer;
+  animation: admin-fade .18s var(--ease-out);
+}
+@media (min-width: 1024px) { .admin-backdrop-nav { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar { transition: none; }
+  .admin-backdrop-nav { animation: none; }
 }
 
 .admin-brand { display: inline-flex; align-items: center; gap: .6rem; min-width: 0; }
@@ -44,9 +125,8 @@
 }
 .admin-brand-text span { color: var(--fg-3); font-weight: 600; }
 
-.admin-bar-actions { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
-
-/* The bar is 64px tall; a 44px pill inside it leaves 10px of air. */
+/* Sits in the sidebar footer now; kept compact so it does not read as
+   the page's primary action. */
 .admin .admin-signout { min-height: 38px; padding: .4rem 1.05rem; font-size: var(--t-small); }
 
 /* Language switch. Same segmented pattern as the calculator's RAW/FRIED
@@ -75,8 +155,12 @@
 
 /* ---------------- page head ---------------- */
 
+/* min-width:0 because a grid item's automatic minimum is its content, and a
+   wide table would otherwise widen the column and push the layout instead of
+   scrolling inside its own panel. */
 .admin-main {
-  max-width: 84rem; margin-inline: auto;
+  min-width: 0;
+  max-width: 84rem;
   padding: clamp(1.75rem, 4vw, 3rem) var(--gut) clamp(4rem, 8vw, 6rem);
 }
 .admin-head {
@@ -338,27 +422,33 @@
 .admin-login-submit { width: 100%; margin-top: .35rem; }
 
 /* ---------------- nav ----------------
-   Only the ported pages appear; see AdminShell. It wraps under the brand on
-   a phone rather than scrolling, since two or three items always fit. */
+   Only the ported pages appear; see AdminNav. A vertical list in the
+   sidebar, grouped under the headings the old dashboard used. */
 
-.admin-nav { display: flex; gap: .25rem; flex-wrap: wrap; min-width: 0; }
+.admin-nav { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.admin-nav-group ul { display: flex; flex-direction: column; gap: 1px; }
+.admin-nav-label {
+  display: block; padding: 0 .7rem .35rem;
+  font-size: var(--t-caption); font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--fg-3);
+}
 .admin-nav a {
-  display: inline-flex; align-items: center;
-  min-height: 34px; padding: .35rem .8rem;
-  border-radius: 999px;
+  display: flex; align-items: center;
+  min-height: 36px; padding: .4rem .7rem;
+  border-radius: var(--r-sm);
   font-size: var(--t-small); font-weight: 600; letter-spacing: -0.01em;
-  color: var(--fg-3);
+  color: var(--fg-2);
   transition: background-color .2s var(--ease-out), color .2s var(--ease-out);
 }
 .admin-nav a:hover { color: var(--fg); background: var(--bg-2); }
-.admin-nav a.is-active { color: var(--fg); background: var(--surface); box-shadow: var(--sh-1); }
-@media (pointer: coarse) { .admin-nav a { min-height: 44px; } }
-
-/* Below 720 the bar is brand + actions on one line, nav on the next. */
-@media (max-width: 719px) {
-  .admin-bar-inner { flex-wrap: wrap; padding-block: .6rem; }
-  .admin-nav { order: 3; width: 100%; }
+/* The marker is a leading rule rather than a filled pill: in a column, a
+   solid block on the active row competes with the page beside it. */
+.admin-nav a.is-active {
+  color: var(--fg); background: var(--bg-2);
+  box-shadow: inset 2px 0 0 var(--accent);
 }
+[dir='rtl'] .admin-nav a.is-active { box-shadow: inset -2px 0 0 var(--accent); }
+@media (pointer: coarse) { .admin-nav a { min-height: 44px; } }
 
 /* ---------------- two-column form rows ----------------
    The dialog is 34rem at most, so two columns only earn their place once
