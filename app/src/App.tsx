@@ -44,6 +44,9 @@ const AdminTimeline = lazy(() =>
 const AdminCertifications = lazy(() =>
   import('@/pages/admin/AdminCertifications').then((m) => ({ default: m.AdminCertifications })),
 )
+const AdminHeroes = lazy(() =>
+  import('@/pages/admin/AdminHeroes').then((m) => ({ default: m.AdminHeroes })),
+)
 
 /**
  * The public site: header, footer, head metadata and smoothed scrolling.
@@ -123,6 +126,7 @@ export default function App() {
             <Route path="/admin/stats" element={<AdminStats />} />
             <Route path="/admin/timeline" element={<AdminTimeline />} />
             <Route path="/admin/certifications" element={<AdminCertifications />} />
+            <Route path="/admin/heroes" element={<AdminHeroes />} />
           </Route>
         </Routes>
       </LocaleProvider>

@@ -1,5 +1,13 @@
 import { API_BASE } from './api'
-import type { ApiProduct, Category, Certification, Milestone, NewsItem, Stat } from './api'
+import type {
+  ApiProduct,
+  Category,
+  Certification,
+  Milestone,
+  NewsItem,
+  PageHero,
+  Stat,
+} from './api'
 
 /**
  * Admin API client — the authenticated half of the backend, ported from
@@ -766,4 +774,85 @@ export async function deleteCertification(id: string): Promise<Certification[]> 
     throw new AdminError('The server accepted the delete but the certification is still there.')
   }
   return list
+}
+
+// ---------------- page heroes ----------------
+
+/**
+ * The six pages that have a hero record, in the site's own nav order. Mirrors
+ * PAGE_KEYS in lib/cms.ts — the same six the public site fetches.
+ */
+export const HERO_PAGES = ['home', 'products', 'services', 'about', 'news', 'contact'] as const
+export type HeroPage = (typeof HERO_PAGES)[number]
+
+/** The four fields admin/heroes.html edits, plus the page it belongs to. */
+export type HeroDraft = {
+  image_url: string
+  eyebrow: string
+  heading: string
+  subheading: string
+}
+
+export const heroDraftFrom = (h: PageHero | undefined): HeroDraft => ({
+  image_url: h?.image_url ?? '',
+  eyebrow: h?.eyebrow ?? '',
+  heading: h?.heading ?? '',
+  subheading: h?.subheading ?? '',
+})
+
+export const emptyHeroDraft = (): HeroDraft => heroDraftFrom(undefined)
+
+export const getPageHero = (page: HeroPage, signal?: AbortSignal) =>
+  adminFetch<PageHero>(`/admin/page-heroes/${page}`, { signal })
+
+/**
+ * All six at once rather than one per switch.
+ *
+ * The old page re-fetched on every change of the select, which meant a
+ * network round trip between choosing a page and seeing its text. Six small
+ * records cost one parallel fetch, and switching afterwards is instant — which
+ * also makes the unsaved-changes guard meaningful, since there is no window
+ * where the form is empty because a request is still in flight.
+ */
+export async function listPageHeroes(signal?: AbortSignal): Promise<Record<string, PageHero>> {
+  const records = await Promise.all(HERO_PAGES.map((page) => getPageHero(page, signal)))
+  return Object.fromEntries(
+    records.filter((h): h is PageHero => Boolean(h)).map((h) => [h.page_key, h]),
+  )
+}
+
+const heroPayload = (page: HeroPage, draft: HeroDraft) => ({
+  page_key: page,
+  image_url: draft.image_url,
+  eyebrow: draft.eyebrow.trim(),
+  heading: draft.heading.trim(),
+  subheading: draft.subheading.trim(),
+})
+
+function matchesHeroDraft(stored: PageHero, page: HeroPage, draft: HeroDraft): boolean {
+  const want = heroPayload(page, draft)
+  return (
+    (stored.image_url ?? '') === want.image_url &&
+    (stored.eyebrow ?? '').trim() === want.eyebrow &&
+    (stored.heading ?? '').trim() === want.heading &&
+    (stored.subheading ?? '').trim() === want.subheading
+  )
+}
+
+/**
+ * PUT then re-read, like every other admin write here: a 2xx says the request
+ * was accepted, not that the row changed. Returns the stored record so the
+ * caller renders server truth.
+ */
+export async function updatePageHero(page: HeroPage, draft: HeroDraft): Promise<PageHero> {
+  await adminFetch<PageHero>(`/admin/page-heroes/${page}`, {
+    method: 'PUT',
+    body: heroPayload(page, draft),
+  })
+  const stored = await getPageHero(page)
+  if (!stored) throw new AdminError('The hero disappeared after saving. Reload and check the page.')
+  if (!matchesHeroDraft(stored, page, draft)) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return stored
 }
