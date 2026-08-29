@@ -1,0 +1,312 @@
+/* ============================================================
+   ADMIN
+   The authenticated screens. Same token layer as the public site —
+   no colour, radius, shadow or type size is named literally here, so
+   the admin follows a theme change without a second edit.
+
+   Loaded after index.css (see main.tsx) so the few deliberate
+   overrides below, all scoped under .admin, land last.
+   ============================================================ */
+
+.admin {
+  min-height: 100dvh;
+  background: var(--bg-2);
+  color: var(--fg);
+  font-family: var(--font);
+}
+
+/* ---------------- bar ---------------- */
+
+.admin-bar {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--chrome);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--chrome-hair);
+}
+.admin-bar-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  min-height: var(--chrome-h);
+  max-width: 84rem; margin-inline: auto;
+  padding-inline: var(--gut);
+}
+
+.admin-brand { display: inline-flex; align-items: center; gap: .6rem; min-width: 0; }
+.admin-brand-mark {
+  display: grid; place-items: center;
+  width: 30px; height: 30px; border-radius: 9px;
+  background: var(--accent); color: var(--on-accent);
+  font-size: var(--t-caption); font-weight: 800; letter-spacing: .02em;
+}
+.admin-brand-text {
+  font-weight: 700; letter-spacing: -0.02em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.admin-brand-text span { color: var(--fg-3); font-weight: 600; }
+
+/* The bar is 64px tall; a 44px pill inside it leaves 10px of air. */
+.admin .admin-signout { min-height: 38px; padding: .4rem 1.05rem; font-size: var(--t-small); }
+
+/* ---------------- page head ---------------- */
+
+.admin-main {
+  max-width: 84rem; margin-inline: auto;
+  padding: clamp(1.75rem, 4vw, 3rem) var(--gut) clamp(4rem, 8vw, 6rem);
+}
+.admin-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 1rem 1.5rem; margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.admin-head-text { min-width: 0; }
+.admin-head h1 {
+  font-size: var(--t-h2); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05;
+  /* Flat, not the public site's gold gradient: a tool's page title should
+     not compete with the data under it. */
+  color: var(--fg);
+}
+.admin-head p { margin-top: .5rem; color: var(--fg-2); font-size: var(--t-body); max-width: 52ch; }
+.admin-head-actions { display: flex; gap: .6rem; flex-shrink: 0; }
+
+/* ---------------- panel ----------------
+   The public `.card` is the product-rail card: a flex item with a fixed
+   basis and scroll-snap alignment. Reusing it here would inherit both, so
+   the admin surface is its own class with the same skin. */
+
+.admin-panel {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+  overflow: hidden;
+}
+
+/* ---------------- table (>=900px) ---------------- */
+
+.admin-table { width: 100%; border-collapse: collapse; display: none; }
+@media (min-width: 900px) { .admin-table { display: table; } }
+
+.admin-table th {
+  text-align: start;
+  padding: .9rem 1.25rem;
+  font-size: var(--t-caption); font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--fg-3);
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--hair);
+  white-space: nowrap;
+}
+.admin-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--hair);
+  vertical-align: middle;
+  font-size: var(--t-body);
+}
+.admin-table tr:last-child td { border-bottom: 0; }
+.admin-table tbody tr { transition: background-color .18s var(--ease-out); }
+.admin-table tbody tr:hover { background: var(--bg-2); }
+
+.admin-cell-title { display: block; font-weight: 650; letter-spacing: -0.01em; }
+.admin-cell-sub {
+  display: block; margin-top: .25rem;
+  font-size: var(--t-small); color: var(--fg-3); line-height: 1.5;
+  /* Descriptions run to a couple of sentences; two lines is enough to
+     identify the row without letting one cell set the row height. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; max-width: 46ch;
+}
+.admin-slug {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--t-small);
+  padding: .18rem .45rem; border-radius: var(--r-sm);
+  background: var(--bg-2); border: 1px solid var(--hair); color: var(--fg-2);
+}
+.admin-col-actions { text-align: end; white-space: nowrap; }
+.admin-row-actions { display: flex; gap: .4rem; justify-content: flex-end; flex-wrap: wrap; }
+/* Denser than the 44px default, because a table row with two buttons in it
+   is a pointer-precise context and full-size pills would set the row height.
+   The floor comes straight back for touch, below — same rule the calculator
+   uses, and the reason this is a media query rather than a flat 36px. */
+.admin-row-actions .btn { min-height: 36px; padding: .35rem .9rem; font-size: var(--t-small); }
+@media (pointer: coarse) {
+  .admin-row-actions .btn { min-height: 44px; padding: .55rem 1.1rem; }
+}
+
+/* ---------------- badge ---------------- */
+
+.admin-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .25rem .6rem; border-radius: 999px;
+  font-size: var(--t-caption); font-weight: 700; letter-spacing: .01em;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.admin-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.admin-badge--active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.admin-badge--hidden {
+  color: var(--fg-3);
+  background: var(--bg-2);
+  border-color: var(--hair-2);
+}
+
+/* ---------------- cards (<900px) ---------------- */
+
+.admin-cards { display: grid; gap: 0; }
+@media (min-width: 900px) { .admin-cards { display: none; } }
+
+.admin-card { padding: 1.15rem var(--gut); border-bottom: 1px solid var(--hair); }
+.admin-card:last-child { border-bottom: 0; }
+.admin-card-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.admin-card-head h3 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; min-width: 0; }
+.admin-card-desc { margin-top: .5rem; color: var(--fg-2); font-size: var(--t-small); line-height: 1.6; }
+.admin-card-meta { display: flex; gap: 1.5rem; margin-top: .85rem; }
+.admin-card-meta dt {
+  font-size: var(--t-caption); font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--fg-3);
+}
+.admin-card-meta dd { margin-top: .3rem; font-size: var(--t-small); }
+.admin-card .admin-row-actions { margin-top: 1rem; justify-content: flex-start; }
+
+/* ---------------- empty / error / loading ---------------- */
+
+.admin-state { padding: clamp(2.5rem, 6vw, 4rem) var(--gut); text-align: center; }
+.admin-state h2 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; }
+.admin-state p { margin: .6rem auto 1.5rem; color: var(--fg-2); max-width: 44ch; font-size: var(--t-body); }
+
+.admin-skeleton-row {
+  display: flex; gap: 1.25rem; align-items: center;
+  padding: 1.15rem 1.25rem; border-bottom: 1px solid var(--hair);
+}
+.admin-skeleton-row:last-child { border-bottom: 0; }
+.admin-skeleton {
+  height: 12px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--hair) 25%, var(--bg-2) 37%, var(--hair) 63%);
+  background-size: 400% 100%;
+  animation: admin-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes admin-shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .admin-skeleton { animation: none; background: var(--hair); }
+}
+
+.admin-sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---------------- modal ---------------- */
+
+.admin-backdrop {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; place-items: center;
+  padding: var(--gut);
+  background: color-mix(in srgb, var(--fg) 45%, transparent);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: admin-fade .18s var(--ease-out);
+}
+.admin-modal {
+  width: min(34rem, 100%);
+  max-height: min(85dvh, 46rem); overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+  animation: admin-rise .22s var(--spring);
+}
+@keyframes admin-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes admin-rise { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .admin-backdrop, .admin-modal { animation: none; }
+}
+
+.admin-modal-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1.15rem var(--gut);
+  border-bottom: 1px solid var(--hair);
+}
+.admin-modal-head h2 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; }
+.admin-modal-close {
+  display: grid; place-items: center;
+  width: 36px; height: 36px; flex-shrink: 0;
+  border: 1px solid transparent; border-radius: 50%;
+  background: transparent; color: var(--fg-3); cursor: pointer;
+  transition: background-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+.admin-modal-close:hover { background: var(--bg-2); color: var(--fg); }
+.admin-modal-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.admin-form { display: grid; gap: 1.1rem; padding: var(--gut); grid-template-columns: 1fr; }
+.admin-modal-actions {
+  display: flex; justify-content: flex-end; gap: .6rem; flex-wrap: wrap;
+  padding-top: .35rem;
+}
+.admin-confirm-text { color: var(--fg-2); font-size: var(--t-body); line-height: 1.65; }
+.admin-confirm-text strong { color: var(--fg); font-weight: 700; }
+
+/* The checkbox is the one control the public `.field` does not cover: it
+   needs the label beside the box, not above it. */
+.admin-check label { display: flex; align-items: center; gap: .6rem; cursor: pointer; font-size: var(--t-body); color: var(--fg); font-weight: 500; }
+.admin-check input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; }
+
+.field-error, .admin-form-error {
+  font-size: var(--t-small); font-weight: 600;
+  color: color-mix(in srgb, #DC2626 78%, var(--fg));
+}
+.admin-form-error {
+  padding: .75rem .9rem; border-radius: var(--r-md);
+  background: color-mix(in srgb, #DC2626 10%, transparent);
+  border: 1px solid color-mix(in srgb, #DC2626 28%, transparent);
+  line-height: 1.5;
+}
+
+/* Destructive actions. Red is introduced here rather than in the token block
+   because the public site has no destructive action anywhere. */
+.admin .admin-danger { color: color-mix(in srgb, #DC2626 78%, var(--fg)); }
+.admin .admin-danger:hover { background: color-mix(in srgb, #DC2626 10%, transparent); border-color: color-mix(in srgb, #DC2626 30%, transparent); }
+.admin .admin-danger-fill { background: #DC2626; color: #fff; }
+.admin .admin-danger-fill:hover { background: #B91C1C; }
+
+/* ---------------- toast ---------------- */
+
+.admin-toast {
+  position: fixed; z-index: 100;
+  inset-inline-end: var(--gut); inset-block-end: var(--gut);
+  display: flex; align-items: center; gap: .75rem;
+  max-width: min(26rem, calc(100vw - 2 * var(--gut)));
+  padding: .85rem 1rem;
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-2);
+  font-size: var(--t-small); font-weight: 600; line-height: 1.5;
+  animation: admin-toast-in .22s var(--spring);
+}
+@keyframes admin-toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .admin-toast { animation: none; } }
+
+.admin-toast--success { background: var(--fg); color: var(--bg); }
+.admin-toast--error { background: #DC2626; color: #fff; }
+.admin-toast button {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 24px; height: 24px; border: 0; border-radius: 50%;
+  background: transparent; color: inherit; cursor: pointer; opacity: .75;
+}
+.admin-toast button:hover { opacity: 1; }
+.admin-toast svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+
+/* ---------------- login ---------------- */
+
+.admin-login { display: grid; place-items: center; padding: var(--gut); }
+.admin-login-card {
+  width: min(26rem, 100%);
+  padding: clamp(1.75rem, 5vw, 2.5rem);
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+.admin-login-card h1 { margin-top: 1.5rem; font-size: var(--t-h3); font-weight: 800; letter-spacing: -0.03em; }
+.admin-login-sub { margin-top: .4rem; color: var(--fg-2); font-size: var(--t-small); }
+.admin-login-card .admin-form { padding: 0; margin-top: 1.5rem; }
+.admin-login-submit { width: 100%; margin-top: .35rem; }

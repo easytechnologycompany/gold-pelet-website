@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
+// After index.css: the admin's few scoped overrides need to land last.
+import './admin.css'
 
 const root = document.getElementById('root')
 if (!root) throw new Error('#root is missing from index.html')
