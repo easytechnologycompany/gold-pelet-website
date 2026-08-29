@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "sync:translations": "node scripts/sync-translations.mjs",
+    "sync:admin-translations": "node scripts/sync-admin-translations.mjs",
     "fix:em-dashes": "node scripts/fix-cms-em-dashes.mjs"
   },
   "dependencies": {

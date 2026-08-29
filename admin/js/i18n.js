@@ -86,6 +86,10 @@ const ADMIN_TRANSLATIONS = {
 
     'crud.loading': 'Loading…',
     'crud.failedToLoad': 'Failed to load.',
+    'crud.retry': 'Try again',
+    'crud.addItem': '+ Add {item}',
+    'crud.editItem': 'Edit {item}',
+    'crud.deleteItem': 'Delete {item}',
     'crud.empty': 'Nothing here yet — add the first one.',
     'crud.actions': 'Actions',
     'crud.edit': 'Edit',
@@ -206,6 +210,7 @@ const ADMIN_TRANSLATIONS = {
     'certifications.field.iconHint': 'shield-check / shield-tick / circle-check / document-check',
 
     'categories.field.slugHint': 'Slug (URL-friendly, e.g. "potato")',
+    'categories.slugTaken': 'Another category already uses this slug.',
 
     'news.field.dateLabel': 'Date label (e.g. "March 2026" or "Upcoming · March 2026")',
     'news.field.featuredCheckbox': 'Featured (shown as the large top card)',
@@ -329,6 +334,10 @@ const ADMIN_TRANSLATIONS = {
 
     'crud.loading': 'Yükleniyor…',
     'crud.failedToLoad': 'Yüklenemedi.',
+    'crud.retry': 'Tekrar dene',
+    'crud.addItem': '+ {item} Ekle',
+    'crud.editItem': '{item} Düzenle',
+    'crud.deleteItem': '{item} Sil',
     'crud.empty': 'Henüz bir şey yok — ilkini ekleyin.',
     'crud.actions': 'İşlemler',
     'crud.edit': 'Düzenle',
@@ -449,6 +458,7 @@ const ADMIN_TRANSLATIONS = {
     'certifications.field.iconHint': 'shield-check / shield-tick / circle-check / document-check',
 
     'categories.field.slugHint': 'Slug (URL uyumlu, örn. "potato")',
+    'categories.slugTaken': 'Bu slug başka bir kategori tarafından kullanılıyor.',
 
     'news.field.dateLabel': 'Tarih etiketi (örn. "Mart 2026" veya "Yakında · Mart 2026")',
     'news.field.featuredCheckbox': 'Öne çıkan (büyük üst kart olarak gösterilir)',
