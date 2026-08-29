@@ -344,8 +344,13 @@ export function AdminCategories() {
         onClose={() => !deleting && setConfirming(null)}
       >
         <div className="admin-form">
+          {/* The dictionary sentence is "Delete this {item}?", and the old
+              page filled {item} with the resource type, not the record name,
+              so it reads as a sentence in both languages. The name goes above
+              it instead, where it is also easier to scan. */}
+          <p className="admin-confirm-name">{confirming?.name}</p>
           <p className="admin-confirm-text">
-            {t('crud.deleteConfirm', { item: confirming?.name ?? '' })}
+            {t('crud.deleteConfirm', { item: resource.toLocaleLowerCase() })}
           </p>
           <div className="admin-modal-actions">
             <Button variant="ghost" onClick={() => setConfirming(null)} disabled={deleting}>

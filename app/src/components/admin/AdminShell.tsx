@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { clearToken } from '@/lib/admin'
 import { useAdminT } from '@/lib/admin-i18n'
@@ -16,12 +16,18 @@ import { useAdminHead } from './useAdminHead'
  * same visual language — same tokens, same button skin — with only what an
  * operator needs.
  *
- * The old dashboard's twelve-item sidebar is intentionally absent rather than
- * reproduced: eleven of those pages have not been ported, so a sidebar here
- * would be eleven dead links. Categories is the page that exists, so the
- * shell states where you are and gets out of the way. The language switcher
- * and Sign Out, which lived in that sidebar's footer, move up into the bar.
+ * The nav lists only the pages that exist. The old dashboard's sidebar has
+ * twelve items; reproducing it while ten of those pages are unported would
+ * be ten dead links, so entries appear here as they are built. The language
+ * switcher and Sign Out, which lived in that sidebar's footer, move up into
+ * the bar.
  */
+
+/** Ported admin pages, in the old sidebar's Catalog order. */
+const NAV = [
+  { to: '/admin/categories', key: 'nav.categories' },
+  { to: '/admin/products', key: 'nav.products' },
+] as const
 export function AdminShell({
   title,
   description,
@@ -49,6 +55,18 @@ export function AdminShell({
               Gold Pelet <span>{t('sidebar.admin')}</span>
             </span>
           </span>
+          <nav className="admin-nav" aria-label={t('nav.group.catalog')}>
+            {NAV.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) => (isActive ? 'is-active' : undefined)}
+              >
+                {t(item.key)}
+              </NavLink>
+            ))}
+          </nav>
+
           <div className="admin-bar-actions">
             <LangSwitch />
             <Button
