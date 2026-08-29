@@ -696,12 +696,38 @@
 .admin-group .admin-state { padding-block: 1.5rem; }
 
 /* The brand logo where one is available, sized to match .admin-brand-mark so
-   the row does not shift when it arrives. Fixed light plate for the same
-   reason the public header has one: the mark is drawn for a light ground. */
+   the row does not shift when it arrives.
+
+   Treated exactly as the public header treats it (see .brand-logo in
+   index.css): shown as drawn on the light ground, where the artwork's navy
+   and green are legible, and flattened to white on the dark one, where the
+   navy would otherwise land at 1.88:1. It used to sit on a fixed light plate
+   instead; white is the stronger answer to the same problem at 19.0:1, and
+   the two surfaces now agree.
+
+   Same `brightness(0) invert(1)` and the same reason for it: the logo comes
+   from the CMS, so a committed white asset would only match today's upload,
+   while the filter whitens any artwork and leaves transparency alone. */
 .admin-brand-logo {
-  display: grid; place-items: center;
-  width: 30px; height: 30px; flex-shrink: 0;
-  padding: 3px; border-radius: 9px;
-  background: var(--plate);
+  display: block; flex-shrink: 0;
+  /* The same crop the header uses, and for the same reason: the CMS ships a
+     full lockup reading "GOLD PELET", and contained whole into a 30px box it
+     renders its own wordmark at a few pixels tall -- a smudge beside the live
+     text that already says the name. The box crops to the mark; the polygon
+     notches out the "E" the leaf overhangs. Geometry measured off the 910x576
+     artwork, so it is the same numbers as .brand-logo in index.css. */
+  height: 30px;
+  aspect-ratio: 475 / 576;
+  overflow: hidden;
 }
-.admin-brand-logo img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.admin-brand-logo img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  display: block;
+  clip-path: polygon(0 0, 100% 0, 100% 65.97%, 46.81% 65.97%, 46.81% 100%, 0 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .admin-brand-logo img { filter: brightness(0) invert(1); }
+}
+:root[data-theme="dark"] .admin-brand-logo img { filter: brightness(0) invert(1); }
