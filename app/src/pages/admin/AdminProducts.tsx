@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AdminShell } from '@/components/admin/AdminShell'
+import { ImageField } from '@/components/admin/ImageField'
 import { Modal } from '@/components/admin/Modal'
 import { Toast, type ToastState } from '@/components/admin/Toast'
 import { Button } from '@/components/ui/Button'
@@ -126,8 +127,7 @@ export function AdminProducts() {
     addSpec()
   }
 
-  const onPickImage = async (side: ImageSide, file: File | undefined) => {
-    if (!file) return
+  const onPickImage = async (side: ImageSide, file: File) => {
     setUploading(side)
     setFormError('')
     try {
@@ -178,45 +178,21 @@ export function AdminProducts() {
     setToast({ kind: 'error', message: result.message })
   }
 
-  /** Shared by both upload fields, which differ only in side and label. */
+  /** Both fields differ only in side and label; see components/admin/ImageField. */
   const imageField = (side: ImageSide) => {
-    const url = side === 'raw' ? draft.raw_image_url : draft.fried_image_url
-    const id = `product-${side}-image`
+    const key = side === 'raw' ? 'raw_image_url' : 'fried_image_url'
     return (
-      <div className="field">
-        <label htmlFor={id}>{t(side === 'raw' ? 'products.field.rawImage' : 'products.field.friedImage')}</label>
-        <div className="admin-upload">
-          {url ? (
-            <img className="admin-upload-preview" src={mediaURL(url)} alt="" />
-          ) : (
-            <span className="admin-upload-preview admin-upload-empty" aria-hidden="true" />
-          )}
-          <div className="admin-upload-controls">
-            <input
-              id={id}
-              type="file"
-              accept=".jpg,.jpeg,.png,.webp"
-              disabled={uploading !== null}
-              onChange={(e) => void onPickImage(side, e.target.files?.[0])}
-            />
-            {uploading === side && <span className="admin-upload-status">{t('crud.loading')}</span>}
-            {url && uploading !== side && (
-              <button
-                type="button"
-                className="admin-link-btn"
-                onClick={() =>
-                  setDraft((d) => ({
-                    ...d,
-                    [side === 'raw' ? 'raw_image_url' : 'fried_image_url']: '',
-                  }))
-                }
-              >
-                {t('crud.delete')}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <ImageField
+        id={`product-${side}-image`}
+        label={t(side === 'raw' ? 'products.field.rawImage' : 'products.field.friedImage')}
+        url={draft[key]}
+        busy={uploading === side}
+        // Both are disabled while either uploads: the save button is blocked
+        // anyway, and a second upload mid-flight would race the first.
+        disabled={uploading !== null}
+        onPick={(file) => void onPickImage(side, file)}
+        onClear={() => setDraft((d) => ({ ...d, [key]: '' }))}
+      />
     )
   }
 
