@@ -3,6 +3,7 @@ import type {
   ApiProduct,
   Category,
   Certification,
+  ContentEntry,
   Milestone,
   NewsItem,
   PageHero,
@@ -855,4 +856,69 @@ export async function updatePageHero(page: HeroPage, draft: HeroDraft): Promise<
     throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
   }
   return stored
+}
+
+// ---------------- site content ----------------
+
+export const listContent = (signal?: AbortSignal) =>
+  adminFetch<{ data: ContentEntry[] }>('/admin/content', { signal }).then((r) => r?.data ?? [])
+
+/** Per-key outcome of a batch save. A key is only `saved` once re-read. */
+export type ContentSaveReport = {
+  saved: string[]
+  failed: { key: string; message: string }[]
+}
+
+/**
+ * Saves the edited keys and reports on each one separately.
+ *
+ * Separately, because that is what the old page got right and is worth
+ * keeping: one key failing must not discard the text typed into the others.
+ * Its baseline only moves for keys that succeeded, so a failure leaves that
+ * field dirty with the operator's words intact.
+ *
+ * What it did not do is check. It moved the baseline on `res.ok`, so a write
+ * the backend accepted and dropped looked saved and the edit was then lost on
+ * the next reload. Here every key is compared against a re-read.
+ *
+ * One re-read for the whole batch, not one per key: /admin/content returns
+ * every record, so a single GET verifies all of them however many were sent.
+ */
+export async function saveContent(
+  edits: Record<string, string>,
+): Promise<{ list: ContentEntry[]; report: ContentSaveReport }> {
+  const keys = Object.keys(edits)
+
+  const writes = await Promise.all(
+    keys.map(async (key) => {
+      try {
+        await adminFetch<ContentEntry>(`/admin/content/${encodeURIComponent(key)}`, {
+          method: 'PUT',
+          body: { content_value: edits[key] },
+        })
+        return { key, error: '' }
+      } catch (err) {
+        // A 401 has to surface as a 401 rather than as one failed field, so
+        // the caller can send the operator back to sign in.
+        if (err instanceof UnauthorizedError) throw err
+        return { key, error: err instanceof Error ? err.message : 'Could not save.' }
+      }
+    }),
+  )
+
+  const list = await listContent()
+  const stored = new Map(list.map((entry) => [entry.content_key, entry.content_value ?? '']))
+
+  const report: ContentSaveReport = { saved: [], failed: [] }
+  for (const { key, error } of writes) {
+    if (error) {
+      report.failed.push({ key, message: error })
+    } else if (stored.get(key) !== edits[key]) {
+      report.failed.push({ key, message: 'The server accepted the change but did not save it.' })
+    } else {
+      report.saved.push(key)
+    }
+  }
+
+  return { list, report }
 }

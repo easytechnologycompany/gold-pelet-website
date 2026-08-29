@@ -495,3 +495,53 @@
   border-radius: 50%; background: var(--accent);
 }
 .admin-textarea-tall { min-height: 9rem; }
+
+/* ---------------- site content: grouped bulk editor ---------------- */
+
+.admin-groups { display: grid; gap: 1.25rem; max-width: 48rem; }
+.admin-group { padding: var(--gut); display: grid; gap: 1.1rem; }
+.admin-group-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+  padding-bottom: .9rem; border-bottom: 1px solid var(--hair);
+}
+.admin-group-head h2 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; }
+.admin-group-head p { margin-top: .3rem; color: var(--fg-2); font-size: var(--t-small); }
+.admin .admin-view-page { min-height: 34px; padding: .3rem .85rem; font-size: var(--t-small); }
+
+.admin-content-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.admin-char-count { font-size: var(--t-caption); color: var(--fg-3); font-variant-numeric: tabular-nums; }
+/* A nudge, not a limit: nothing truncates at 140. */
+.admin-char-count.is-over { color: color-mix(in srgb, #DC2626 78%, var(--fg)); font-weight: 700; }
+
+/* Which fields you have touched, at a glance, in a form this long. */
+.admin-content-field.is-dirty > .admin-content-label-row label::after {
+  content: ''; display: inline-block; vertical-align: middle;
+  width: 6px; height: 6px; margin-inline-start: .4rem;
+  border-radius: 50%; background: var(--accent);
+}
+
+/* ---------------- sticky save bar ---------------- */
+
+.admin-save-bar {
+  position: sticky; z-index: 30;
+  inset-block-end: var(--gut);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+  max-width: 48rem; margin-top: 1.25rem;
+  padding: .85rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--hair-2); border-radius: var(--r-md);
+  box-shadow: var(--sh-2);
+  animation: admin-toast-in .22s var(--spring);
+}
+@media (prefers-reduced-motion: reduce) { .admin-save-bar { animation: none; } }
+.admin-save-bar-status { font-size: var(--t-small); font-weight: 650; display: flex; align-items: center; gap: .45rem; }
+.admin-save-bar-status::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+}
+.admin-save-bar--saved { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.admin-save-bar--saved .admin-save-bar-status::before { background: var(--accent); }
+.admin-save-bar-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.admin-save-bar-actions .btn { min-height: 38px; padding: .4rem 1rem; font-size: var(--t-small); }
+@media (pointer: coarse) { .admin-save-bar-actions .btn { min-height: 44px; } }
