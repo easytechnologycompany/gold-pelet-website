@@ -320,6 +320,13 @@ header.chrome .inner {
   font-size: .95rem; font-weight: 800; letter-spacing: -0.02em;
   white-space: nowrap;
 }
+/* The wordmark in the site's gold. `--accent` rather than `--gold`: this is
+   text, and on the light ground --gold measures 2.27:1 where --accent
+   measures 4.71 -- one is readable and the other is not. --accent is also
+   already the gold every button and link uses, so the header matches the
+   rest of the page rather than introducing a second gold. Dark measures
+   8.77:1. */
+.brand-name { color: var(--accent); }
 /* The CMS ships one logo: a full lockup reading "GOLD PELET", where the
    navy graphic *is* the P. At header size the "ELET" lettering is what
    forces the whole thing small, so the header shows the mark only — leaf,
@@ -350,13 +357,19 @@ header.chrome .inner {
 /* The artwork is navy and green, and measured against the dark ground the
    navy lands at 1.88:1 — under the 3:1 floor for non-text graphics, i.e.
    genuinely unreadable, not merely dull. On the light ground it is fine
-   (10.07:1 navy, 6.07:1 green).
+   (10.07:1 navy, 6.07:1 green), so light mode shows it as drawn.
 
-   So dark mode gives it a light plate to sit on rather than recolouring it:
-   the brand's navy and green survive intact at the same contrast they enjoy
-   in light mode. The plate colour is deliberately NOT a theme token — it has
-   to stay light in the dark theme, which is exactly what a swapping token
-   would not do.
+   Dark mode used to solve that with a light plate behind the mark. It now
+   draws the mark white instead, which is the stronger answer on both counts:
+   white on the dark ground measures 19.0:1 against the plate's 1.88, and the
+   header loses the pale rectangle that was the one light element in an
+   otherwise dark bar.
+
+   `brightness(0) invert(1)` rather than a white asset on purpose. The header
+   follows whatever the admin uploads — that is the whole reason the crop is
+   done in CSS — and a committed white PNG would only match today's logo.
+   The filter flattens any artwork to a white silhouette and leaves
+   transparency alone, so an uploaded logo keeps working.
 
    Declared in all three theme states, base included, so the unset/system
    case resolves and no value lives only inside a media query. */
@@ -367,17 +380,9 @@ header.chrome .inner {
   background: transparent;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .brand-plate {
-    padding: 4px 7px;
-    border-radius: 9px;
-    background: var(--plate);
-  }
+  :root:not([data-theme="light"]) .brand-logo img { filter: brightness(0) invert(1); }
 }
-:root[data-theme="dark"] .brand-plate {
-  padding: 4px 7px;
-  border-radius: 9px;
-  background: var(--plate);
-}
+:root[data-theme="dark"] .brand-logo img { filter: brightness(0) invert(1); }
 
 .chrome nav { display: none; gap: 2.1rem; }
 @media (min-width: 900px) { .chrome nav { display: flex; } }
