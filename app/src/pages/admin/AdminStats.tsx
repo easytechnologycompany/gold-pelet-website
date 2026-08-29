@@ -6,7 +6,7 @@ import { Toast, type ToastState } from '@/components/admin/Toast'
 import { Button } from '@/components/ui/Button'
 import type { Stat } from '@/lib/api'
 import { emptyStatDraft, getToken, statDraftFrom, type StatDraft } from '@/lib/admin'
-import { useAdminStats } from '@/lib/admin-stats-store'
+import { useAdminStats } from '@/lib/admin-resources'
 import { useAdminLower, useAdminT } from '@/lib/admin-i18n'
 
 /**
@@ -36,7 +36,7 @@ export function AdminStats() {
   const t = useAdminT()
   const lower = useAdminLower()
 
-  const stats = useAdminStats((s) => s.stats)
+  const stats = useAdminStats((s) => s.items)
   const status = useAdminStats((s) => s.status)
   const loadError = useAdminStats((s) => s.error)
   const expired = useAdminStats((s) => s.expired)

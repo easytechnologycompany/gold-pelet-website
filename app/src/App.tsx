@@ -38,6 +38,9 @@ const AdminProducts = lazy(() =>
 const AdminStats = lazy(() =>
   import('@/pages/admin/AdminStats').then((m) => ({ default: m.AdminStats })),
 )
+const AdminTimeline = lazy(() =>
+  import('@/pages/admin/AdminTimeline').then((m) => ({ default: m.AdminTimeline })),
+)
 
 /**
  * The public site: header, footer, head metadata and smoothed scrolling.
@@ -115,6 +118,7 @@ export default function App() {
             <Route path="/admin/products" element={<AdminProducts />} />
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/admin/stats" element={<AdminStats />} />
+            <Route path="/admin/timeline" element={<AdminTimeline />} />
           </Route>
         </Routes>
       </LocaleProvider>
