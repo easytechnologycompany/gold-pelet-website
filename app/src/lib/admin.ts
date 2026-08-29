@@ -5,6 +5,8 @@ import type {
   Category,
   Certification,
   ContentEntry,
+  Enquiry,
+  EnquiryStatus,
   Milestone,
   NewsItem,
   PageHero,
@@ -1009,4 +1011,53 @@ export async function updateBranding(draft: BrandingDraft): Promise<Branding> {
     throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
   }
   return stored
+}
+
+// ---------------- enquiries ----------------
+
+/**
+ * The inbox. Unlike every other admin resource these records are created by
+ * the public site, never here — so there is no draft type and no create.
+ * What an operator can do is move one between statuses and delete it.
+ */
+export const listEnquiries = (status: EnquiryStatus | '', signal?: AbortSignal) =>
+  adminFetch<{ data: Enquiry[] }>(`/admin/enquiries${status ? `?status=${status}` : ''}`, {
+    signal,
+  }).then((r) => r?.data ?? [])
+
+/**
+ * PATCH, not PUT: only the status moves, and the record is otherwise someone
+ * else's words that the admin has no business rewriting.
+ *
+ * The re-read is filtered the same way the list is, so the caller gets back
+ * exactly what the current filter should show. That matters here more than
+ * elsewhere: moving an enquiry out of the filtered status should remove it
+ * from the visible list, and only a filtered re-read shows that correctly.
+ */
+export async function updateEnquiryStatus(
+  id: string,
+  status: EnquiryStatus,
+  filter: EnquiryStatus | '',
+): Promise<Enquiry[]> {
+  await adminFetch<Enquiry>(`/admin/enquiries/${id}/status`, { method: 'PATCH', body: { status } })
+
+  // Verify against the unfiltered list: the record may legitimately have left
+  // the filtered view, and its absence there would otherwise look like a
+  // failed write.
+  const all = await listEnquiries('')
+  const stored = all.find((e) => e.id === id)
+  if (!stored) throw new AdminError('The enquiry disappeared after saving. Reload and check the list.')
+  if (stored.status !== status) {
+    throw new AdminError('The server accepted the status change but did not save it.')
+  }
+  return filter ? all.filter((e) => e.status === filter) : all
+}
+
+export async function deleteEnquiry(id: string, filter: EnquiryStatus | ''): Promise<Enquiry[]> {
+  await adminFetch<void>(`/admin/enquiries/${id}`, { method: 'DELETE' })
+  const all = await listEnquiries('')
+  if (all.some((e) => e.id === id)) {
+    throw new AdminError('The server accepted the delete but the enquiry is still there.')
+  }
+  return filter ? all.filter((e) => e.status === filter) : all
 }

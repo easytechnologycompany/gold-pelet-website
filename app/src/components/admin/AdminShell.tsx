@@ -35,6 +35,7 @@ const NAV = [
   { to: '/admin/stats', key: 'nav.stats' },
   { to: '/admin/timeline', key: 'nav.timeline' },
   { to: '/admin/certifications', key: 'nav.certifications' },
+  { to: '/admin/enquiries', key: 'nav.enquiries' },
 ] as const
 export function AdminShell({
   title,
