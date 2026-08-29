@@ -38,6 +38,19 @@
   --gold:      #D4A017;
   --gold-lo:   #B4790C;
 
+  /* Heading gradient stops, kept separate from --gold/--accent-2 because those
+     are also UI colours (button hover, icons) that must not shift.
+
+     On this near-white ground the display golds above measure 3.54:1, 2.27:1
+     and 6.56:1 against the background. The middle one is the highlight, and it
+     sat at less than half the 4.5:1 AA asks for, so the centre of every
+     heading was its hardest part to read. These keep the same shape -- medium,
+     highlight at 46%, deep bronze -- with the highlight pulled down to the
+     lightest value that still clears 4.5:1. Measured: 5.67, 4.53, 8.09. */
+  --head-a:    #8A5A0B;
+  --head-b:    #9C690A;
+  --head-c:    #6F4310;
+
   --on-accent: #FFFFFF;
 
   --chrome:    rgba(250, 250, 249, .72);
@@ -96,6 +109,10 @@
     --accent-2: #FBBF24;
     --gold:     #F0B429;
     --gold-lo:  #B4790C;
+    /* Unchanged: on #0A0A0A these measure 5.36, 10.62 and 11.86. */
+    --head-a:   #B4790C;
+    --head-b:   #F0B429;
+    --head-c:   #FBBF24;
 
     --on-accent: #1C1310;
 
@@ -120,6 +137,10 @@
   --accent-2: #FBBF24;
   --gold:     #F0B429;
   --gold-lo:  #B4790C;
+  /* Unchanged: on #0A0A0A these measure 5.36, 10.62 and 11.86. */
+  --head-a:   #B4790C;
+  --head-b:   #F0B429;
+  --head-c:   #FBBF24;
 
   --on-accent: #1C1310;
 
@@ -1056,7 +1077,7 @@ footer .base {
 h1,
 h2,
 h3 {
-  background: linear-gradient(96deg, var(--gold-lo), var(--gold) 46%, var(--accent-2));
+  background: linear-gradient(96deg, var(--head-a), var(--head-b) 46%, var(--head-c));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
