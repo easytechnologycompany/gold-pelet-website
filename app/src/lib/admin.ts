@@ -1,5 +1,5 @@
 import { API_BASE } from './api'
-import type { ApiProduct, Category, Milestone, NewsItem, Stat } from './api'
+import type { ApiProduct, Category, Certification, Milestone, NewsItem, Stat } from './api'
 
 /**
  * Admin API client — the authenticated half of the backend, ported from
@@ -666,6 +666,104 @@ export async function deleteMilestone(id: string): Promise<Milestone[]> {
   const list = await listTimeline()
   if (list.some((m) => m.id === id)) {
     throw new AdminError('The server accepted the delete but the milestone is still there.')
+  }
+  return list
+}
+
+// ---------------- certifications ----------------
+
+/** The five fields admin/certifications.html configures crud.js with. */
+export type CertificationDraft = {
+  name: string
+  description: string
+  icon_key: string
+  sort_order: number
+  is_active: boolean
+}
+
+/**
+ * Matches the old page's
+ * `defaults: { is_active: true, sort_order: 0, icon_key: 'shield-check' }`.
+ */
+export const emptyCertificationDraft = (): CertificationDraft => ({
+  name: '',
+  description: '',
+  icon_key: 'shield-check',
+  sort_order: 0,
+  is_active: true,
+})
+
+export const certificationDraftFrom = (c: Certification): CertificationDraft => ({
+  name: c.name,
+  description: c.description ?? '',
+  icon_key: c.icon_key ?? '',
+  sort_order: c.sort_order,
+  is_active: c.is_active,
+})
+
+export const listCertifications = (signal?: AbortSignal) =>
+  adminFetch<{ data: Certification[] }>('/admin/certifications', { signal }).then((r) => r?.data ?? [])
+
+const certificationPayload = (draft: CertificationDraft) => ({
+  name: draft.name.trim(),
+  description: draft.description.trim(),
+  icon_key: draft.icon_key.trim(),
+  sort_order: draft.sort_order,
+  is_active: draft.is_active,
+})
+
+function matchesCertificationDraft(stored: Certification, draft: CertificationDraft): boolean {
+  const want = certificationPayload(draft)
+  return (
+    stored.name === want.name &&
+    (stored.description ?? '').trim() === want.description &&
+    (stored.icon_key ?? '') === want.icon_key &&
+    stored.sort_order === want.sort_order &&
+    stored.is_active === want.is_active
+  )
+}
+
+export async function createCertification(draft: CertificationDraft): Promise<Certification[]> {
+  const created = await adminFetch<Certification>('/admin/certifications', {
+    method: 'POST',
+    body: certificationPayload(draft),
+  })
+  const list = await listCertifications()
+  // No unique key of its own, so the id the POST returned is the lookup, with
+  // a full field match as the fallback.
+  const stored =
+    list.find((c) => c.id === created?.id) ?? list.find((c) => matchesCertificationDraft(c, draft))
+  if (!stored) {
+    throw new AdminError('The server accepted the certification but it is not in the list. Nothing was saved.')
+  }
+  if (!matchesCertificationDraft(stored, draft)) {
+    throw new AdminError('The certification was created but saved with different values. Check the fields and try again.')
+  }
+  return list
+}
+
+export async function updateCertification(
+  id: string,
+  draft: CertificationDraft,
+): Promise<Certification[]> {
+  await adminFetch<Certification>(`/admin/certifications/${id}`, {
+    method: 'PUT',
+    body: certificationPayload(draft),
+  })
+  const list = await listCertifications()
+  const stored = list.find((c) => c.id === id)
+  if (!stored) throw new AdminError('The certification disappeared after saving. Reload and check the list.')
+  if (!matchesCertificationDraft(stored, draft)) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return list
+}
+
+export async function deleteCertification(id: string): Promise<Certification[]> {
+  await adminFetch<void>(`/admin/certifications/${id}`, { method: 'DELETE' })
+  const list = await listCertifications()
+  if (list.some((c) => c.id === id)) {
+    throw new AdminError('The server accepted the delete but the certification is still there.')
   }
   return list
 }

@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 230, tr: 230).
+ * 2 locales (en: 231, tr: 231).
  * 0 key(s) fall back to English.
  */
 
@@ -202,6 +202,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "certifications.field.name": "Name (e.g. \"ISO 22000\")",
     "certifications.field.description": "Description (e.g. \"Food Safety Management\")",
     "certifications.field.iconHint": "shield-check / shield-tick / circle-check / document-check",
+    "certifications.field.iconFallback": "This key is not recognised, so the site will draw the generic tick icon.",
     "categories.field.slugHint": "Slug (URL-friendly, e.g. \"potato\")",
     "categories.slugTaken": "Another category already uses this slug.",
     "crud.slugTaken": "Another {item} already uses this slug.",
@@ -434,6 +435,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "certifications.field.name": "Ad (örn. \"ISO 22000\")",
     "certifications.field.description": "Açıklama (örn. \"Gıda Güvenliği Yönetimi\")",
     "certifications.field.iconHint": "shield-check / shield-tick / circle-check / document-check",
+    "certifications.field.iconFallback": "Bu anahtar tanınmıyor, bu yüzden site genel onay simgesini çizecek.",
     "categories.field.slugHint": "Slug (URL uyumlu, örn. \"potato\")",
     "categories.slugTaken": "Bu slug başka bir kategori tarafından kullanılıyor.",
     "crud.slugTaken": "Bu slug başka bir {item} tarafından kullanılıyor.",
