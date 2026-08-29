@@ -28,7 +28,8 @@ export type ListStatus = 'loading' | 'ready' | 'error'
 /** Distinguishes "the session went away" so the UI can route to sign-in. */
 export type Outcome = { ok: true } | { ok: false; message: string; expired: boolean }
 
-const outcome = (err: unknown): Outcome => ({
+/** Shared with admin-products-store.ts, so both classify errors alike. */
+export const toOutcome = (err: unknown): Outcome => ({
   ok: false,
   message: err instanceof Error ? err.message : 'Something went wrong.',
   expired: err instanceof UnauthorizedError,
@@ -60,7 +61,7 @@ export const useAdminCategories = create<CategoriesState>((set) => ({
       set({ categories, status: 'ready', error: '', expired: false })
     } catch (err) {
       if (signal?.aborted) return
-      const result = outcome(err)
+      const result = toOutcome(err)
       set({ status: 'error', error: result.ok ? '' : result.message, expired: !result.ok && result.expired })
     }
   },
@@ -75,7 +76,7 @@ export const useAdminCategories = create<CategoriesState>((set) => ({
       set({ categories: await createCategory(draft) })
       return { ok: true }
     } catch (err) {
-      return outcome(err)
+      return toOutcome(err)
     }
   },
 
@@ -84,7 +85,7 @@ export const useAdminCategories = create<CategoriesState>((set) => ({
       set({ categories: await updateCategory(id, draft) })
       return { ok: true }
     } catch (err) {
-      return outcome(err)
+      return toOutcome(err)
     }
   },
 
@@ -93,7 +94,7 @@ export const useAdminCategories = create<CategoriesState>((set) => ({
       set({ categories: await deleteCategory(id) })
       return { ok: true }
     } catch (err) {
-      return outcome(err)
+      return toOutcome(err)
     }
   },
 }))

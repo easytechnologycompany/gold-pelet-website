@@ -336,3 +336,114 @@
 .admin-login-sub { margin-top: .4rem; color: var(--fg-2); font-size: var(--t-small); }
 .admin-login-card .admin-form { padding: 0; margin-top: 1.5rem; }
 .admin-login-submit { width: 100%; margin-top: .35rem; }
+
+/* ---------------- nav ----------------
+   Only the ported pages appear; see AdminShell. It wraps under the brand on
+   a phone rather than scrolling, since two or three items always fit. */
+
+.admin-nav { display: flex; gap: .25rem; flex-wrap: wrap; min-width: 0; }
+.admin-nav a {
+  display: inline-flex; align-items: center;
+  min-height: 34px; padding: .35rem .8rem;
+  border-radius: 999px;
+  font-size: var(--t-small); font-weight: 600; letter-spacing: -0.01em;
+  color: var(--fg-3);
+  transition: background-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+.admin-nav a:hover { color: var(--fg); background: var(--bg-2); }
+.admin-nav a.is-active { color: var(--fg); background: var(--surface); box-shadow: var(--sh-1); }
+@media (pointer: coarse) { .admin-nav a { min-height: 44px; } }
+
+/* Below 720 the bar is brand + actions on one line, nav on the next. */
+@media (max-width: 719px) {
+  .admin-bar-inner { flex-wrap: wrap; padding-block: .6rem; }
+  .admin-nav { order: 3; width: 100%; }
+}
+
+/* ---------------- two-column form rows ----------------
+   The dialog is 34rem at most, so two columns only earn their place once
+   there is room for both fields to stay legible. */
+
+.admin-form-row { display: grid; gap: 1.1rem; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .admin-form-row { grid-template-columns: 1fr 1fr; } }
+
+.admin-field-hint {
+  margin-top: -.35rem;
+  font-size: var(--t-small); color: var(--fg-3); line-height: 1.55;
+}
+
+/* ---------------- image upload ---------------- */
+
+.admin-upload { display: flex; gap: .75rem; align-items: flex-start; }
+.admin-upload-preview {
+  width: 64px; height: 64px; flex-shrink: 0;
+  object-fit: cover;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hair);
+  background: var(--bg-2);
+}
+/* A product with no photo yet: a plate, never a broken-image glyph. */
+.admin-upload-empty,
+.admin-thumb--empty {
+  background:
+    repeating-linear-gradient(45deg, var(--bg-2), var(--bg-2) 6px, var(--hair) 6px, var(--hair) 7px);
+}
+.admin-upload-controls { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.admin-upload-controls input[type='file'] { font-size: var(--t-small); color: var(--fg-2); max-width: 100%; }
+.admin-upload-status { font-size: var(--t-small); color: var(--fg-3); font-weight: 600; }
+
+.admin-link-btn {
+  align-self: flex-start;
+  padding: 0; border: 0; background: none;
+  font: inherit; font-size: var(--t-small); font-weight: 600;
+  color: color-mix(in srgb, #DC2626 78%, var(--fg));
+  text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer;
+}
+.admin-link-btn:hover { text-decoration-thickness: 2px; }
+
+/* ---------------- spec chips ---------------- */
+
+.admin-spec-entry { display: flex; gap: .5rem; align-items: stretch; }
+.admin-spec-entry input { flex: 1 1 auto; min-width: 0; }
+.admin-spec-entry .btn { flex-shrink: 0; min-height: 0; }
+
+.admin-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.admin-chip {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .3rem .4rem .3rem .7rem;
+  border: 1px solid var(--hair); border-radius: 999px;
+  background: var(--bg-2);
+  font-size: var(--t-small); font-weight: 600;
+}
+.admin-chip button {
+  display: grid; place-items: center;
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 0; border-radius: 50%;
+  background: transparent; color: var(--fg-3); cursor: pointer;
+  transition: background-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+.admin-chip button:hover { background: var(--hair-2); color: var(--fg); }
+.admin-chip svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+@media (pointer: coarse) {
+  .admin-chip { padding-block: .45rem; }
+  .admin-chip button { width: 28px; height: 28px; }
+}
+
+/* ---------------- product row thumb ---------------- */
+
+.admin-product-cell { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+.admin-thumb {
+  width: 40px; height: 40px; flex-shrink: 0;
+  object-fit: cover;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hair);
+  background: var(--bg-2);
+}
+.admin-skeleton--thumb { width: 40px; height: 40px; border-radius: var(--r-sm); flex-shrink: 0; }
+
+/* The record being deleted, above the generic confirm sentence. */
+.admin-confirm-name {
+  font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em;
+  color: var(--fg); margin-bottom: .4rem;
+}
