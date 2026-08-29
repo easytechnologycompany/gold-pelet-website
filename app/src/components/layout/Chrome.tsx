@@ -138,7 +138,7 @@ function BrandMark() {
           />
         </svg>
       )}
-      <span>{t(copy.brand)}</span>
+      <span className="brand-name">{t(copy.brand)}</span>
     </>
   )
 }
