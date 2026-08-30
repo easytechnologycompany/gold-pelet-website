@@ -161,6 +161,18 @@
 .admin-main {
   min-width: 0;
   max-width: 84rem;
+  /* Centred in whatever the sidebar leaves. Without this the column is pinned
+     to the sidebar and every pixel over the 84rem cap piles up on the right:
+     at 1760 the track is 1512 against a 1344 cap, so the page sat 168px left
+     of centre with a gap down one side. Invisible at 1440, where the track is
+     narrower than the cap and there is no slack to misplace -- which is why it
+     only showed on a wide screen. */
+  /* width:100% as well as the auto margins, because auto margins on a grid
+     item override justify-self:stretch -- on their own they stopped the column
+     filling its track and let it shrink to fit the table instead, which then
+     overflowed a phone by 49px. Filling the track, capped, then centred. */
+  width: 100%;
+  margin-inline: auto;
   padding: clamp(1.75rem, 4vw, 3rem) var(--gut) clamp(4rem, 8vw, 6rem);
 }
 .admin-head {
