@@ -126,7 +126,6 @@ export function AdminImages() {
 
                 <div className="admin-image-body">
                   <span className="admin-image-label">{image.label}</span>
-                  <code className="admin-slug">{image.image_key}</code>
 
                   <label className="admin-image-pick" htmlFor={inputId}>
                     <span className="admin-sr-only">

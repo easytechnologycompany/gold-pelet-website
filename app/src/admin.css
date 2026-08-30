@@ -707,7 +707,6 @@
 
 .admin-image-body { display: grid; gap: .45rem; padding: .9rem 1rem 1rem; }
 .admin-image-label { font-weight: 650; letter-spacing: -0.01em; line-height: 1.35; }
-.admin-image-body .admin-slug { justify-self: start; }
 .admin-image-pick input[type='file'] {
   margin-top: .35rem; max-width: 100%;
   font-size: var(--t-small); color: var(--fg-2);

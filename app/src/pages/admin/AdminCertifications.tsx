@@ -194,9 +194,6 @@ export function AdminCertifications() {
                       </span>
                       <span>
                         <span className="admin-cell-title">{c.name}</span>
-                        <span className="admin-cell-sub">
-                          <code className="admin-slug">{c.icon_key}</code>
-                        </span>
                       </span>
                     </div>
                   </td>
@@ -234,12 +231,6 @@ export function AdminCertifications() {
                 </div>
                 <p className="admin-card-desc">{c.description}</p>
                 <dl className="admin-card-meta">
-                  <div>
-                    <dt>{t('field.iconKey')}</dt>
-                    <dd>
-                      <code className="admin-slug">{c.icon_key}</code>
-                    </dd>
-                  </div>
                   <div>
                     <dt>{t('field.order')}</dt>
                     <dd>{c.sort_order}</dd>
