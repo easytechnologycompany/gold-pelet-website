@@ -44,6 +44,18 @@ const APPLY =
   process.argv.some((a) => a.replace(LEADING_DASHES, '') === 'apply') ||
   process.env.GP_APPLY === '1'
 
+/* What the script actually received, printed before anything else.
+   Three runs in a row reported success while writing nothing, because a dry
+   run prints every diff and then one quiet line at the bottom that is easy to
+   scroll past. Saying up front whether this is a real run removes the guess. */
+console.log(
+  'mode: ' + (APPLY ? 'APPLY (will write)' : 'DRY RUN (writes nothing)') +
+  ' | token: ' + (TOKEN ? 'set' : 'not set') +
+  ' | args: ' + JSON.stringify(process.argv.slice(2)) +
+  ' | GP_APPLY: ' + JSON.stringify(process.env.GP_APPLY ?? null),
+)
+console.log('')
+
 const here = dirname(fileURLToPath(import.meta.url))
 const SOURCE = resolve(here, '../src/lib/translations.ts')
 
@@ -168,7 +180,17 @@ for (const p of planned) {
 }
 
 if (!APPLY) {
-  console.log('Dry run. Re-run with --apply and GP_ADMIN_TOKEN set to write these.')
+  console.log('Dry run. NOTHING WAS WRITTEN.')
+  if (TOKEN) {
+    // The token only matters for writing, so its presence means writing was
+    // the intent and the flag is what went missing on the way in.
+    console.log('')
+    console.log('A token is set but the apply flag never arrived, so this only')
+    console.log('printed the diff. Set GP_APPLY=1 in the environment, or pass')
+    console.log('--apply as an argument, and run it again.')
+  } else {
+    console.log('Re-run with --apply (or GP_APPLY=1) and GP_ADMIN_TOKEN set to write these.')
+  }
   process.exit(0)
 }
 
