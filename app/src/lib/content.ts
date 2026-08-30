@@ -24,6 +24,21 @@ export const copy = {
     ku: 'چیپسی پێلێت لە زەیتدا سوور دەکرێتەوە',
     tr: 'Yağda kızaran pelet cips',
   },
+  /* The company name itself is in the logo beside this, so the label is only
+     the connective phrase. ku and tr are a first pass, as the note at the top
+     of this file says of the rest. */
+  poweredBy: {
+    en: 'Powered by',
+    ar: 'بدعم من',
+    ku: 'بە پاڵپشتی',
+    tr: 'Geliştiren',
+  },
+  easytechAlt: {
+    en: 'Easy Technology Company',
+    ar: 'Easy Technology Company',
+    ku: 'Easy Technology Company',
+    tr: 'Easy Technology Company',
+  },
   railHint: {
     en: 'Scroll to browse',
     ar: 'اسحب للتصفّح',
