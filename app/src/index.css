@@ -76,7 +76,15 @@
   --t-lead:    clamp(1.125rem, 1.02rem + 0.5vw, 1.5rem);
   --t-h3:      clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
   --t-h2:      clamp(2rem, 1.35rem + 2.9vw, 3.75rem);
-  --t-h1:      clamp(2.75rem, 1.4rem + 6vw, 6.5rem);
+  /* Capped at 6rem rather than 6.5. Measured against the hero's 1056px
+     column, the headline sets in two lines at 96px and three at 104: at the
+     larger size the wrap falls mid-compound, in "Ready-to-/Fry", and the
+     balancer then evens that into three short lines of 747, 653 and 522
+     against a measure of 1056 -- three lines none of which fills the column.
+     Eight pixels buys the second line back without touching the character of
+     the display size, and everything below the cap is unchanged, so laptops,
+     tablets and phones wrap exactly as they did. */
+  --t-h1:      clamp(2.75rem, 1.4rem + 6vw, 6rem);
   --t-mega:    clamp(4rem, 1.5rem + 11vw, 11rem);
 
   --r-lg: 22px;
