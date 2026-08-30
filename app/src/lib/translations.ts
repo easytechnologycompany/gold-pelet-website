@@ -41,7 +41,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "footer.link.calculator": "Load Calculator",
     "footer.copyright": "© 2026 Gold Pelet. All rights reserved.",
     "home.hero.eyebrow": "Pellet Snack Manufacturer · Est. 1998",
-    "home.hero.h1": "From raw grain to ready-to-fry pellets, engineered for scale.",
+    "home.hero.h1": "From Raw Grain to Ready-to-Fry Pellets.",
     "home.hero.lede": "Gold Pelet produces potato, corn and wheat snack pellets and semi-finished chips for food brands and co-packers worldwide, built on consistent raw materials, validated recipes, and a production line that runs to spec every batch.",
     "home.hero.cta.solutions": "Our Solutions",
     "home.products.eyebrow": "Product Range",

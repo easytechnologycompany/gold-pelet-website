@@ -20,7 +20,12 @@ export function Hero() {
   const hero = useCms((s) => s.heroes.home)
 
   const kicker = cms('home.hero.eyebrow', hero?.eyebrow ?? '')
-  const heading = cms('home.hero.h1', hero?.heading ?? '')
+  /* The headline comes from the repo, not the CMS.
+     Every other field on this hero still comes from the dashboard; this one
+     is set here because it is the page's one piece of display typography and
+     its length is load-bearing -- it is sized and wrapped against a measured
+     column, and a longer string silently costs a line. */
+  const heading = tk('home.hero.h1')
   const lead = cms('home.hero.lede', hero?.subheading ?? '')
 
   return (
