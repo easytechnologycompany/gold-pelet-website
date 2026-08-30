@@ -343,6 +343,16 @@ header.chrome .inner {
   height: 40px;
   aspect-ratio: 475 / 576;   /* the mark's own proportion */
   overflow: hidden;
+  /* The crop is geometry, not text, and must not follow the page direction.
+     The box shows whatever the image's inline start puts under it, and in
+     Arabic and Kurdish `dir="rtl"` moves that start to the right: the same
+     33px viewport then landed on x=433..910 of the 910px artwork -- the tail
+     of the "ELET" lettering rather than the mark at x=0..475 -- with
+     clip-path notching away most of what was left. The logo did not fail to
+     load in those locales; it was cropped to the wrong part of itself.
+     `direction: ltr` pins the crop to the artwork's own axis, which is the
+     one the offsets above were measured against. */
+  direction: ltr;
 }
 .brand-logo img {
   height: 100%;

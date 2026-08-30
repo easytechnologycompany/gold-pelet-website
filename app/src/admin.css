@@ -851,6 +851,11 @@
   height: 30px;
   aspect-ratio: 475 / 576;
   overflow: hidden;
+  /* Same crop, same reason it must not flip; see .brand-logo in index.css.
+     The admin forces ltr on the document, so this is belt-and-braces -- but
+     the crop should be correct on its own terms rather than by relying on
+     that. */
+  direction: ltr;
 }
 .admin-brand-logo img {
   height: 100%;
