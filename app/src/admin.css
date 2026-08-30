@@ -407,7 +407,22 @@
 
 /* ---------------- login ---------------- */
 
-.admin-login { display: grid; place-items: center; padding: var(--gut); }
+/* One column, explicitly. The login page carries .admin for the shell's
+   background, colours and full-bleed height, but it has no sidebar -- and
+   .admin turns into a two-column grid above 1024px. Setting display:grid here
+   without also setting the tracks left the card sitting in the 15.5rem
+   sidebar column with the content column empty beside it: a 248px card
+   pinned to the top left of an otherwise blank page.
+
+   minmax(0, 1fr) rather than 1fr for the reason the public grids use it: the
+   floor of a 1fr track is the item's min-content, and the card should shrink
+   with the viewport rather than push the page wider than it. */
+.admin-login {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: var(--gut);
+}
 .admin-login-card {
   width: min(26rem, 100%);
   padding: clamp(1.75rem, 5vw, 2.5rem);
