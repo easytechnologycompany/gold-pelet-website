@@ -499,8 +499,13 @@ header.chrome .inner {
 /* ---------------- hero ---------------- */
 .hero {
   position: relative;
-  padding-top: calc(var(--chrome-h) + clamp(3rem, 8vw, 6.5rem));
-  padding-bottom: clamp(2rem, 5vw, 4rem);
+  /* Was chrome + clamp(3rem, 8vw, 6.5rem), which is 104px of air under a
+     64px bar at 1440 -- 168px before the eyebrow starts. That pushed the
+     film's top to 569 on a 900px screen and left 56% of it below the fold.
+     The band above a headline is not what makes a hero feel considered when
+     the thing being introduced is a film nobody can see. */
+  padding-top: calc(var(--chrome-h) + clamp(1.25rem, 2.5vw, 2rem));
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
   text-align: center;
   overflow: hidden;
 }
@@ -509,8 +514,8 @@ header.chrome .inner {
   color: var(--fg);
 }
 .hero h1 { margin-top: .35rem; }
-.hero .lead { margin-top: 1.1rem; max-width: 36ch; }
-.hero .links { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; }
+.hero .lead { margin-top: .85rem; max-width: 36ch; }
+.hero .links { margin-top: 1.1rem; display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; }
 
 /* the product: scroll-linked, 1:1 with scroll position */
 /* No min-height. It reserved room for the portrait pack that used to stand
@@ -520,7 +525,9 @@ header.chrome .inner {
    and below it, which read as a broken gap under the buttons. */
 .stage {
   position: relative;
-  margin-top: clamp(1.5rem, 4vw, 3rem);
+  /* Close to the row above it: the links are the last thing to read before
+     the film, not a section break. */
+  margin-top: clamp(.9rem, 1.8vw, 1.5rem);
   display: grid; place-items: center;
 }
 .stage .glow {
