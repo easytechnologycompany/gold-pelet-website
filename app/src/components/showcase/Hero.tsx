@@ -41,6 +41,13 @@ export function Hero() {
           {heading}
         </Reveal>
 
+        {/* The film sits between the headline and the explanation: what the
+            factory does is easier to show than to describe, so it is shown
+            first and the paragraph reads as the caption to it. The reveal
+            delays follow the order on screen rather than the order the
+            elements used to be in. */}
+        <HeroFilm />
+
         {lead && (
           <Reveal as="p" className="lead" delay={130}>
             {lead}
@@ -53,8 +60,6 @@ export function Hero() {
             {tk('home.hero.cta.solutions')}
           </Link>
         </Reveal>
-
-        <HeroFilm />
       </div>
     </section>
   )
