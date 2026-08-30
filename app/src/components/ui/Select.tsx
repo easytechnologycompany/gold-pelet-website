@@ -49,6 +49,8 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
 
 /** Matches the panel's transition; see .cselect-panel in index.css. */
 const EXIT_MS = 190
+/** How long a type-ahead search stays open before the next key starts a new one. */
+const TYPE_MS = 700
 
 export function Select({
   id,
@@ -71,6 +73,8 @@ export function Select({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const exitTimer = useRef<number | null>(null)
+  const typeBuffer = useRef('')
+  const typeTimer = useRef<number | null>(null)
   const listboxId = `${id}-listbox`
   const reactId = useId()
   const optionId = (i: number) => `${reactId}-opt-${i}`
@@ -195,9 +199,58 @@ export function Select({
 
   useEffect(() => () => {
     if (exitTimer.current) window.clearTimeout(exitTimer.current)
+    if (typeTimer.current) window.clearTimeout(typeTimer.current)
   }, [])
 
+  /**
+   * Jump to an option by typing its opening letters, the way a native select
+   * does. The buffer clears after a pause, so "co" finds Corn while c-then-c
+   * cycles through everything starting with c -- the repeated-character case
+   * is treated as cycling rather than as a search for "cc", which would match
+   * nothing.
+   *
+   * Matching is on the rendered label with `toLocaleLowerCase`, so it works in
+   * whatever language the labels are currently in: nothing here knows or cares
+   * that they might be English. Turkish is the reason for the locale-aware
+   * form rather than plain toLowerCase -- I is not i there.
+   *
+   * Typing while closed opens the menu on the match rather than committing it
+   * silently. A native select can change its value unseen because the OS gives
+   * that its own feedback; here, showing the list is the feedback.
+   */
+  const typeahead = (char: string) => {
+    if (typeTimer.current) window.clearTimeout(typeTimer.current)
+    typeTimer.current = window.setTimeout(() => { typeBuffer.current = '' }, TYPE_MS)
+    typeBuffer.current += char.toLocaleLowerCase()
+
+    const buf = typeBuffer.current
+    const repeated = buf.length > 1 && [...buf].every((c) => c === buf[0])
+    const query = repeated ? buf[0] : buf
+    // A repeat or a first keystroke moves on from where we are; a longer
+    // search restarts from the top so it can narrow rather than skip.
+    const from = repeated || buf.length === 1 ? activeIndex + 1 : 0
+
+    for (let i = 0; i < options.length; i++) {
+      const idx = (from + i) % options.length
+      if (options[idx].label.toLocaleLowerCase().startsWith(query)) {
+        setActiveIndex(idx)
+        if (!open) setOpen(true)
+        return
+      }
+    }
+  }
+
   const onKeyDown = (e: React.KeyboardEvent) => {
+    // Printable keys search. Space is the exception: it opens and commits
+    // until a search is already running, at which point it is just a space.
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      if (e.key !== ' ' || typeBuffer.current) {
+        e.preventDefault()
+        typeahead(e.key)
+        return
+      }
+    }
+
     const last = options.length - 1
     switch (e.key) {
       case 'ArrowDown':
