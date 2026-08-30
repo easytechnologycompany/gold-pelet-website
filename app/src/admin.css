@@ -375,6 +375,16 @@
 .admin-modal-close:hover { background: var(--bg-2); color: var(--fg); }
 .admin-modal-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
+/* Sits under a field to say why it is the way it is. */
+.admin-field-note {
+  margin: .4rem 0 0;
+  font-size: var(--t-small); line-height: 1.5; color: var(--fg-3);
+}
+.admin-form input:disabled,
+.admin-form textarea:disabled {
+  background: var(--bg-2); color: var(--fg-3); cursor: not-allowed;
+}
+
 .admin-form { display: grid; gap: 1.1rem; padding: var(--gut); grid-template-columns: 1fr; }
 .admin-modal-actions {
   display: flex; justify-content: flex-end; gap: .6rem; flex-wrap: wrap;

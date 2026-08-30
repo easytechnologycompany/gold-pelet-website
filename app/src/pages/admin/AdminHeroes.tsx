@@ -208,8 +208,19 @@ export function AdminHeroes() {
                 id="hero-heading"
                 value={draft.heading}
                 required
+                /* The home headline is set in the code and this field no
+                   longer drives it. Leaving it editable would be the worse
+                   option: an operator would type, save, see the toast, and
+                   find the page unchanged with nothing to explain why. */
+                disabled={page === 'home'}
+                aria-describedby={page === 'home' ? 'hero-heading-note' : undefined}
                 onChange={(e) => setDraft({ ...draft, heading: e.target.value })}
               />
+              {page === 'home' && (
+                <p className="admin-field-note" id="hero-heading-note">
+                  {t('heroes.headingFixed')}
+                </p>
+              )}
             </div>
 
             <div className="field full">
