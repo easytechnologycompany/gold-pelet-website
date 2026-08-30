@@ -17,6 +17,7 @@ import {
 import type { PageHero } from '@/lib/api'
 import { useAdminHeroes } from '@/lib/admin-heroes-store'
 import { useAdminT } from '@/lib/admin-i18n'
+import { TRANSLATIONS } from '@/lib/translations'
 
 /**
  * Page Heroes — the banner at the top of each public page.
@@ -34,6 +35,9 @@ import { useAdminT } from '@/lib/admin-i18n'
  * the form's contents on the select's change event with no check at all, so a
  * half-written subheading vanished on a misclick with nothing to say it had.
  */
+
+/** The headline the home hero renders; see components/showcase/Hero. */
+const LIVE_HOME_HEADING = TRANSLATIONS.en['home.hero.h1']
 
 export function AdminHeroes() {
   const navigate = useNavigate()
@@ -206,7 +210,11 @@ export function AdminHeroes() {
               <label htmlFor="hero-heading">{t('heroes.headingLabel')} *</label>
               <input
                 id="hero-heading"
-                value={draft.heading}
+                /* For home this shows what the site actually renders, not
+                   the row still sitting in the database. A disabled field
+                   displaying stale text would disagree with the page and
+                   there would be no way to tell which was right. */
+                value={page === 'home' ? LIVE_HOME_HEADING : draft.heading}
                 required
                 /* The home headline is set in the code and this field no
                    longer drives it. Leaving it editable would be the worse
