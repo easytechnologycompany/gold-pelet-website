@@ -494,8 +494,16 @@ header.chrome .inner {
   background: radial-gradient(circle, color-mix(in srgb, var(--gold) 42%, transparent), transparent 66%);
   filter: blur(60px);
 }
-.stage .pack {
-  position: relative; width: min(56%, 19rem);
+/* Wider than the portrait pack that stood here, because the footage is 16:9
+   and cropping it to the pack's slot would have discarded most of each frame.
+   object-fit: cover so an encode at a different aspect still fills the frame
+   rather than letterboxing inside it. */
+.stage .film {
+  position: relative; width: min(86%, 34rem);
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  background: var(--surface);
   transform-origin: 50% 62%;
   filter: drop-shadow(0 34px 46px rgba(12,10,9,.34));
   will-change: transform;
