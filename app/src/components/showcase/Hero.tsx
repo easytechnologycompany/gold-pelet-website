@@ -48,9 +48,9 @@ export function Hero() {
             {tk('home.hero.cta.solutions')}
           </Link>
         </Reveal>
-      </div>
 
-      <HeroFilm />
+        <HeroFilm />
+      </div>
     </section>
   )
 }
