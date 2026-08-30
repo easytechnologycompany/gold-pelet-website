@@ -256,9 +256,6 @@ export function AdminProducts() {
                       <ProductThumb product={p} />
                       <span>
                         <span className="admin-cell-title">{p.name}</span>
-                        <span className="admin-cell-sub">
-                          <code className="admin-slug">{p.slug}</code>
-                        </span>
                       </span>
                     </div>
                   </td>

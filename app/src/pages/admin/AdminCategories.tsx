@@ -177,13 +177,12 @@ export function AdminCategories() {
       {status === 'ready' && categories.length > 0 && (
         <div className="admin-panel">
           {/* One source list, two presentations: a table from 900px up, and
-              stacked cards below it, where four columns plus two buttons
+              stacked cards below it, where three columns plus two buttons
               cannot fit without a horizontal scroll. */}
           <table className="admin-table">
             <thead>
               <tr>
                 <th>{t('field.name')}</th>
-                <th>{t('field.slug')}</th>
                 <th>{t('field.order')}</th>
                 <th>{t('crud.status')}</th>
                 <th className="admin-col-actions">{t('crud.actions')}</th>
@@ -195,9 +194,6 @@ export function AdminCategories() {
                   <td>
                     <span className="admin-cell-title">{c.name}</span>
                     {c.description && <span className="admin-cell-sub">{c.description}</span>}
-                  </td>
-                  <td>
-                    <code className="admin-slug">{c.slug}</code>
                   </td>
                   <td>{c.sort_order}</td>
                   <td>
@@ -227,12 +223,6 @@ export function AdminCategories() {
                 </div>
                 {c.description && <p className="admin-card-desc">{c.description}</p>}
                 <dl className="admin-card-meta">
-                  <div>
-                    <dt>{t('field.slug')}</dt>
-                    <dd>
-                      <code className="admin-slug">{c.slug}</code>
-                    </dd>
-                  </div>
                   <div>
                     <dt>{t('field.order')}</dt>
                     <dd>{c.sort_order}</dd>

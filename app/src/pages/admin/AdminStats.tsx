@@ -182,9 +182,6 @@ export function AdminStats() {
                 <tr key={s.id}>
                   <td>
                     <span className="admin-cell-title">{s.label}</span>
-                    <span className="admin-cell-sub">
-                      <code className="admin-slug">{s.stat_key}</code>
-                    </span>
                   </td>
                   {/* Tabular figures so a column of numbers lines up. */}
                   <td className="admin-num">{s.value_number}</td>
@@ -220,12 +217,6 @@ export function AdminStats() {
                 </div>
                 <p className="admin-card-desc">{s.label}</p>
                 <dl className="admin-card-meta">
-                  <div>
-                    <dt>{t('stats.field.key')}</dt>
-                    <dd>
-                      <code className="admin-slug">{s.stat_key}</code>
-                    </dd>
-                  </div>
                   <div>
                     <dt>{t('field.order')}</dt>
                     <dd>{s.sort_order}</dd>
