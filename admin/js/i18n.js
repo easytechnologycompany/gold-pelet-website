@@ -31,7 +31,7 @@ const ADMIN_TRANSLATIONS = {
     'sidebar.admin': 'Admin',
     'sidebar.menu': 'Menu',
     'sidebar.appearance': 'Switch appearance',
-    'heroes.headingFixed': 'The home headline is part of the site design and is set in the code, so it is not edited here. Every other field on this page is yours.',
+    'heroes.headingFixed': 'Headlines are part of the site design and are set in the code, because each one is sized to fit a single line. Every other field on this page is yours.',
 
     'page.dashboard.title': 'Overview',
     'page.dashboard.desc': "A snapshot of what's on the live site right now.",
@@ -286,7 +286,7 @@ const ADMIN_TRANSLATIONS = {
     'sidebar.admin': 'Yönetici',
     'sidebar.menu': 'Menü',
     'sidebar.appearance': 'Görünümü değiştir',
-    'heroes.headingFixed': 'Ana sayfa başlığı site tasarımının bir parçasıdır ve kodda belirlenir, bu yüzden buradan düzenlenmez. Bu sayfadaki diğer tüm alanlar sizindir.',
+    'heroes.headingFixed': 'Başlıklar site tasarımının bir parçasıdır ve kodda belirlenir, çünkü her biri tek satıra sığacak şekilde ölçeklenir. Bu sayfadaki diğer tüm alanlar sizindir.',
 
     'page.dashboard.title': 'Genel Bakış',
     'page.dashboard.desc': 'Canlı sitede şu anda neler olduğuna dair bir özet.',
