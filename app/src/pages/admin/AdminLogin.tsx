@@ -33,6 +33,11 @@ export function AdminLogin() {
    * when a sign-in screen most needs to still render.
    */
   const logo = useCms((s) => s.branding?.logo_url)
+  // Same failure as the public header: the artwork comes from the backend's
+  // origin and that service sleeps, so a cold start leaves an empty plate
+  // where the mark should be. Falls back to the GP monogram below. Keyed by
+  // URL so a later upload gets its own attempt without an effect to reset it.
+  const [failedLogo, setFailedLogo] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -62,11 +67,16 @@ export function AdminLogin() {
     <div className="admin admin-login">
       <div className="admin-login-card">
         <span className="admin-brand">
-          {logo ? (
+          {logo && failedLogo !== logo ? (
             // On a fixed light plate: the mark is drawn for a light ground
             // and would vanish against the dark surface in dark mode.
             <span className="admin-brand-logo">
-              <img src={mediaURL(logo)} alt="" aria-hidden="true" />
+              <img
+                src={mediaURL(logo)}
+                alt=""
+                aria-hidden="true"
+                onError={() => setFailedLogo(logo)}
+              />
             </span>
           ) : (
             <span className="admin-brand-mark" aria-hidden="true">

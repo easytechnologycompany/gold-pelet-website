@@ -118,15 +118,33 @@ function BrandMark() {
   const branding = useCms((s) => s.branding)
   const logo = branding?.logo_url ? mediaURL(branding.logo_url) : null
 
+  /**
+   * The fallback below already covered "the CMS has no logo". It did not cover
+   * "the CMS has a logo and the file did not arrive", which is a different
+   * failure and the one that actually happens: the artwork is served from the
+   * backend's origin, not this one, and that service sleeps. A phone on mobile
+   * data meeting a cold start gets a failed image request where a desktop with
+   * the file already cached never notices.
+   *
+   * Without this the <img> still rendered, .brand-logo still reserved its
+   * 33x40 crop viewport, and nothing painted into it: the logo did not fall
+   * back, it silently went missing next to the wordmark.
+   */
+  // Remembers which URL failed rather than a bare boolean, so a later upload
+  // is attempted on its own merits: a different URL is by definition not the
+  // one that failed. A boolean would need an effect to clear it, and a
+  // setState in an effect is the cascading render this codebase avoids.
+  const [failedUrl, setFailedUrl] = useState<string | null>(null)
+
   return (
     <>
-      {logo ? (
+      {logo && failedUrl !== logo ? (
         // The plate is a separate element from the crop box: .brand-logo's
         // size *is* the crop viewport, so padding it would shift what the
         // overflow actually clips.
         <span className="brand-plate">
           <span className="brand-logo">
-            <img src={logo} alt="" aria-hidden="true" />
+            <img src={logo} alt="" aria-hidden="true" onError={() => setFailedUrl(logo)} />
           </span>
         </span>
       ) : (
