@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Menu, Moon, Sun, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { LOCALE_CODE, LOCALE_NAME, LOCALES, useLang, useT, type Locale } from '@/lib/i18n'
-import { useTheme } from '@/lib/theme'
+import { ThemeToggle as SharedThemeToggle } from '@/components/ui/ThemeToggle'
 import { useCms } from '@/lib/cms'
 import { mediaURL } from '@/lib/api'
 import { copy } from '@/lib/content'
@@ -226,15 +226,8 @@ function LanguageMenu() {
   )
 }
 
+/** The shared control, wearing the header's skin and the visitor's label. */
 function ThemeToggle() {
   const { t } = useT()
-  const isDark = useTheme((s) => s.isDark)
-  const toggle = useTheme((s) => s.toggle)
-
-  return (
-    <button className="tap" type="button" aria-label={t(copy.ariaAppearance)} onClick={toggle}>
-      {/* Shows the destination, not the current state. */}
-      {isDark ? <Sun size={15} aria-hidden /> : <Moon size={15} aria-hidden />}
-    </button>
-  )
+  return <SharedThemeToggle className="tap" label={t(copy.ariaAppearance)} />
 }
