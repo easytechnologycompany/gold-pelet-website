@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { ChevronDown, Minus, Plus } from 'lucide-react'
+import { Minus, Plus } from 'lucide-react'
 import { Reveal } from '@/components/motion/Reveal'
+import { Select } from '@/components/ui/Select'
 import { ButtonRoute } from '@/components/ui/Button'
 import {
   CONTAINERS,
@@ -91,23 +92,29 @@ export function LoadCalculator() {
       <Reveal className="calc" delay={160}>
         <div className="calc-grid">
           <Field id="calc-category" label={tk('products.calc.productLine')}>
-            <Select id="calc-category" value={densityKgM3} onChange={(v) => setDensity(Number(v))}>
-              {PRODUCT_LINES.map((l) => (
-                <option key={l.densityKgM3} value={l.densityKgM3}>
-                  {tk(l.labelKey)}
-                </option>
-              ))}
-            </Select>
+            <Select
+              id="calc-category"
+              labelledBy="calc-category-label"
+              value={String(densityKgM3)}
+              onChange={(v) => setDensity(Number(v))}
+              options={PRODUCT_LINES.map((l) => ({
+                value: String(l.densityKgM3),
+                label: tk(l.labelKey),
+              }))}
+            />
           </Field>
 
           <Field id="calc-packaging" label={tk('products.calc.packagingFormat')}>
-            <Select id="calc-packaging" value={bagKg} onChange={(v) => setBagKg(Number(v))}>
-              {PACKAGING.map((p) => (
-                <option key={p.bagKg} value={p.bagKg}>
-                  {tk(p.labelKey)}
-                </option>
-              ))}
-            </Select>
+            <Select
+              id="calc-packaging"
+              labelledBy="calc-packaging-label"
+              value={String(bagKg)}
+              onChange={(v) => setBagKg(Number(v))}
+              options={PACKAGING.map((p) => ({
+                value: String(p.bagKg),
+                label: tk(p.labelKey),
+              }))}
+            />
           </Field>
 
           <Field id="calc-quantity" label={tk('products.calc.orderQuantity')}>
@@ -161,15 +168,14 @@ export function LoadCalculator() {
           <Field id="calc-container" label={tk('products.calc.containerTypeLabel')}>
             <Select
               id="calc-container"
+              labelledBy="calc-container-label"
               value={containerId}
               onChange={(v) => setContainerId(v as ContainerId)}
-            >
-              {(Object.keys(CONTAINERS) as ContainerId[]).map((id) => (
-                <option key={id} value={id}>
-                  {tk(CONTAINERS[id].labelKey)}
-                </option>
-              ))}
-            </Select>
+              options={(Object.keys(CONTAINERS) as ContainerId[]).map((cid) => ({
+                value: cid,
+                label: tk(CONTAINERS[cid].labelKey),
+              }))}
+            />
           </Field>
         </div>
 
@@ -223,35 +229,13 @@ export function LoadCalculator() {
 function Field({ id, label, children }: { id: string; label: string; children: ReactNode }) {
   return (
     <div className="calc-field">
-      <label htmlFor={id}>{label}</label>
+      {/* The id is what the combobox points `aria-labelledby` at: `htmlFor`
+          names an input, but it does not name a button. Harmless for the
+          quantity field, which is a real input and uses both. */}
+      <label id={`${id}-label`} htmlFor={id}>
+        {label}
+      </label>
       {children}
-    </div>
-  )
-}
-
-/**
- * A select with the OS chevron replaced by our own, so the control matches the
- * rest of the system. The native `<select>` is kept — its menu is the one the
- * platform already makes accessible, and on a phone that is the wheel picker a
- * custom listbox would have to reimplement badly.
- */
-function Select({
-  id,
-  value,
-  onChange,
-  children,
-}: {
-  id: string
-  value: string | number
-  onChange: (value: string) => void
-  children: ReactNode
-}) {
-  return (
-    <div className="pick">
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
-        {children}
-      </select>
-      <ChevronDown className="chev" size={18} aria-hidden="true" />
     </div>
   )
 }
