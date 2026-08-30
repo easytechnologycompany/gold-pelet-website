@@ -3,7 +3,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { ChevronLink } from '@/components/ui/ChevronLink'
 import { useCms } from '@/lib/cms'
 import { useOverlay } from '@/lib/overlay'
-import { PackArt } from './PackArt'
+import { HeroFilm } from './HeroFilm'
 
 /**
  * The home hero, driven by the `home` page-hero record. English comes from the
@@ -48,9 +48,9 @@ export function Hero() {
             {tk('home.hero.cta.solutions')}
           </Link>
         </Reveal>
-      </div>
 
-      <PackArt />
+        <HeroFilm />
+      </div>
     </section>
   )
 }

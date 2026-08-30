@@ -483,19 +483,42 @@ header.chrome .inner {
 .hero .links { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; }
 
 /* the product: scroll-linked, 1:1 with scroll position */
+/* No min-height. It reserved room for the portrait pack that used to stand
+   here, which was tall and narrow; the film is wide and short and sets its
+   own height from the column width. Keeping the reservation left a 188px
+   film centred in a 496px box on a phone -- about 150px of dead space above
+   and below it, which read as a broken gap under the buttons. */
 .stage {
   position: relative;
   margin-top: clamp(1.5rem, 4vw, 3rem);
   display: grid; place-items: center;
-  min-height: min(62vh, 34rem);
 }
 .stage .glow {
   position: absolute; width: min(62%, 34rem); aspect-ratio: 1; border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--gold) 42%, transparent), transparent 66%);
   filter: blur(60px);
 }
-.stage .pack {
-  position: relative; width: min(56%, 19rem);
+/* Full width of the column it sits in, which is the same .bay that sizes the
+   heading, the lead and the links above it -- so the film's edges land on the
+   heading's edges and the hero reads as one column rather than a wide block
+   with a small picture floating under it.
+
+   No max-width of its own, deliberately. The stage used to be a sibling of
+   .bay rather than a child, so it spanned the viewport and the film could
+   only be centred in the window by giving it some width unrelated to the
+   text: at 1440 that put a 544px video under a 1056px heading. Moving it
+   into .bay means the cap it obeys is .bay's 1120px, in one place, and a
+   change to the column width moves both.
+
+   aspect-ratio holds the 16:9 while the width is fluid, so nothing stretches;
+   object-fit: cover so an encode at a different aspect still fills the frame
+   rather than letterboxing inside it. */
+.stage .film {
+  position: relative; width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  background: var(--surface);
   transform-origin: 50% 62%;
   filter: drop-shadow(0 34px 46px rgba(12,10,9,.34));
   will-change: transform;
