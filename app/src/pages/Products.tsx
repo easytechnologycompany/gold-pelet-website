@@ -1,6 +1,7 @@
 import { PageHero } from '@/components/layout/PageHero'
 import { Reveal } from '@/components/motion/Reveal'
 import { LoadCalculator } from '@/components/showcase/LoadCalculator'
+import { PackShot } from '@/components/showcase/PackShot'
 import { ProductCard } from '@/components/showcase/ProductCard'
 import { ButtonRoute } from '@/components/ui/Button'
 import { useCms } from '@/lib/cms'
@@ -33,6 +34,8 @@ export function Products() {
   return (
     <main id="top">
       <PageHero page="products" />
+
+      <PackShot />
 
       {ordered.map((category) => {
         const inCategory = products.filter((p) => p.category_id === category.id)
