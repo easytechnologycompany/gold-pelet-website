@@ -75,7 +75,7 @@
   --t-body:    1.0625rem;
   --t-lead:    clamp(1.125rem, 1.02rem + 0.5vw, 1.5rem);
   --t-h3:      clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
-  --t-h2:      clamp(2rem, 1.35rem + 2.9vw, 3.75rem);
+  --t-h2:      clamp(2rem, 1.35rem + 2.9vw, 2.625rem);
   /* Capped at 6rem rather than 6.5. Measured against the hero's 1056px
      column, the headline sets in two lines at 96px and three at 104: at the
      larger size the wrap falls mid-compound, in "Ready-to-/Fry", and the
@@ -84,7 +84,7 @@
      Eight pixels buys the second line back without touching the character of
      the display size, and everything below the cap is unchanged, so laptops,
      tablets and phones wrap exactly as they did. */
-  --t-h1:      clamp(2.75rem, 1.4rem + 6vw, 6rem);
+  --t-h1:      clamp(2.75rem, 1.4rem + 6vw, 3.25rem);
   --t-mega:    clamp(4rem, 1.5rem + 11vw, 11rem);
 
   --r-lg: 22px;
@@ -1467,6 +1467,35 @@ h3 {
   margin-inline: auto;
 }
 
+/* Note on the two caps above.
+
+   Headings are sized to hold one line.
+
+   Measured at 1440 against the column each sits in, the size every heading
+   would need to stop wrapping:
+
+     /products h1   41    "Five pellet lines. One consistent raw-material..."
+     /contact  h1   54    "Request a quote, samples, or a spec sheet."
+     /about    h1   55    "Your process-line partner in pellet snacks."
+     home      h2   43    "One continuous line, from raw grain to finished..."
+     short h2s  80+   "Wheat Pellets" and friends already fit
+
+   Taking every one of them literally would put the h1s at 41 and the h2s at
+   43 -- a page whose title is smaller than the section headings under it.
+   The hierarchy is worth more than the last line, so the h1s hold 54, the
+   h2s take 44, and one heading stays at two lines: /products, whose text is
+   long enough that nothing above its own h2 size will fit it. That one wants
+   shorter copy rather than smaller type.
+
+   Those figures came from measuring text on a canvas, which ran one or two
+   pixels optimistic against real layout: at 54 and 44 three headings were
+   still wrapping. The shipped values are 52 and 42, arrived at by rendering
+   them rather than calculating them.
+
+   The caps live on the tokens rather than on `h1`/`h2` rules. An element
+   rule would have outranked the phone block below, which overrides the same
+   tokens, and headings on a 360px screen would have jumped from 31px to 44.
+   Capping the token leaves that override in charge where it applies. */
 /* The home headline, sized to hold one line.
 
    "From Raw Grain to Ready-to-Fry Pellets." measures 1043px at 56 against a
@@ -1482,10 +1511,6 @@ h3 {
 
    The lower bound and slope are the token's own, so nothing below the cap
    changes and the phone override still wins where it applies. */
-.hero:not(.page-hero) h1 {
-  font-size: clamp(2.75rem, 1.4rem + 6vw, 3.375rem);
-}
-
 /* ---------------- phone composition ----------------
    Everything below 480px, and nothing above it. The desktop hero is not a
    layout that shrinks well: at 360 it rendered a 44px heading over five
