@@ -43,6 +43,21 @@
   }
 }
 .admin-sidebar-head { padding-inline: .35rem; }
+/* Language and appearance share a row at the foot of the sidebar. Both are
+   operator preferences rather than actions, so they read as a pair and sit
+   apart from Sign Out below them. */
+.admin-sidebar-prefs { display: flex; align-items: center; gap: .5rem; }
+.admin-theme {
+  display: grid; place-items: center;
+  width: 34px; height: 34px; flex-shrink: 0;
+  border: 1px solid var(--hair); border-radius: var(--r-sm);
+  background: transparent; color: var(--fg-2); cursor: pointer;
+  transition: background-color .2s var(--ease-out), color .2s var(--ease-out),
+              border-color .2s var(--ease-out);
+}
+.admin-theme:hover { background: var(--bg-2); color: var(--fg); border-color: var(--hair-2); }
+@media (pointer: coarse) { .admin-theme { width: 44px; height: 44px; } }
+
 .admin-sidebar-foot {
   margin-top: auto;
   display: flex; flex-direction: column; align-items: flex-start; gap: .6rem;

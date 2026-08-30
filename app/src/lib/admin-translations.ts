@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 232, tr: 232).
+ * 2 locales (en: 233, tr: 233).
  * 0 key(s) fall back to English.
  */
 
@@ -36,6 +36,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "sidebar.signOut": "Sign Out",
     "sidebar.admin": "Admin",
     "sidebar.menu": "Menu",
+    "sidebar.appearance": "Switch appearance",
     "page.dashboard.title": "Overview",
     "page.dashboard.desc": "A snapshot of what's on the live site right now.",
     "page.dashboard.recentEnquiries": "Recent Enquiries",
@@ -270,6 +271,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "sidebar.signOut": "Çıkış Yap",
     "sidebar.admin": "Yönetici",
     "sidebar.menu": "Menü",
+    "sidebar.appearance": "Görünümü değiştir",
     "page.dashboard.title": "Genel Bakış",
     "page.dashboard.desc": "Canlı sitede şu anda neler olduğuna dair bir özet.",
     "page.dashboard.recentEnquiries": "Son Talepler",

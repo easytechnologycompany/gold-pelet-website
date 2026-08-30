@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { clearToken } from '@/lib/admin'
 import { useAdminT } from '@/lib/admin-i18n'
 import { AdminNav } from './AdminNav'
@@ -107,7 +108,12 @@ export function AdminShell({
         <AdminNav onNavigate={() => setDrawerOpen(false)} />
 
         <div className="admin-sidebar-foot">
-          <LangSwitch />
+          {/* Language and appearance sit on one row: both are operator
+              preferences rather than actions, and neither needs a label. */}
+          <div className="admin-sidebar-prefs">
+            <LangSwitch />
+            <ThemeToggle className="admin-theme" label={t('sidebar.appearance')} />
+          </div>
           <Button
             variant="ghost"
             className="admin-signout"
