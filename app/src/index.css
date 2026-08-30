@@ -668,6 +668,32 @@ header.chrome .inner {
   line-height: 1; letter-spacing: -0.04em; color: var(--fg);
   font-variant-numeric: tabular-nums;
 }
+/* A cell clips what leaves it, because overflow: hidden is what gives the
+   rounded corner something to cut against. That is fine for a background or an
+   illustration and quietly wrong for text: a long unbreakable token does not
+   spill past the border where someone would notice it, it loses its tail and
+   still looks finished. info@goldpeletcips.com read as info@goldpeletcips.co
+   from 1060 up, where the cell's inner width is 278px and the address wants
+   302 -- a truncated address that still looks like an address.
+
+   `anywhere` rather than `break-word` because it also lets the intrinsic
+   minimum shrink, so the token stops forcing the cell wider than its track;
+   either way it only breaks a word when there is no other way to fit it, so
+   ordinary prose in these cells wraps exactly as it did. */
+.bento .cell :is(h3, p, a, .num) { overflow-wrap: anywhere; }
+
+/* An address is one word to the line breaker, so it is the case where the rule
+   above would have to break mid-domain to help. Size is the better lever: a
+   step down from --t-h3 keeps it on one line in the narrowest cell the grid
+   makes, and the wrap above stays as the guarantee for a longer address than
+   this one. Scoped by the href rather than by a class so it follows the thing
+   it is about, wherever a bento cell shows an address.
+
+   1.3rem is sized against the tightest cell, not the roomiest: the six-column
+   band starts at 1060 with 265px of inner width and only reaches 278 once the
+   column caps out, so a size chosen at 1440 wrapped at 1060. */
+.bento .cell h3 a[href^="mailto:"] { font-size: 1.3rem; letter-spacing: -0.01em; }
+
 .bento .cap { font-size: var(--t-small); font-weight: 600; letter-spacing: .01em; color: var(--fg-3); }
 .bento .cell p { font-size: .95rem; line-height: 1.5; color: var(--fg-2); }
 .bento .cell .ico { color: var(--accent); }
