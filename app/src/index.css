@@ -23,6 +23,16 @@
 }
 
 :root {
+  /* Declaring this is what stops Android Chrome's "Auto dark theme" rewriting
+     the page for us. Force-dark inverts backgrounds it thinks are light but
+     leaves a background-clip:text gradient alone, so the ground went black
+     while the heading kept its light-mode brown -- dark brown on black, which
+     is the unreadable state reported from a real device and is impossible
+     from our own stylesheet. Saying which schemes we support opts out of the
+     algorithm entirely, and gives native controls and scrollbars the right
+     colours as a side effect. */
+  color-scheme: light;
+
   /* light — Apple's neutral stack, warmed a few degrees toward the product */
   --bg:        #FAFAF9;
   --bg-2:      #F5F5F7;
@@ -96,6 +106,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --bg:      #0A0A0A;
     --bg-2:    #141312;
     --surface: #1C1B1A;
@@ -124,6 +135,7 @@
   }
 }
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg:      #0A0A0A;
   --bg-2:    #141312;
   --surface: #1C1B1A;
@@ -1445,6 +1457,105 @@ h3 {
    their container and `auto` resolves to zero, so this is inert for them. */
 :is(.center, .hero, .statement, .cta) :is(h1, h2, h3, .lead, .sub, .mega) {
   margin-inline: auto;
+}
+
+/* ---------------- phone composition ----------------
+   Everything below 480px, and nothing above it. The desktop hero is not a
+   layout that shrinks well: at 360 it rendered a 44px heading over five
+   lines, a seven-line lead, and an 888px hero against a 740px screen, so the
+   product film began 64px before the fold. These are the numbers that were
+   measured on a 360x740 Android viewport, not guesses at what "mobile" means.
+
+   The type scale is overridden here rather than folded into the tokens'
+   clamps, because one clamp cannot both shrink a phone heading and leave a
+   1440px one at 104px. A scoped override says exactly where the change
+   applies and leaves the desktop scale to the tokens. */
+@media (max-width: 480px) {
+  :root {
+    /* ~29px at 320, ~31px at 360, ~33px at 430: three lines of the English
+       headline instead of five, without dropping to a size that stops
+       reading as a display face. The floor is 1.75rem rather than 1.95
+       because at 320 -- the narrowest Android width worth supporting -- the
+       higher floor still bound and left the headline at five lines. */
+    --t-h1: clamp(1.75rem, 1.1rem + 3.6vw, 2.5rem);
+    --t-h2: clamp(1.6rem, 1rem + 2.6vw, 2.1rem);
+    --t-lead: 1.02rem;
+    /* The band of air the desktop uses between sections is most of a phone
+       screen. */
+    --bay: clamp(2.75rem, 9vw, 3.75rem);
+  }
+
+  /* Tighter than the desktop's 1.04 would be unreadable at display size, but
+     the gap between lines is what makes a five-line headline feel endless. */
+  h1 { line-height: 1.1; }
+
+  .hero {
+    /* Was chrome + 3rem. The eyebrow started 134px down a 740px screen. */
+    padding-top: calc(var(--chrome-h) + 1.5rem);
+    padding-bottom: 1.5rem;
+  }
+  .hero .lead {
+    margin-top: .8rem;
+    /* 1.55 rather than the desktop's 1.45: smaller text on a narrow measure
+       wants more room between lines, not less. */
+    line-height: 1.55;
+    max-width: 32ch;
+  }
+  .hero .links { margin-top: 1.15rem; gap: .5rem; }
+  .stage { margin-top: 1.25rem; }
+}
+
+/* Under ~380px the two hero links cannot sit side by side without breaking
+   mid-phrase, so they stack and each takes the full width. */
+@media (max-width: 380px) {
+  .hero .links { flex-direction: column; align-items: center; gap: .25rem; }
+}
+
+/* A touch target is a physical thing and does not scale with the viewport:
+   the hero links are text, and text is thinner than a fingertip. Padding
+   rather than a min-height so the hit area grows around the label without
+   moving it. */
+@media (pointer: coarse) {
+  .hero .links a { padding-block: .6rem; }
+
+  /* Measured on a phone, these were the only controls on the site whose real
+     hit area fell short of 44px. The header's already clears it: .tap is 34px
+     with an ::after inset of -5px, which is why measuring the element box
+     alone reports a false failure there.
+
+     The Raw/Fried switch came in at 30px and the card's call to action at 33.
+     The switch carries its own min-height of 30px, which capped the button at
+     35.6 however much padding was added, so its floor is raised rather than
+     padded around; the card's action only needed the padding. Its wrapper
+     already measured 44, but a wrapper is not what a thumb aims at -- each of
+     the two options is. */
+  .media-toggle button { min-height: 44px; padding-block: .35rem; }
+  /* 19.5px of line-height plus 12.5 either side clears 44 exactly. */
+  .pcard-cta { padding-block: .78rem; }
+  /* The calculator's quantity field came in at 26px. Its own stepper buttons
+     either side already cleared 44, which made the field between them the
+     smallest thing on the page to aim at, and it is the one you type into. */
+  .qty input { min-height: 44px; }
+
+  /* Standalone links: the whole of their parent, not a word inside a
+     sentence. The contact page shows its address and number as headings, and
+     the rail's catalogue link is a paragraph of one link -- 18 to 25px of
+     text each, and each of them the only thing there is to tap.
+
+     `:only-child` is what keeps this off links that sit inside prose. Those
+     are exempt from target sizing for good reason: padding a word in the
+     middle of a sentence would open the line box around it, and the sentence
+     is the context that makes it findable anyway. The "Write directly to
+     info@..." link on the same page is deliberately left alone.
+
+     A floor rather than padding, because these sit at different sizes -- 18px
+     of line-height in the rail hint, 25 in the contact headings -- and one
+     padding value cannot clear 44 for both. */
+  .rail-hint > a:only-child,
+  h3 > a:only-child {
+    display: inline-flex; align-items: center;
+    min-height: 44px;
+  }
 }
 
 /* ---------------- Turkish ----------------
