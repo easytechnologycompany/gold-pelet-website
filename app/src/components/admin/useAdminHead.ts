@@ -14,9 +14,17 @@ import { useAdminLang } from '@/lib/admin-i18n'
  * it from the *visitor's* locale and wraps the admin too, but the admin has
  * its own operator locale. Whichever wrote last would win, so this one takes
  * ownership while an admin screen is mounted and restores the visitor's on
- * the way out. `dir` is deliberately untouched — both admin locales are
- * Latin and LTR, so there is nothing to flip, and writing it would fight
- * LocaleProvider for no benefit.
+ * the way out.
+ *
+ * `dir` needs the same ownership, and used to be left alone on the reasoning
+ * that both admin locales are Latin so there was nothing to flip. That is
+ * true of the admin's own locales and beside the point: the attribute it was
+ * leaving alone belonged to the visitor's. Anyone who had looked at the site
+ * in Arabic or Kurdish had `dir="rtl"` on the document, and the dashboard
+ * inherited it -- the sidebar moved to the right and every English sentence
+ * rendered with its full stop on the left. Setting it is not fighting
+ * LocaleProvider; it is the same ownership `lang` already takes, and the
+ * cleanup below hands both back together.
  *
  * noindex is belt-and-braces rather than load-bearing: the admin is behind a
  * token and is neither prerendered nor in the sitemap, so a crawler has no
@@ -31,6 +39,8 @@ export function useAdminHead(title: string) {
     const previousTitle = document.title
     document.title = `${title} — Gold Pelet Admin`
     root.lang = adminLocale
+    // Both admin locales are LTR; this is a reset, not a translation.
+    root.dir = 'ltr'
 
     let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
     const ownsTag = !robots

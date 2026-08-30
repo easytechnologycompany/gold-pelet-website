@@ -27,7 +27,22 @@ import { fileURLToPath } from 'node:url'
 const EM = String.fromCharCode(0x2014)
 const API = 'https://backend-production-cfda.up.railway.app/api/v1'
 const TOKEN = process.env.GP_ADMIN_TOKEN
-const APPLY = process.argv.includes('--apply')
+/**
+ * Writing is opt-in, by flag or by env var.
+ *
+ * The dashes in the argument are normalised first. Copying a command out of a
+ * rendered document can turn `--apply` into an en dash, and the plain
+ * `includes('--apply')` then missed silently and fell through to a dry run
+ * that looked like a successful no-op -- which is exactly what happened, and
+ * a fitting bug for this particular script. GP_APPLY=1 avoids the argument
+ * quoting question altogether.
+ */
+const LEADING_DASHES = new RegExp(
+  '^[-' + String.fromCharCode(0x2010, 0x2011, 0x2012, 0x2013, 0x2014) + ']+',
+)
+const APPLY =
+  process.argv.some((a) => a.replace(LEADING_DASHES, '') === 'apply') ||
+  process.env.GP_APPLY === '1'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const SOURCE = resolve(here, '../src/lib/translations.ts')
