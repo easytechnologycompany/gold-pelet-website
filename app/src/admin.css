@@ -715,9 +715,20 @@
 
 .admin-image-grid {
   display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  /* min(100%, 15rem) rather than a bare 15rem: below that width the track
+     would otherwise stay 15rem wide and push the page sideways. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
 }
-.admin-image-card { display: flex; flex-direction: column; overflow: hidden; }
+/* min-width: 0 on both, and it is the fix for the clipped titles.
+
+   The card is a flex column and the body a flex item, so each takes its
+   content's min-content as an automatic minimum. The file input inside is
+   a native control about 324px wide at its narrowest -- "Choose File / No
+   file chosen" -- which made the body 324px inside a 268px card. The label
+   filled that width, ran 74px past the card, and the card's overflow:hidden
+   cut it off. The title was never the problem; it was sized by the control
+   underneath it. */
+.admin-image-card { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 .admin-image-card.is-failed { border-color: color-mix(in srgb, #DC2626 40%, var(--hair)); }
 
 .admin-image-shot {
@@ -738,10 +749,19 @@
   font-size: var(--t-small); font-weight: 700; color: var(--fg);
 }
 
-.admin-image-body { display: grid; gap: .45rem; padding: .9rem 1rem 1rem; }
-.admin-image-label { font-weight: 650; letter-spacing: -0.01em; line-height: 1.35; }
+.admin-image-body { display: grid; gap: .45rem; padding: .9rem 1rem 1rem; min-width: 0; }
+.admin-image-label {
+  font-weight: 650; letter-spacing: -0.01em; line-height: 1.35;
+  min-width: 0;
+  /* Wraps between words normally; `anywhere` is the backstop for a label
+     with no spaces in it, which would otherwise push the card open again. */
+  overflow-wrap: anywhere;
+}
 .admin-image-pick input[type='file'] {
-  margin-top: .35rem; max-width: 100%;
+  margin-top: .35rem;
+  /* width, not just max-width: the control reports a wide intrinsic size and
+     max-width alone does not stop it setting the flex minimum. */
+  width: 100%; min-width: 0; max-width: 100%;
   font-size: var(--t-small); color: var(--fg-2);
 }
 
