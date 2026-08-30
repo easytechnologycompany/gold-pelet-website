@@ -18,6 +18,12 @@ export const copy = {
     ku: 'گۆڕینی ڕوخسار',
     tr: 'Görünümü değiştir',
   },
+  packAlt: {
+    en: 'Gold Pelet retail pack',
+    ar: 'عبوة گولد بيليت',
+    ku: 'پاکەتی گۆڵد پێلێت',
+    tr: 'Gold Pelet perakende paketi',
+  },
   filmAlt: {
     en: 'Pellet chips frying in oil',
     ar: 'رقائق البيليت أثناء القلي في الزيت',
