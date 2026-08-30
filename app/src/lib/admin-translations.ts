@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 234, tr: 234).
+ * 2 locales (en: 235, tr: 235).
  * 0 key(s) fall back to English.
  */
 
@@ -37,6 +37,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "sidebar.admin": "Admin",
     "sidebar.menu": "Menu",
     "sidebar.appearance": "Switch appearance",
+    "sidebar.poweredBy": "Powered by",
     "heroes.headingFixed": "Headlines are part of the site design and are set in the code, because each one is sized to fit a single line. Every other field on this page is yours.",
     "page.dashboard.title": "Overview",
     "page.dashboard.desc": "A snapshot of what's on the live site right now.",
@@ -273,6 +274,7 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "sidebar.admin": "Yönetici",
     "sidebar.menu": "Menü",
     "sidebar.appearance": "Görünümü değiştir",
+    "sidebar.poweredBy": "Geliştiren",
     "heroes.headingFixed": "Başlıklar site tasarımının bir parçasıdır ve kodda belirlenir, çünkü her biri tek satıra sığacak şekilde ölçeklenir. Bu sayfadaki diğer tüm alanlar sizindir.",
     "page.dashboard.title": "Genel Bakış",
     "page.dashboard.desc": "Canlı sitede şu anda neler olduğuna dair bir özet.",

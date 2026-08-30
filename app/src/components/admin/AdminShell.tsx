@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { EasyTechCredit } from '@/components/ui/EasyTechCredit'
 import { clearToken } from '@/lib/admin'
 import { useAdminT } from '@/lib/admin-i18n'
 import { AdminNav } from './AdminNav'
@@ -124,6 +125,11 @@ export function AdminShell({
           >
             {t('sidebar.signOut')}
           </Button>
+
+          {/* Under Sign Out rather than beside the preferences: it is a
+              credit, not a control, and nothing here should look clickable
+              that is not. */}
+          <EasyTechCredit className="et-credit--admin" label={t('sidebar.poweredBy')} />
         </div>
       </aside>
 

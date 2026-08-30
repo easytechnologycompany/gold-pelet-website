@@ -6,6 +6,7 @@ import { mediaURL } from '@/lib/api'
 import { getToken, login } from '@/lib/admin'
 import { useCms } from '@/lib/cms'
 import { useAdminT } from '@/lib/admin-i18n'
+import { EasyTechCredit } from '@/components/ui/EasyTechCredit'
 
 /**
  * Sign-in for the admin screens — a port of admin/login.html, same endpoint
@@ -116,6 +117,10 @@ export function AdminLogin() {
           </button>
         </form>
       </div>
+
+      {/* Outside the card, not in it: the card is the sign-in task and this
+          is not part of it. */}
+      <EasyTechCredit className="et-credit--login" label={t('sidebar.poweredBy')} />
     </div>
   )
 }

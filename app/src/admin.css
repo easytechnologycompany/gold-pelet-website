@@ -473,6 +473,29 @@
 .admin-login-card .admin-form { padding: 0; margin-top: 1.5rem; }
 .admin-login-submit { width: 100%; margin-top: .35rem; }
 
+/* The Easy Technology credit in the admin.
+
+   The artwork, the theme swap and the ratio all come from `.et-credit` in
+   index.css, which the admin loads too. Only placement is set here.
+
+   In the sidebar it stacks under Sign Out with a rule above it, so it reads
+   as a footnote to the panel rather than another control in the stack. On
+   the sign-in screen it sits under the card, centred, because the card is
+   the task and this is not part of it. */
+.et-credit--admin {
+  margin-top: .9rem; padding-top: .9rem;
+  border-top: 1px solid var(--hair);
+  width: 100%;
+  font-size: var(--t-caption);
+}
+.et-credit--login {
+  margin-top: 1.1rem;
+  justify-content: center;
+  font-size: var(--t-caption);
+}
+/* The login screen centres one grid item; a second would sit beside it. */
+.admin-login { grid-auto-flow: row; justify-items: center; }
+
 /* ---------------- nav ----------------
    Only the ported pages appear; see AdminNav. A vertical list in the
    sidebar, grouped under the headings the old dashboard used. */
