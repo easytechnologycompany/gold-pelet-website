@@ -31,6 +31,7 @@ const ADMIN_TRANSLATIONS = {
     'sidebar.admin': 'Admin',
     'sidebar.menu': 'Menu',
     'sidebar.appearance': 'Switch appearance',
+    'sidebar.poweredBy': 'Powered by',
     'heroes.headingFixed': 'Headlines are part of the site design and are set in the code, because each one is sized to fit a single line. Every other field on this page is yours.',
 
     'page.dashboard.title': 'Overview',
@@ -286,6 +287,7 @@ const ADMIN_TRANSLATIONS = {
     'sidebar.admin': 'Yönetici',
     'sidebar.menu': 'Menü',
     'sidebar.appearance': 'Görünümü değiştir',
+    'sidebar.poweredBy': 'Geliştiren',
     'heroes.headingFixed': 'Başlıklar site tasarımının bir parçasıdır ve kodda belirlenir, çünkü her biri tek satıra sığacak şekilde ölçeklenir. Bu sayfadaki diğer tüm alanlar sizindir.',
 
     'page.dashboard.title': 'Genel Bakış',

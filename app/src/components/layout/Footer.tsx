@@ -3,6 +3,7 @@ import { useCms } from '@/lib/cms'
 import { useOverlay } from '@/lib/overlay'
 import { useT } from '@/lib/i18n'
 import { copy } from '@/lib/content'
+import { EasyTechCredit } from '@/components/ui/EasyTechCredit'
 
 /**
  * The finished site's footer, rebuilt in the redesign's language.
@@ -71,7 +72,7 @@ export function Footer() {
 
       <div className="bay base">
         <span>{tk('footer.copyright')}</span>
-        <EasyTechCredit />
+        <FooterCredit />
       </div>
     </footer>
   )
@@ -133,26 +134,8 @@ function ContactColumn() {
   )
 }
 
-/**
- * The build credit, opposite the copyright in the footer's base row.
- *
- * Both artworks are in the markup and CSS shows one. The alternative --
- * swapping `src` from the theme store -- would work too, but this way the
- * correct logo is in the first paint rather than after React has read a
- * store, and it keeps working if the theme changes while the tab is in the
- * background. Nothing is recoloured: these are the supplied files, one drawn
- * black and one drawn white, and `display: none` keeps the unused one out of
- * the accessibility tree so the name is announced once.
- */
-function EasyTechCredit() {
+/** The credit, wearing the visitor's language. */
+function FooterCredit() {
   const { t } = useT()
-  const alt = t(copy.easytechAlt)
-
-  return (
-    <span className="et-credit">
-      <span className="et-by">{t(copy.poweredBy)}</span>
-      <img className="et-logo et-logo--onlight" src="/easytech-dark.png" alt={alt} />
-      <img className="et-logo et-logo--ondark" src="/easytech-light.png" alt={alt} />
-    </span>
-  )
+  return <EasyTechCredit label={t(copy.poweredBy)} />
 }
