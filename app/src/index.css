@@ -810,6 +810,50 @@ footer .base {
   padding-block: 1.25rem; border-top: 1px solid var(--hair); line-height: 1.6;
 }
 
+/* The Easy Technology credit, opposite the copyright in the footer base.
+
+   Two files, one shown. The supplied artwork exists in a black and a white
+   version, so the theme picks a file rather than filtering one -- the header
+   mark is inverted with brightness(0) invert(1) because it follows whatever
+   the admin uploads and no white copy of it exists, which is not the case
+   here.
+
+   Three states, matching the rest of the sheet: bare :root is light, the
+   media query covers a system preference with no explicit choice, and
+   [data-theme="dark"] covers the explicit one. Because this is CSS, the swap
+   happens on the same frame the attribute changes, with no render and no
+   reload.
+
+   `display: none` rather than opacity or visibility, so the hidden copy is
+   out of the accessibility tree and the company name is announced once. */
+.et-credit {
+  display: inline-flex; align-items: center; gap: .55rem;
+  color: var(--fg-3);
+}
+.et-logo {
+  /* Height, not width: the two files are the same 4.26:1 artwork, and fixing
+     the height keeps the credit's line steady whatever the label beside it
+     does. width:auto holds the ratio, so nothing is stretched. */
+  height: 18px; width: auto;
+  opacity: .75;
+  transition: opacity .2s var(--ease-out);
+}
+.et-credit:hover .et-logo { opacity: 1; }
+
+.et-logo--ondark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .et-logo--onlight { display: none; }
+  :root:not([data-theme="light"]) .et-logo--ondark { display: block; }
+}
+:root[data-theme="dark"] .et-logo--onlight { display: none; }
+:root[data-theme="dark"] .et-logo--ondark { display: block; }
+
+/* On a phone the base row wraps; the credit keeps its own line rather than
+   crowding the copyright. */
+@media (max-width: 480px) {
+  footer .base { gap: .75rem; }
+}
+
 /* ---------------- 404 ----------------
    Not part of the approved design — the router needs a terminal state and
    this is the most restrained one available: page tokens, existing type
