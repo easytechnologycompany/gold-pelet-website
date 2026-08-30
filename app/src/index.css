@@ -514,7 +514,10 @@ header.chrome .inner {
   color: var(--fg);
 }
 .hero h1 { margin-top: .35rem; }
-.hero .lead { margin-top: .85rem; max-width: 36ch; }
+/* Now sits under the film rather than under the headline, so it wants a
+   little more room above it than a paragraph following a line of type would:
+   it is reading as the caption to the video. */
+.hero .lead { margin-top: 1.35rem; max-width: 36ch; }
 .hero .links { margin-top: 1.1rem; display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; }
 
 /* the product: scroll-linked, 1:1 with scroll position */
@@ -525,9 +528,17 @@ header.chrome .inner {
    and below it, which read as a broken gap under the buttons. */
 .stage {
   position: relative;
-  /* Close to the row above it: the links are the last thing to read before
-     the film, not a section break. */
-  margin-top: clamp(.9rem, 1.8vw, 1.5rem);
+  /* The film now follows the headline directly, and a heading carries
+     margin-block: -0.2em so the gradient has room to paint its descenders.
+     That negative margin pulls whatever comes next upward: at 1440 it put
+     the video's top edge 4px above the headline's last line of text. This
+     clears it and leaves a real gap rather than a coincidental one.
+
+     The floor is 2.75rem rather than 2rem because the amount being cancelled
+     scales with the headline, not with the viewport: through the tablet band
+     the h1 is near its cap while 3.5vw is not, so a 2rem floor left 4px of
+     visible gap at 768. */
+  margin-top: clamp(2.75rem, 3.5vw, 3rem);
   display: grid; place-items: center;
 }
 .stage .glow {
@@ -1605,7 +1616,10 @@ h3 {
     max-width: 32ch;
   }
   .hero .links { margin-top: 1.15rem; gap: .5rem; }
-  .stage { margin-top: 1.25rem; }
+  /* Clears the headline's negative block margin the same way the desktop rule
+     does. At 1.25rem the film's top edge sat 4px above the last line of text:
+     the box gap looked positive, the ink did not. */
+  .stage { margin-top: 2.25rem; }
 }
 
 /* Under ~380px the two hero links cannot sit side by side without breaking
