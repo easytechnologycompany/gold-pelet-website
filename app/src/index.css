@@ -1467,6 +1467,25 @@ h3 {
   margin-inline: auto;
 }
 
+/* The home headline, sized to hold one line.
+
+   "From Raw Grain to Ready-to-Fry Pellets." measures 1043px at 56 against a
+   1056px column, and wraps to two at 58. So 56 is the ceiling and 54 is the
+   one to ship: 13px of clearance is inside the margin by which text rendering
+   varies between platforms, and a headline that silently becomes two lines on
+   someone else's machine is the thing this is meant to prevent. At 54 it sets
+   1006 wide with 50px in hand.
+
+   Scoped to the home hero rather than the h1 token: .page-hero carries the
+   .hero class too, so the other five headings would have come down with it,
+   and none of them has this constraint.
+
+   The lower bound and slope are the token's own, so nothing below the cap
+   changes and the phone override still wins where it applies. */
+.hero:not(.page-hero) h1 {
+  font-size: clamp(2.75rem, 1.4rem + 6vw, 3.375rem);
+}
+
 /* ---------------- phone composition ----------------
    Everything below 480px, and nothing above it. The desktop hero is not a
    layout that shrinks well: at 360 it rendered a 44px heading over five
