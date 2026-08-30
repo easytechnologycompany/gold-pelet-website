@@ -503,7 +503,7 @@ header.chrome .inner {
   margin-top: clamp(1.5rem, 4vw, 3rem);
   display: grid; place-items: center;
 }
-:is(.stage, .packshot) .glow {
+.stage .glow {
   position: absolute; width: min(62%, 34rem); aspect-ratio: 1; border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--gold) 42%, transparent), transparent 66%);
   filter: blur(60px);
@@ -534,29 +534,6 @@ header.chrome .inner {
   will-change: transform;
 }
 
-/* The retail pack on the catalogue page, between the intro copy and the
-   ranges. Sized as a showcase rather than a thumbnail: 24rem wide on a
-   desktop is a ~500px pack, which is the point of putting it there.
-
-   Width only. The SVG's viewBox carries the 260:340 proportion, so height
-   follows from it and the drawing cannot be stretched however the column
-   resizes -- there is no aspect-ratio to keep in step and nothing to crop,
-   since the artwork already fills its own viewBox edge to edge.
-
-   The 78% keeps it inside the column's padding on a phone, so it scales down
-   with the page rather than overflowing it. Generous padding-block because
-   this is a beat between reading and browsing; too little and it reads as a
-   stray graphic attached to the copy above. */
-.packshot {
-  position: relative;
-  display: grid; place-items: center;
-  padding-block: clamp(2.75rem, 7vw, 5.5rem);
-}
-.packshot .pack {
-  position: relative;
-  width: min(78%, 24rem);
-  filter: drop-shadow(0 34px 46px rgba(12,10,9,.34));
-}
 
 /* ---------------- big statement ---------------- */
 .statement {
