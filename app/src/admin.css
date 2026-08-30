@@ -162,7 +162,7 @@
 .admin-lang button:hover { color: var(--fg); }
 .admin-lang button.is-active { background: var(--surface); color: var(--fg); box-shadow: var(--sh-1); }
 .admin-lang button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-@media (pointer: coarse) { .admin-lang button { min-height: 40px; padding: .4rem .9rem; } }
+@media (pointer: coarse) { .admin-lang button { min-height: 44px; padding: .5rem .9rem; } }
 
 /* The login card centres its brand row; the switch sits beside it. */
 .admin-login-card .admin-brand { display: flex; }
@@ -221,6 +221,18 @@
 
 .admin-table { width: 100%; border-collapse: collapse; display: none; }
 @media (min-width: 900px) { .admin-table { display: table; } }
+/* .admin-panel hides its overflow so the rounded corner has something to cut
+   against, which is right for a background and wrong for a table: at 1024
+   (an iPad Pro upright, any iPad on its side) the sidebar leaves the panel
+   710px and the news table wants 758, so the Actions column -- Edit and
+   Delete -- was cut off the right edge with no scrollbar to reach it.
+
+   A table that cannot fit should scroll, not lose a column. Scoped with :has
+   to panels that actually contain one, so every other panel keeps the plain
+   clip. overflow-y stays hidden: it already was, via the shorthand. */
+@media (min-width: 900px) {
+  .admin-panel:has(> .admin-table) { overflow-x: auto; overflow-y: hidden; }
+}
 
 .admin-table th {
   text-align: start;
@@ -290,15 +302,25 @@
 
 /* ---------------- cards (<900px) ---------------- */
 
-.admin-cards { display: grid; gap: 0; }
+/* The track is floored at 0 rather than left to `auto`. A grid track sized
+   `auto` takes its minimum from the content, and a card's min-content is the
+   sum of an unwrapped meta row -- so on a 768px tablet the track came out
+   953px inside a 695px list, and .admin-panel (which hides its overflow)
+   silently cut 226px off the right of every card. Nothing scrolled, because
+   nothing overflowed the document: the content was simply gone.
+
+   minmax(0, 1fr) is the same floor .bento already uses on the public side. */
+.admin-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
 @media (min-width: 900px) { .admin-cards { display: none; } }
 
-.admin-card { padding: 1.15rem var(--gut); border-bottom: 1px solid var(--hair); }
+.admin-card { padding: 1.15rem var(--gut); border-bottom: 1px solid var(--hair); min-width: 0; }
 .admin-card:last-child { border-bottom: 0; }
-.admin-card-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.admin-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem .75rem; min-width: 0; }
 .admin-card-head h3 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; min-width: 0; }
 .admin-card-desc { margin-top: .5rem; color: var(--fg-2); font-size: var(--t-small); line-height: 1.6; }
-.admin-card-meta { display: flex; gap: 1.5rem; margin-top: .85rem; }
+/* Wraps because the floored track above no longer lets this row set the
+   card's width: on a narrow screen the pairs stack instead of being cut. */
+.admin-card-meta { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin-top: .85rem; min-width: 0; }
 .admin-card-meta dt {
   font-size: var(--t-caption); font-weight: 700; letter-spacing: .06em;
   text-transform: uppercase; color: var(--fg-3);
@@ -539,7 +561,9 @@
 
 /* ---------------- image upload ---------------- */
 
-.admin-upload { display: flex; gap: .75rem; align-items: flex-start; }
+/* Wraps so the controls drop under the preview rather than forcing the row
+   wider than the panel; min-width: 0 so the row may actually shrink. */
+.admin-upload { display: flex; flex-wrap: wrap; gap: .75rem; align-items: flex-start; min-width: 0; }
 .admin-upload-preview {
   width: 64px; height: 64px; flex-shrink: 0;
   object-fit: cover;
@@ -554,7 +578,10 @@
     repeating-linear-gradient(45deg, var(--bg-2), var(--bg-2) 6px, var(--hair) 6px, var(--hair) 7px);
 }
 .admin-upload-controls { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
-.admin-upload-controls input[type='file'] { font-size: var(--t-small); color: var(--fg-2); max-width: 100%; }
+/* max-width alone does not lower the intrinsic minimum of a file input --
+   the UA button and its "no file selected" label set that -- so it needs an
+   explicit floor as well before the flex row can narrow. */
+.admin-upload-controls input[type='file'] { font-size: var(--t-small); color: var(--fg-2); width: 100%; min-width: 0; max-width: 100%; }
 .admin-upload-status { font-size: var(--t-small); color: var(--fg-3); font-weight: 600; }
 
 .admin-link-btn {
@@ -664,7 +691,12 @@
 /* ---------------- site content: grouped bulk editor ---------------- */
 
 .admin-groups { display: grid; gap: 1.25rem; max-width: 48rem; }
-.admin-group { padding: var(--gut); display: grid; gap: 1.1rem; }
+/* Floored for the same reason .admin-cards is: an `auto` track takes its
+   minimum from the content, and the upload row's minimum is a 64px preview
+   plus a native file input's intrinsic width. On a 320px phone that made the
+   track 432px inside a 280px panel, and .admin-panel hides its overflow, so
+   the file input and its hint were simply cut off the right edge. */
+.admin-group { padding: var(--gut); display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; }
 .admin-group-head {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: 1rem; flex-wrap: wrap;
@@ -673,6 +705,30 @@
 .admin-group-head h2 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; }
 .admin-group-head p { margin-top: .3rem; color: var(--fg-2); font-size: var(--t-small); }
 .admin .admin-view-page { min-height: 34px; padding: .3rem .85rem; font-size: var(--t-small); }
+
+/* The controls the rest of the coarse-pointer rules did not reach. The admin
+   is run from a tablet as often as from a desk, and these three were the only
+   things left under 44px once the pointer is a thumb:
+
+   - the panel's "View Page" / "Enquiries" link, at 34px
+   - the destructive link-styled button on Page Heroes, at 20px, which is the
+     smallest target in the admin and deletes something
+   - a bare file input, whose 20px height is the UA's and which on a phone is
+     the control that opens the camera roll
+
+   Each keeps its own look; only the box that answers a tap grows. */
+@media (pointer: coarse) {
+  .admin .admin-view-page { min-height: 44px; padding-block: .5rem; }
+  /* padding-inline as well as the height floor: the label is "Delete", which
+     is only 42px wide, and this is the one destructive control here. */
+  .admin-link-btn { display: inline-flex; align-items: center; min-height: 44px; padding-inline: .3rem; }
+  .admin input[type='file'] { min-height: 44px; }
+  /* In the permanent sidebar, so only reachable above 900px -- which is where
+     a tablet in landscape lives. */
+  /* .admin .admin-signout sets 38px at two-class specificity, so this has to
+     match it to win. */
+  .admin .admin-signout { min-height: 44px; }
+}
 
 .admin-content-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
 .admin-char-count { font-size: var(--t-caption); color: var(--fg-3); font-variant-numeric: tabular-nums; }

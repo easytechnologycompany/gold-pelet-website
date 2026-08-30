@@ -500,6 +500,20 @@ header.chrome .inner {
 
 @media (pointer: coarse) {
   .chev { min-height: 44px; }
+
+  /* The bar swaps from the burger to the full nav at 900px, and 900px stopped
+     meaning "a mouse" a long time ago: every tablet in both orientations is
+     past it, and so is a large phone turned sideways (a 15 Pro Max is 932
+     wide in landscape). Those got a row of 18px-tall links and a 34px button
+     as the only navigation on the page, on a device with no cursor.
+
+     inline-flex so the floor applies to an anchor that is otherwise just a
+     line of text. The active state here is a colour change with no underline
+     to reposition, and the header centres its row, so the labels do not move:
+     only the area that answers a thumb changes. */
+  .chrome nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .nav-cta { min-height: 44px; }
+
   /* Footer links are 15px of text in a dense column. inline-flex plus the
      44px floor makes each row a real target; the list gap drops to 0 so the
      column grows by the target height instead of target + gap. */
@@ -1667,6 +1681,41 @@ h3 {
    mid-phrase, so they stack and each takes the full width. */
 @media (max-width: 380px) {
   .hero .links { flex-direction: column; align-items: center; gap: .25rem; }
+}
+
+/* A phone turned sideways has about a third of the height it had upright, and
+   the hero's vertical rhythm was tuned against the upright figure: at 667x375
+   the headline started 141px down, so 38% of the screen was spent before the
+   first word. The width is unchanged and so is portrait -- this only buys back
+   the room that rotation took away.
+
+   Bounded by height rather than by orientation alone, so a tablet in landscape
+   (768px tall and up) keeps the full composition. */
+@media (orientation: landscape) and (max-height: 480px) {
+  /* The home hero only. .page-hero carries both classes and sets its own
+     bottom padding; a blanket `.hero` rule here is later in the file, so it
+     won a cascade it had no business entering and cut 5px off the last line
+     of every sub-page lead -- .page-hero hides its overflow, so that came off
+     silently. The sub-pages get the same relief below, from the top padding,
+     which has nothing underneath it to cut. */
+  .hero:not(.page-hero) {
+    padding-top: calc(var(--chrome-h) + .6rem);
+    /* Not 1rem. .hero hides its overflow, and on a touch device the two CTAs
+       below the film are 51px rather than 31px -- the coarse-pointer padding
+       doing its job. 1rem left the taller row 6px past the bottom edge and
+       the hero cut it off. Sized against the touch row, which is the taller
+       of the two cases this rule has to hold. */
+    padding-bottom: 1.75rem;
+  }
+  .page-hero { padding-top: calc(var(--chrome-h) + 1.25rem); }
+  .hero h1 { margin-top: .2rem; }
+  /* .stage is deliberately not touched here. Its margin is what cancels the
+     heading's -0.2em, and an override tuned by eye put the film's top back
+     onto the last line of text -- the same defect the base rule exists to
+     prevent. Space is taken from the band above the headline instead, which
+     is padding and answers to nobody. */
+  .hero:not(.page-hero) .lead { margin-top: .9rem; }
+  .hero .links { margin-top: .9rem; }
 }
 
 /* A touch target is a physical thing and does not scale with the viewport:
