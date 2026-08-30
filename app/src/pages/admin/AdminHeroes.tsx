@@ -36,8 +36,8 @@ import { TRANSLATIONS } from '@/lib/translations'
  * half-written subheading vanished on a misclick with nothing to say it had.
  */
 
-/** The headline the home hero renders; see components/showcase/Hero. */
-const LIVE_HOME_HEADING = TRANSLATIONS.en['home.hero.h1']
+/** The headline each hero actually renders; see PageHero and showcase/Hero. */
+const liveHeading = (page: HeroPage) => TRANSLATIONS.en[`${page}.hero.h1`] ?? ''
 
 export function AdminHeroes() {
   const navigate = useNavigate()
@@ -214,21 +214,19 @@ export function AdminHeroes() {
                    the row still sitting in the database. A disabled field
                    displaying stale text would disagree with the page and
                    there would be no way to tell which was right. */
-                value={page === 'home' ? LIVE_HOME_HEADING : draft.heading}
+                value={liveHeading(page)}
                 required
                 /* The home headline is set in the code and this field no
                    longer drives it. Leaving it editable would be the worse
                    option: an operator would type, save, see the toast, and
                    find the page unchanged with nothing to explain why. */
-                disabled={page === 'home'}
-                aria-describedby={page === 'home' ? 'hero-heading-note' : undefined}
+                disabled
+                aria-describedby="hero-heading-note"
                 onChange={(e) => setDraft({ ...draft, heading: e.target.value })}
               />
-              {page === 'home' && (
-                <p className="admin-field-note" id="hero-heading-note">
-                  {t('heroes.headingFixed')}
-                </p>
-              )}
+              <p className="admin-field-note" id="hero-heading-note">
+                {t('heroes.headingFixed')}
+              </p>
             </div>
 
             <div className="field full">

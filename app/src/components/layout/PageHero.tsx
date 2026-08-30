@@ -24,12 +24,17 @@ const heroKeys = (page: PageKey) => ({
 })
 
 export function PageHero({ page }: { page: PageKey }) {
-  const { cms } = useOverlay()
+  const { cms, tk } = useOverlay()
   const hero = useCms((s) => s.heroes[page])
   const key = heroKeys(page)
 
   const eyebrow = cms(key.eyebrow, hero?.eyebrow ?? '')
-  const heading = cms(key.heading, hero?.heading ?? '')
+  /* The heading comes from the repo, the rest of the record from the CMS.
+     Every hero heading is sized to hold one line against a fixed column, so
+     its length is part of the layout rather than copy that can grow freely:
+     three of these were two lines until the text was shortened to fit. The
+     eyebrow and the lead below wrap harmlessly and stay editable. */
+  const heading = tk(key.heading)
   const lead = cms(key.lead, hero?.subheading ?? '')
 
   return (
