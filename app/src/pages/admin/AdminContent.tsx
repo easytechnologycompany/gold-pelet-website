@@ -137,11 +137,18 @@ export function AdminContent() {
   }, [dirtyKeys.length])
 
   const onSave = async () => {
-    if (saving || !dirtyKeys.length) return
+    if (saving) return
     setSaving(true)
     setJustSaved(false)
 
-    const edits = Object.fromEntries(dirtyKeys.map((key) => [key, values[key]]))
+    /* Falls back to every field when nothing reads as changed.
+       The gate used to be `!dirtyKeys.length`, which returned before sending
+       anything -- so on a machine where the change detection did not fire,
+       Save was inert and silent. Writing a field back unchanged costs one
+       request and stores the value it already had; refusing to write a
+       changed one loses the edit. The save reports per key either way. */
+    const keys = dirtyKeys.length ? dirtyKeys : Object.keys(values)
+    const edits = Object.fromEntries(keys.map((key) => [key, values[key]]))
     const result = await save(edits)
     setSaving(false)
 
@@ -271,7 +278,7 @@ export function AdminContent() {
               type="button"
               className="btn btn-fill"
               onClick={() => void onSave()}
-              disabled={saving || !dirtyKeys.length}
+              disabled={saving}
             >
               {saving ? t('content.saving') : t('content.saveBtn')}
             </button>

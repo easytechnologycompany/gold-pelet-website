@@ -234,10 +234,28 @@ export function AdminHeroes() {
               <span className="admin-dirty" role="status">
                 {dirty ? t('content.unsavedChanges') : ''}
               </span>
+              {/* Deliberately not gated on `dirty`.
+
+                  It was, and on a real operator's machine the button stayed
+                  greyed however much they typed -- so clicking it did nothing
+                  at all: no request, no error, no clue. Four attempts at a
+                  copy fix failed that way before the server logs showed that
+                  no request had ever been sent.
+
+                  I could not reproduce the stuck state here, and a gate I
+                  cannot reproduce is not one worth keeping in front of the
+                  only way to save. Saving an unchanged record costs one
+                  request and writes the same values back; being unable to
+                  save a changed one costs the change. updatePageHero still
+                  re-reads and compares afterwards, so the honesty of the
+                  result does not depend on this check.
+
+                  `dirty` still drives the unsaved-changes warning and the
+                  guard on switching pages, which is what it is good for. */}
               <button
                 type="submit"
                 className="btn btn-fill"
-                disabled={saving || uploading || !dirty}
+                disabled={saving || uploading}
               >
                 {saving ? `${t('crud.save')}…` : t('crud.save')}
               </button>
