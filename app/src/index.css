@@ -808,7 +808,7 @@ header.chrome .inner {
 @media (pointer: coarse) {
   .card .shot.photo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .card .shot.photo img { position: static; inset: auto; opacity: 1; height: 100%; }
-  .card .shot.photo .fried { border-inline-start: 1px solid var(--hair); }
+  .card .shot.photo .fried { opacity: 1; border-inline-start: 1px solid var(--hair); }
   .shot-state { grid-auto-flow: column; gap: .35rem; }
   .shot-state span { grid-area: auto; position: static; opacity: 1; }
   .shot-state .is-fried::before { content: '·'; margin-inline-end: .35rem; }
