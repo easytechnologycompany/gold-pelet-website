@@ -13,7 +13,18 @@ import { create } from 'zustand'
  */
 export type ThemeChoice = 'light' | 'dark' | null
 
-const STORAGE_KEY = 'gp-theme'
+/**
+ * Bumped from `gp-theme` when light became the default.
+ *
+ * The old key held explicit choices made while the site still followed the
+ * OS, including ones made only to look at the dark palette during the
+ * redesign. Those outranked the new default and kept handing dark back to the
+ * people who had been testing it, which looked exactly like the default not
+ * working. Renaming the key retires every one of them in a single deploy: the
+ * old value is simply never read again, so everyone lands on light and the
+ * toggle starts from a clean slate.
+ */
+const STORAGE_KEY = 'gp-theme-2'
 
 const readStored = (): ThemeChoice => {
   try {
