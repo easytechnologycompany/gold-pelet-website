@@ -9,7 +9,20 @@
  */
 
 /** Hand-drawn product glyphs. No external images anywhere on this site. */
-export type GlyphId = 'g-classic' | 'g-ridged' | 'g-ring' | 'g-curl' | 'g-stick'
+export type GlyphId =
+  | 'g-classic'
+  | 'g-ridged'
+  | 'g-ring'
+  | 'g-curl'
+  | 'g-stick'
+  | 'g-fish'
+  | 'g-ball'
+  | 'g-window'
+  | 'g-skin'
+  | 'g-serrated'
+  | 'g-pipe'
+  | 'g-ring-large'
+  | 'g-flower'
 
 /** UI icon symbols. */
 export type IconId = 'i-chev' | 'i-check' | 'i-cert' | 'i-leaf' | 'i-scan' | 'i-truck'
