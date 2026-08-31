@@ -972,7 +972,4 @@
   display: block;
   clip-path: polygon(0 0, 100% 0, 100% 65.97%, 46.81% 65.97%, 46.81% 100%, 0 100%);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .admin-brand-logo img { filter: brightness(0) invert(1); }
-}
 :root[data-theme="dark"] .admin-brand-logo img { filter: brightness(0) invert(1); }
