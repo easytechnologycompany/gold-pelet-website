@@ -738,14 +738,14 @@ header.chrome .inner {
 .card:hover { box-shadow: var(--sh-2); }
 .card:active { transform: scale(.99); }
 .card .shot {
-  aspect-ratio: 1 / .82; display: grid; place-items: center;
+  aspect-ratio: 1 / .95; display: grid; place-items: center;
   background: radial-gradient(58% 56% at 50% 46%, color-mix(in srgb, var(--tone) 26%, transparent), transparent 72%), var(--bg-2);
   border-bottom: 1px solid var(--hair);
 }
 .card .shot svg { width: 56%; }
-.card .body { padding: 1.15rem 1.3rem 1.4rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+.card .body { padding: .9rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
 .card .body .cut { font-size: var(--t-caption); font-weight: 600; letter-spacing: .04em; color: var(--fg-3); text-transform: uppercase; }
-.card .body p { font-size: .92rem; line-height: 1.5; color: var(--fg-2); }
+.card .body p { font-size: .88rem; line-height: 1.5; color: var(--fg-2); }
 .card .body .foot {
   margin-top: auto; padding-top: .9rem; display: flex; align-items: center; gap: .8rem;
   font-size: var(--t-small); color: var(--fg-3); font-variant-numeric: tabular-nums;
@@ -808,7 +808,7 @@ header.chrome .inner {
 @media (pointer: coarse) {
   .card .shot.photo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .card .shot.photo img { position: static; inset: auto; opacity: 1; height: 100%; }
-  .card .shot.photo .fried { border-inline-start: 1px solid var(--hair); }
+  .card .shot.photo .fried { opacity: 1; border-inline-start: 1px solid var(--hair); }
   .shot-state { grid-auto-flow: column; gap: .35rem; }
   .shot-state span { grid-area: auto; position: static; opacity: 1; }
   .shot-state .is-fried::before { content: '·'; margin-inline-end: .35rem; }
@@ -1089,7 +1089,7 @@ footer .base {
 .pcard:hover { box-shadow: var(--sh-2); border-color: var(--hair-2); transform: translateY(-2px); }
 
 .pcard-media {
-  position: relative; aspect-ratio: 4 / 3;
+  position: relative; aspect-ratio: 1 / 1;
   display: grid; place-items: center;
   background: var(--bg-2);
 }
@@ -1125,8 +1125,8 @@ footer .base {
 }
 .media-toggle button.is-active { background: var(--fg); color: var(--bg); }
 
-.pcard-body { display: flex; flex-direction: column; gap: .5rem; padding: 1.25rem; }
-.pcard-body p { font-size: .95rem; color: var(--fg-2); }
+.pcard-body { display: flex; flex-direction: column; gap: .4rem; padding: .9rem 1rem 1rem; }
+.pcard-body p { font-size: .9rem; line-height: 1.5; color: var(--fg-2); }
 .chips { list-style: none; margin: .25rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
 .chips li {
   padding: .2rem .55rem; border-radius: var(--r-sm);
