@@ -27,9 +27,13 @@
       // the dark ones under [data-theme="dark"], so there is nothing to
       // resolve here and no dark frame to flash on a dark-themed OS.
       try {
-        // Key bumped with the light default; see lib/theme.ts. Must match it.
+        // Key bumped with the light default; see lib/theme.ts. Must match it,
+        // as must the /admin test below — this script and the store resolve the
+        // same rule, and a disagreement shows up as a flash on first paint.
         var t = localStorage.getItem('gp-theme-2')
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
+        else if (location.pathname.indexOf('/admin') === 0)
+          document.documentElement.dataset.theme = 'dark'
         var l = localStorage.getItem('gp-lang')
         if (l === 'ar' || l === 'ku' || l === 'tr') {
           document.documentElement.lang = l

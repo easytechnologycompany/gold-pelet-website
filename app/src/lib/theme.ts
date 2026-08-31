@@ -1,15 +1,19 @@
 import { create } from 'zustand'
 
 /**
- * Light is the default, and the OS is not consulted.
+ * The default depends on where you are: light on the public site, dark in the
+ * admin. The OS is not consulted either way.
  *
  * This used to be three states — explicit light, explicit dark, and unset,
- * where prefers-color-scheme decided. Unset now means light: a visitor on a
- * dark desktop gets the light site until they ask for otherwise, which is the
- * appearance the brand is designed around. `null` is still kept distinct from
- * an explicit `'light'` so that "never chose" and "chose light" stay
- * different things — only the second survives in storage, and only the second
- * would need honouring if the default ever moved again.
+ * where prefers-color-scheme decided. Unset now resolves per route: a visitor
+ * on a dark desktop gets the light marketing site until they ask otherwise,
+ * because that is the appearance the brand is designed around, while the
+ * dashboard opens dark because it is a tool someone sits in front of for an
+ * afternoon rather than a page they glance at.
+ *
+ * `null` is still kept distinct from an explicit `'light'`. Only the second
+ * survives in storage, and only the second outranks the route default — which
+ * is what lets an admin who prefers a light dashboard keep one.
  */
 export type ThemeChoice = 'light' | 'dark' | null
 
@@ -26,6 +30,15 @@ export type ThemeChoice = 'light' | 'dark' | null
  */
 const STORAGE_KEY = 'gp-theme-2'
 
+/** Where the dashboard lives. Matched on the path rather than passed in, so
+ *  the rule cannot drift between the pre-paint script and the store. */
+export const isAdminPath = (pathname: string) => pathname.startsWith('/admin')
+
+/** What an unset choice resolves to for a given route. */
+export const routeDefaultIsDark = (pathname: string) => isAdminPath(pathname)
+
+const currentPath = () => (typeof location === 'object' ? location.pathname : '/')
+
 const readStored = (): ThemeChoice => {
   try {
     const v = localStorage.getItem(STORAGE_KEY)
@@ -41,12 +54,15 @@ type ThemeState = {
   /** What the viewer is actually looking at right now. */
   isDark: boolean
   toggle: () => void
+  /** Re-resolves an unset choice after a client-side navigation, which is the
+   *  only way the route default can change without a reload. */
+  syncRoute: (pathname: string) => void
 }
 
 export const useTheme = create<ThemeState>((set, get) => ({
   choice: readStored(),
-  // Unset resolves to light rather than to the system preference.
-  isDark: readStored() === 'dark',
+  // Unset resolves to the route's default rather than to the system.
+  isDark: readStored() ? readStored() === 'dark' : routeDefaultIsDark(currentPath()),
   toggle: () => {
     // Toggling always produces an explicit choice — the viewer asked for a
     // specific appearance, so we stop deferring to the system.
@@ -57,5 +73,10 @@ export const useTheme = create<ThemeState>((set, get) => ({
       /* the choice just won't survive a reload */
     }
     set({ choice: next, isDark: next === 'dark' })
+  },
+  syncRoute: (pathname) => {
+    if (get().choice) return // an explicit choice outranks the route
+    const next = routeDefaultIsDark(pathname)
+    if (next !== get().isDark) set({ isDark: next })
   },
 }))
