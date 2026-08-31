@@ -11,15 +11,12 @@
    ============================================================ */
 
 /* stack.md sketches this as `(&:where(.dark, .dark *))`, but this project
-   never had a `.dark` class — theming is three-state (explicit light,
-   explicit dark, unset/system) driven by data-theme plus a media query.
-   A `.dark` variant would compile fine and then silently never match, so
-   the variant is redefined here to track the model that actually ships. */
+   never had a `.dark` class — theming is driven by data-theme alone, with
+   light as the default and dark reached only by explicit choice. A `.dark`
+   variant would compile fine and then silently never match, so the variant is
+   redefined here to track the model that actually ships. */
 @custom-variant dark {
   &:where([data-theme="dark"] *) { @slot; }
-  @media (prefers-color-scheme: dark) {
-    &:where(html:not([data-theme="light"]) *) { @slot; }
-  }
 }
 
 :root {
@@ -112,52 +109,6 @@
   --ease-out: cubic-bezier(.22, .61, .36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    /* The dark ground is the logo's blue, not black. Hue 202 is sampled
-       straight from the mark (#0B4363 is its dominant pixel); the steps below
-       hold that hue and vary lightness, so the surface reads as the company's
-       colour rather than as a neutral that happens to be dark.
-
-       The brand blue itself is far too light to sit behind text — gold
-       headings measure 2.84 on it, well under the floor — so it stays where it
-       belongs, on the mark, while the page carries its hue at a luminance that
-       can hold copy. Every value here is luminance-matched to the near-black
-       it replaces, which is what keeps the contrast table below intact. */
-    --bg:      #050F15;
-    --bg-2:    #09161E;
-    --surface: #0C1C25;
-    /* Cooled to match, luminance held, so these read as greys in this light
-       rather than as the warm greys they were against black. */
-    --fg:      #F3F5F7;
-    --fg-2:    #97A5AE;
-    /* Lifted rather than merely cooled: the warm #78716C it replaces measured
-       4.13 on the old background and 4.03 on this one, under the 4.5 floor
-       either way. This clears it at 4.93. */
-    --fg-3:    #73838C;
-    --hair:    #162B36;
-    --hair-2:  #223D4C;
-
-    --accent:   #E3A008;
-    --accent-2: #FBBF24;
-    --gold:     #F0B429;
-    --gold-lo:  #B4790C;
-    /* Unchanged: on #050F15 these measure 5.23, 10.38 and 11.59, against
-       5.36, 10.62 and 11.86 on the black they replaced. */
-    --head-a:   #B4790C;
-    --head-b:   #F0B429;
-    --head-c:   #FBBF24;
-
-    --on-accent: #0B171D;
-
-    --chrome:      rgba(5, 15, 21, .68);
-    --chrome-hair: rgba(255, 255, 255, .10);
-
-    --sh-1: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px -4px rgba(0,0,0,.5);
-    --sh-2: 0 2px 8px rgba(0,0,0,.5), 0 28px 56px -22px rgba(0,0,0,.75);
-  }
-}
 :root[data-theme="dark"] {
   color-scheme: dark;
   /* The dark ground is the logo's blue, not black. Hue 202 is sampled
@@ -450,9 +401,6 @@ header.chrome .inner {
   padding: 0;
   border-radius: 0;
   background: transparent;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .brand-logo img { filter: brightness(0) invert(1); }
 }
 :root[data-theme="dark"] .brand-logo img { filter: brightness(0) invert(1); }
 
@@ -967,9 +915,8 @@ footer .base {
    the admin uploads and no white copy of it exists, which is not the case
    here.
 
-   Three states, matching the rest of the sheet: bare :root is light, the
-   media query covers a system preference with no explicit choice, and
-   [data-theme="dark"] covers the explicit one. Because this is CSS, the swap
+   Two states, matching the rest of the sheet: bare :root is light, and
+   [data-theme="dark"] is the explicit choice. Because this is CSS, the swap
    happens on the same frame the attribute changes, with no render and no
    reload.
 
@@ -990,10 +937,6 @@ footer .base {
 .et-credit:hover .et-logo { opacity: 1; }
 
 .et-logo--ondark { display: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .et-logo--onlight { display: none; }
-  :root:not([data-theme="light"]) .et-logo--ondark { display: block; }
-}
 :root[data-theme="dark"] .et-logo--onlight { display: none; }
 :root[data-theme="dark"] .et-logo--ondark { display: block; }
 

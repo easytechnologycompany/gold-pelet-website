@@ -2,30 +2,24 @@ import { useEffect, type ReactNode } from 'react'
 import { useTheme } from '@/lib/theme'
 
 /**
- * Owns the `data-theme` attribute on `<html>` — and, just as importantly,
- * its absence.
+ * Owns the `data-theme` attribute on `<html>`.
  *
- * Three states: explicit light, explicit dark, and unset. Unset means the
- * attribute is *removed*, not set to some resolved value, so the
- * prefers-color-scheme branch in index.css stays in charge and a system theme
- * change is picked up live rather than frozen at load.
+ * Removing the attribute is still what "no explicit choice" looks like, and
+ * that now resolves to light: index.css carries the light tokens on bare
+ * `:root` and reaches for the dark ones only under `[data-theme="dark"]`.
+ *
+ * There is deliberately no prefers-color-scheme listener here any more. The
+ * OS no longer has a say, so watching it would only produce a state change
+ * that renders identically.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const choice = useTheme((s) => s.choice)
-  const syncSystem = useTheme((s) => s.syncSystem)
 
   useEffect(() => {
     const root = document.documentElement
     if (choice) root.dataset.theme = choice
     else delete root.dataset.theme
   }, [choice])
-
-  useEffect(() => {
-    const mq = matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => syncSystem()
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [syncSystem])
 
   return <>{children}</>
 }

@@ -22,9 +22,10 @@
     />
     <script>
       // Applied before first paint so a stored explicit choice never flashes
-      // the other theme. Absent storage we set nothing at all and the
-      // prefers-color-scheme branch in index.css takes over — the third
-      // state has to stay genuinely unset, not be resolved to a value here.
+      // the other theme. Absent storage we set nothing at all, which is light:
+      // index.css carries the light tokens on bare :root and only reaches for
+      // the dark ones under [data-theme="dark"], so there is nothing to
+      // resolve here and no dark frame to flash on a dark-themed OS.
       try {
         var t = localStorage.getItem('gp-theme')
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
