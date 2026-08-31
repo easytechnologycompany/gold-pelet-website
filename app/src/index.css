@@ -828,11 +828,11 @@ header.chrome .inner {
   transition: transform .35s var(--spring), box-shadow .35s var(--spring);
 }
 .story-card:hover { box-shadow: var(--sh-2); }
-.story-card .frame { aspect-ratio: 4 / 3; background: var(--bg-2); }
+.story-card .frame { aspect-ratio: 1 / 1; background: var(--bg-2); }
 .story-card .frame img { width: 100%; height: 100%; object-fit: cover; }
 .story-card .label {
   display: flex; align-items: baseline; gap: .5rem;
-  padding: .9rem 1.1rem 1.1rem;
+  padding: .7rem .9rem .85rem;
 }
 .story-card .step {
   font-size: var(--t-caption); font-weight: 700; color: var(--accent);
@@ -1467,7 +1467,7 @@ footer .base {
 .story-card .label h3 { flex: 1 1 auto; }
 .story-card .label p {
   flex: 0 0 100%;
-  margin-top: .4rem; font-size: .9rem; color: var(--fg-2);
+  margin-top: .3rem; font-size: .85rem; line-height: 1.45; color: var(--fg-2);
 }
 
 /* The capacity cell's link sits under the figure rather than beside it. */
