@@ -27,7 +27,8 @@
       // the dark ones under [data-theme="dark"], so there is nothing to
       // resolve here and no dark frame to flash on a dark-themed OS.
       try {
-        var t = localStorage.getItem('gp-theme')
+        // Key bumped with the light default; see lib/theme.ts. Must match it.
+        var t = localStorage.getItem('gp-theme-2')
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
         var l = localStorage.getItem('gp-lang')
         if (l === 'ar' || l === 'ku' || l === 'tr') {
