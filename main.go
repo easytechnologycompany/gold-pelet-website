@@ -1,63 +1,85 @@
-// Gold Pelet frontend service — serves the public static site at /, as a
-// plain multi-page HTML site (no SPA routing needed). This is a separate
-// Railway service from the Go API backend; the split exists purely for
-// hosting, not application logic.
+// Gold Pelet frontend service — now a redirector.
 //
-// It used to serve the admin dashboard at /admin as well. That dashboard has
-// been rebuilt in the React app (app/src/pages/admin) and is served from
-// there, so this no longer ships it. The original files stay in admin/ as the
-// reference the port was made from, and because app/scripts/
-// sync-admin-translations.mjs still reads admin/js/i18n.js as the source of
-// the admin dictionary — they are simply no longer deployed.
+// This service used to serve the static multi-page site that lives at the
+// repository root. That site has been replaced by the React app in app/,
+// deployed as its own Railway service, and the two were indistinguishable
+// from the outside: same <title>, same content at a glance, different age.
+// A stale bookmark to this host showed the old site indefinitely, and no
+// amount of cache clearing helped, because it was not a caching problem.
+//
+// So this no longer serves anything. Every request is sent to the app. The
+// HTML, css/ and js/ at the repository root stay where they are — they are
+// the reference the React port was made from, and removing them is a
+// separate decision from not serving them.
 package main
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 )
 
-// The repo root doubles as both the site's document root and this
-// server's own source — block direct requests for the build/source files
-// that happen to live alongside the HTML rather than moving the whole
-// site into a public/ subdirectory just to avoid this.
-var denyPrefixes = []string{"/main.go", "/go.mod", "/go.sum", "/Dockerfile", "/.git", "/.gitignore", "/railway.json", "/admin", "/app"}
+// Where the real site lives. An env var rather than a constant because this
+// is expected to become the custom domain once goldpeletcips.com is cut over
+// to the app, and that should be a variable change rather than a deploy.
+const defaultTarget = "https://gold-pelet-app-production.up.railway.app"
 
-func denyBuildFiles(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		for _, p := range denyPrefixes {
-			if r.URL.Path == p || strings.HasPrefix(r.URL.Path, p+"/") {
-				http.NotFound(w, r)
-				return
-			}
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-// This is a low-traffic content site with no build step, so there's no
-// content-hashed filename to cache indefinitely and bust on change. Instead,
-// force every request to revalidate with the server (a cheap 304 when
-// nothing changed) rather than let browsers silently serve a stale HTML/
-// CSS/JS/image straight from disk cache after a deploy — the alternative
-// forces every reader to know to hard-refresh, which they won't.
-func noCache(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
-		next.ServeHTTP(w, r)
-	})
+// The old site was a page per file; the app is a route per page. Sending
+// /products.html to the app verbatim would land on its 404 — the bookmark
+// that prompted this redirect would still be broken, just at a different
+// host. Anything not listed carries its path across unchanged.
+var legacyPages = map[string]string{
+	"/":              "/",
+	"/index.html":    "/",
+	"/about.html":    "/about",
+	"/services.html": "/services",
+	"/products.html": "/products",
+	"/contact.html":  "/contact",
+	"/news.html":     "/news",
 }
 
 func main() {
+	target := strings.TrimRight(os.Getenv("REDIRECT_TARGET"), "/")
+	if target == "" {
+		target = defaultTarget
+	}
+
 	mux := http.NewServeMux()
-	mux.Handle("/", noCache(denyBuildFiles(http.FileServer(http.Dir(".")))))
+
+	// Answered here rather than redirected. A platform health check that
+	// followed the redirect would be reporting on the app's health instead of
+	// this service's, and one that did not follow it would read a 302 as a
+	// failure and cycle the deployment.
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = io.WriteString(w, "ok")
+	})
+
+	// 302 rather than 301 deliberately. The target is expected to change to
+	// the custom domain shortly, and browsers cache a permanent redirect hard
+	// enough that the people most likely to have the stale bookmark — the team
+	// — would be the last to pick the new target up. Nothing here is indexed
+	// (the canonical URL points elsewhere), so there is no ranking to
+	// consolidate and nothing to trade away for that flexibility.
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.EscapedPath()
+		if mapped, ok := legacyPages[path]; ok {
+			path = mapped
+		}
+		to := target + path
+		if r.URL.RawQuery != "" {
+			to += "?" + r.URL.RawQuery
+		}
+		http.Redirect(w, r, to, http.StatusFound)
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8123"
 	}
-	log.Printf("gold-pelet-frontend listening on :%s", port)
+	log.Printf("gold-pelet-frontend redirecting to %s, listening on :%s", target, port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
