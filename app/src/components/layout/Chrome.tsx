@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { LOCALE_CODE, LOCALE_NAME, LOCALES, useLang, useT, type Locale } from '@/lib/i18n'
@@ -7,7 +7,7 @@ import { useCms } from '@/lib/cms'
 import { mediaURL } from '@/lib/api'
 import { copy } from '@/lib/content'
 import { useScrollLinked } from '@/components/motion/useScrollLinked'
-import { useOverlay } from '@/lib/overlay'
+import { useOverlay, overlayKey } from '@/lib/overlay'
 import { cn } from '@/lib/utils'
 
 /**
@@ -15,6 +15,25 @@ import { cn } from '@/lib/utils'
  * translation keys rather than a parallel set invented here — so a label the
  * live site already ships in four languages is the same label on this one.
  */
+/** The catalogue's own sections, reached from the products entry the way the
+ *  live site reaches them. Not a second list of hard-coded types: these are
+ *  the CMS categories, so a category added or renamed in the dashboard shows
+ *  up here without a deploy, and an empty one is simply not linked. */
+function useProductTypes() {
+  const { cms } = useOverlay()
+  const categories = useCms((s) => s.categories)
+  const products = useCms((s) => s.products)
+  return Object.values(categories)
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .filter((c) => products.some((p) => p.category_id === c.id))
+    .map((c) => ({
+      slug: c.slug,
+      // Same anchors the catalogue page already renders as section ids.
+      to: `/products#${c.slug}`,
+      label: cms(overlayKey.categoryName(c.slug), c.name),
+    }))
+}
+
 const NAV = [
   { to: '/', key: 'nav.home' },
   { to: '/products', key: 'nav.products' },
@@ -32,6 +51,7 @@ const NAV = [
 export function Chrome() {
   const { t } = useT()
   const { tk } = useOverlay()
+  const productTypes = useProductTypes()
   const [atEdge, setAtEdge] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -54,13 +74,33 @@ export function Chrome() {
         </Link>
 
         <nav aria-label={t(copy.ariaPrimary)}>
-          {NAV.map((item) => (
+          {NAV.map((item) => {
             // `end` only on "/", or Home would stay marked active on every
             // page, since every path starts with a slash.
-            <NavLink key={item.to} to={item.to} end={item.to === '/'}>
-              {tk(item.key)}
-            </NavLink>
-          ))}
+            const link = (
+              <NavLink key={item.to} to={item.to} end={item.to === '/'}>
+                {tk(item.key)}
+              </NavLink>
+            )
+            if (item.to !== '/products' || !productTypes.length) return link
+            /* The products entry stays a link to the whole catalogue and
+               gains the three types beside it, as the live site has it. The
+               menu opens on hover and on focus-within, so it is reachable by
+               tabbing and needs no state — this row is display:none below
+               900px, where the sheet lists the types outright instead. */
+            return (
+              <div className="nav-has-menu" key={item.to}>
+                {link}
+                <div className="nav-menu">
+                  {productTypes.map((type) => (
+                    <Link key={type.slug} to={type.to}>
+                      {type.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
         </nav>
 
         <div className="tools">
@@ -92,9 +132,20 @@ export function Chrome() {
         // already on, which is not a route change at all.
         <div className="nav-sheet" id="nav-sheet" onClick={() => setMenuOpen(false)}>
           {NAV.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.to === '/'}>
-              {tk(item.key)}
-            </NavLink>
+            <Fragment key={item.to}>
+              <NavLink to={item.to} end={item.to === '/'}>
+                {tk(item.key)}
+              </NavLink>
+              {item.to === '/products' &&
+                productTypes.map((type) => (
+                  /* Listed outright rather than behind a disclosure. There are
+                     three of them, the sheet already scrolls, and a tap to
+                     reveal a tap is not worth the markup. */
+                  <Link className="nav-sheet-sub" key={type.slug} to={type.to}>
+                    {type.label}
+                  </Link>
+                ))}
+            </Fragment>
           ))}
           <NavLink to="/contact#quote">{tk('header.cta')}</NavLink>
         </div>
