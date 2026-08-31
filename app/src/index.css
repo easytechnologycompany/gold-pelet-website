@@ -849,6 +849,40 @@ header.chrome .inner {
 }
 .bento .cell .shot-art img { width: 100%; height: 100%; object-fit: cover; }
 
+/* News photography leads its cell, bleeding to the edges, so a news card reads
+   the way the story and product cards do: picture first, words underneath.
+   `.shot-art` above is the opposite arrangement on purpose -- a band pushed to
+   the bottom of a cell that is mostly text -- and is left alone.
+
+   The bleed has to repeat the cell's own padding as a negative margin because
+   the cell is a flex column with padding rather than a grid with a full-bleed
+   track; the clamp is duplicated rather than stored in a custom property to
+   keep it beside the padding it cancels. */
+.bento .cell .shot-top {
+  margin-top: calc(clamp(1.25rem, 2.4vw, 1.9rem) * -1);
+  margin-inline: calc(clamp(1.25rem, 2.4vw, 1.9rem) * -1);
+  margin-bottom: .3rem;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--hair);
+  /* The cell is a flex column, so this is a flex item and `min-height: auto`
+     floors it at the photograph's own content height. That floor is invisible
+     while the ratio asks for more height than the image needs -- the square
+     above, and every product card -- and silently wins when it asks for less:
+     the 16/9 lead below wants 593px at 1054px wide and a 3:2 photograph wants
+     703, so the lead rendered at the image's ratio rather than the one set
+     here. Zero lets the aspect-ratio decide and object-fit do the cropping. */
+  min-height: 0;
+}
+.bento .cell .shot-top img { width: 100%; height: 100%; object-fit: cover; }
+
+/* The lead cell is one column of the stack on a phone, where a square is the
+   right shape, but spans the whole grid from 760 up -- a square there would be
+   a photograph taller than the viewport before a word of the item is visible. */
+@media (min-width: 760px) {
+  .bento .w6 .shot-top { aspect-ratio: 16 / 9; }
+}
+
 /* ---------------- specs ---------------- */
 /* The approved design leaned on the UA's `dl { margin-block-end: 1em }` for
    the gap between the spec table and the section's bottom padding — the
