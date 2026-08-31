@@ -104,6 +104,205 @@ export function Sprite() {
           </g>
         </symbol>
 
+        {/* The eight shapes below complete a mark per catalogue product, so no
+            two products fall back to the same drawing. Each depicts what its
+            product actually is — the slugs name real shapes — rather than
+            being an arbitrary token. Same construction as the four above:
+            currentColor at .3 behind a 2px stroke, holes filled with --bg-2 so
+            they read as holes in both themes rather than as dark blobs. */}
+
+        <symbol id="g-fish" viewBox="0 0 200 200">
+          <ellipse
+            cx="114"
+            cy="100"
+            rx="54"
+            ry="36"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M62,100 L26,70 L36,100 L26,130 Z"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+          <circle cx="146" cy="90" r="5" fill="currentColor" fillOpacity=".5" />
+          <path
+            d="M96,78 C108,88 108,112 96,122"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity=".45"
+          />
+        </symbol>
+
+        <symbol id="g-ball" viewBox="0 0 200 200">
+          <circle
+            cx="100"
+            cy="100"
+            r="62"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <g fill="currentColor" fillOpacity=".5">
+            <circle cx="78" cy="78" r="9" />
+            <circle cx="122" cy="112" r="6" />
+            <circle cx="112" cy="66" r="4" />
+            <circle cx="72" cy="118" r="4.5" />
+          </g>
+        </symbol>
+
+        <symbol id="g-window" viewBox="0 0 200 200">
+          <rect
+            x="36"
+            y="36"
+            width="128"
+            height="128"
+            rx="24"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <rect
+            x="74"
+            y="74"
+            width="52"
+            height="52"
+            rx="14"
+            fill="var(--bg-2)"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <g fill="currentColor" fillOpacity=".5">
+            <circle cx="56" cy="56" r="3.4" />
+            <circle cx="146" cy="146" r="3" />
+          </g>
+        </symbol>
+
+        <symbol id="g-skin" viewBox="0 0 200 200">
+          <path
+            d="M38,152 C38,92 88,44 158,42 C152,100 108,152 38,152 Z"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+          {/* The skin-on edge, drawn heavier than the cut edges. */}
+          <path
+            d="M38,152 C38,92 88,44 158,42"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="5"
+            strokeLinecap="round"
+            opacity=".55"
+          />
+          <g fill="currentColor" fillOpacity=".5">
+            <ellipse cx="92" cy="108" rx="8" ry="5" transform="rotate(-24 92 108)" />
+            <ellipse cx="118" cy="82" rx="6" ry="4" transform="rotate(-20 118 82)" />
+          </g>
+        </symbol>
+
+        <symbol id="g-serrated" viewBox="0 0 200 200">
+          <path
+            d="M44,56 L60,44 L76,56 L92,44 L108,56 L124,44 L140,56 L156,44
+               L156,144 L140,156 L124,144 L108,156 L92,144 L76,156 L60,144 L44,156 Z"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+          <g
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity=".45"
+          >
+            <path d="M70,74 L70,126" />
+            <path d="M100,70 L100,130" />
+            <path d="M130,74 L130,126" />
+          </g>
+        </symbol>
+
+        <symbol id="g-pipe" viewBox="0 0 200 200">
+          <rect
+            x="38"
+            y="72"
+            width="124"
+            height="56"
+            rx="28"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          {/* The bore, at the near end. --bg-2 for the same reason as g-ring. */}
+          <ellipse
+            cx="146"
+            cy="100"
+            rx="15"
+            ry="27"
+            fill="var(--bg-2)"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M54,100 C54,86 60,78 68,74"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity=".45"
+          />
+        </symbol>
+
+        <symbol id="g-ring-large" viewBox="0 0 200 200">
+          <circle
+            cx="100"
+            cy="100"
+            r="72"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          {/* Wider bore than g-ring, which is what separates the large ring
+              from the small one at a glance rather than absolute size — both
+              are drawn to the same box. */}
+          <circle cx="100" cy="100" r="44" fill="var(--bg-2)" stroke="currentColor" strokeWidth="2" />
+          <g fill="currentColor" fillOpacity=".5">
+            <circle cx="100" cy="42" r="3.6" />
+            <circle cx="152" cy="120" r="3" />
+          </g>
+        </symbol>
+
+        <symbol id="g-flower" viewBox="0 0 200 200">
+          <g
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <ellipse cx="100" cy="56" rx="23" ry="30" />
+            <ellipse cx="100" cy="56" rx="23" ry="30" transform="rotate(60 100 100)" />
+            <ellipse cx="100" cy="56" rx="23" ry="30" transform="rotate(120 100 100)" />
+            <ellipse cx="100" cy="56" rx="23" ry="30" transform="rotate(180 100 100)" />
+            <ellipse cx="100" cy="56" rx="23" ry="30" transform="rotate(240 100 100)" />
+            <ellipse cx="100" cy="56" rx="23" ry="30" transform="rotate(300 100 100)" />
+          </g>
+          <circle cx="100" cy="100" r="21" fill="var(--bg-2)" stroke="currentColor" strokeWidth="2" />
+        </symbol>
+
         <symbol
           id="i-chev"
           viewBox="0 0 24 24"

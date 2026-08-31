@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { Reveal } from '@/components/motion/Reveal'
 import { mediaURL, type ApiProduct, type Category } from '@/lib/api'
 import { useOverlay, overlayKey } from '@/lib/overlay'
+import { Icon } from '@/components/ui/Icon'
+import { glyphFor, ownPhoto, toneFor } from '@/lib/asset-map'
 
 /**
  * A catalogue card: the real product record, its two photographs, and its
@@ -18,18 +20,24 @@ type MediaState = 'raw' | 'fried'
 export function ProductCard({
   product,
   category,
+  shared,
   delay = 0,
 }: {
   product: ApiProduct
   category?: Category
+  shared: Set<string>
   delay?: number
 }) {
   const { tk, cms } = useOverlay()
   const [state, setState] = useState<MediaState>('raw')
 
-  const raw = mediaURL(product.raw_image_url)
-  const fried = mediaURL(product.fried_image_url)
+  // Only a photograph this product does not share with another one. Seven
+  // wheat products pointing at one shot read as a repeating grid rather than
+  // as seven products, so a shared shot gives way to the product's own glyph.
+  const raw = mediaURL(ownPhoto(product.raw_image_url, shared))
+  const fried = mediaURL(ownPhoto(product.fried_image_url, shared))
   const shown = state === 'raw' ? raw : fried
+  const glyph = glyphFor(product.slug, category?.slug ?? '')
 
   const name = cms(overlayKey.productName(product.slug), product.name)
   const description = cms(overlayKey.productDescription(product.slug), product.description)
@@ -46,8 +54,16 @@ export function ProductCard({
         {shown ? (
           <img src={shown} alt={name} loading="lazy" decoding="async" />
         ) : (
-          <span className="pcard-empty">
-            {tk(state === 'raw' ? 'product.rawPhotoSoon' : 'product.friedPhotoSoon')}
+          /* The glyph rather than the "photo coming" line: it names the shape
+             the product actually is, so the card still says something while
+             the photography is outstanding. */
+          <span
+            className="pcard-glyph"
+            role="img"
+            aria-label={name}
+            style={{ color: toneFor(category?.slug ?? '') }}
+          >
+            <Icon id={glyph} size={200} />
           </span>
         )}
 

@@ -4,7 +4,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { mediaURL, type ApiProduct } from '@/lib/api'
 import { useCms } from '@/lib/cms'
 import { useOverlay, overlayKey } from '@/lib/overlay'
-import type { GlyphId } from '@/lib/sprite-ids'
+import { glyphFor, ownPhoto, sharedProductImages, toneFor } from '@/lib/asset-map'
 
 /**
  * Scroll-snap carousel. The next card sits deliberately half-visible at the
@@ -20,6 +20,7 @@ import type { GlyphId } from '@/lib/sprite-ids'
 export function ProductRail() {
   const { tk } = useOverlay()
   const products = useCms((s) => s.products)
+  const shared = sharedProductImages(products)
 
   if (!products.length) return null
 
@@ -40,7 +41,7 @@ export function ProductRail() {
       <div className="bay-wide" style={{ maxWidth: 1320, paddingInline: 0 }}>
         <div className="rail">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} shared={shared} />
           ))}
         </div>
       </div>
@@ -52,32 +53,21 @@ export function ProductRail() {
   )
 }
 
-/** Deterministic glyph per category, used when a product has no photograph
- *  so the card still shows something of the shape rather than an empty box. */
-const GLYPH_BY_CATEGORY: Record<string, GlyphId> = {
-  potato: 'g-classic',
-  wheat: 'g-ring',
-  corn: 'g-curl',
-}
-
-const TONE_BY_CATEGORY: Record<string, string> = {
-  potato: '#D4A017',
-  wheat: '#EA9A0B',
-  corn: '#C2410C',
-}
-
 type MediaState = 'raw' | 'fried'
 
-function ProductCard({ product }: { product: ApiProduct }) {
+function ProductCard({ product, shared }: { product: ApiProduct; shared: Set<string> }) {
   const { tk, cms } = useOverlay()
   const [shown, setShown] = useState<MediaState>('raw')
   const category = useCms((s) => s.categories[product.category_id])
   const slug = category?.slug ?? ''
-  const tone = TONE_BY_CATEGORY[slug] ?? 'var(--gold)'
-  const glyph = GLYPH_BY_CATEGORY[slug] ?? 'g-classic'
+  const tone = toneFor(slug)
+  const glyph = glyphFor(product.slug, slug)
 
-  const raw = mediaURL(product.raw_image_url)
-  const fried = mediaURL(product.fried_image_url)
+  // Only a photograph this product does not share with another. Where the
+  // catalogue reuses one shot across a whole category, the card shows the
+  // product's own glyph instead of the same picture as its neighbours.
+  const raw = mediaURL(ownPhoto(product.raw_image_url, shared))
+  const fried = mediaURL(ownPhoto(product.fried_image_url, shared))
   const hasPhoto = Boolean(raw || fried)
   // Only offer the switch when both sides exist — the catalogue card takes the
   // same line, and a dead toggle is worse than none.
