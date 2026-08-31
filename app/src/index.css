@@ -753,7 +753,7 @@ header.chrome .inner {
    later in the DOM and would otherwise cover it. */
 .card .card-link { color: inherit; text-decoration: none; }
 .card .card-link::after { content: ''; position: absolute; inset: 0; }
-.card .media-toggle { display: none; z-index: 1; }
+.card .media-toggle { z-index: 1; }
 .card .body { padding: .7rem .9rem .9rem; display: flex; flex-direction: column; gap: .3rem; flex: 1; }
 .card .body .cut { font-size: var(--t-caption); font-weight: 600; letter-spacing: .04em; color: var(--fg-3); text-transform: uppercase; }
 .card .body p { font-size: .85rem; line-height: 1.45; color: var(--fg-2); }
@@ -788,8 +788,8 @@ header.chrome .inner {
   transition: opacity .5s var(--spring);
 }
 .card .shot.photo .fried { opacity: 0; }
-.card:hover .shot.photo .fried,
-.card:focus-within .shot.photo .fried { opacity: 1; }
+.card .shot.photo[data-shown='fried'] .raw { opacity: 0; }
+.card .shot.photo[data-shown='fried'] .fried { opacity: 1; }
 
 /* Names the state, so the cross-fade reads as deliberate rather than as a
    loading glitch. Sits inside the shot on a scrim, not over the copy. */
@@ -811,17 +811,14 @@ header.chrome .inner {
 .card:hover .shot-state .is-fried,
 .card:focus-within .shot-state .is-fried { opacity: 1; }
 
-/* Touch has no hover, so the fried state would simply be unreachable — half
-   the catalogue photography lost on the devices most people browse from.
-   These cards used to answer that by showing both at once, side by side. That
-   made the photograph half as wide on exactly the devices with the least room
-   for it, which is the opposite of what the rail is for. The switch below
-   shows one picture at full width instead and lets you ask for the other,
-   matching what a pointer device gets from hover. */
+/* The RAW/FRIED switch is the only way these cards change picture, on every
+   device, exactly as the catalogue cards behave. It replaced two earlier
+   arrangements: a hover cross-fade, which touch could never reach, and a
+   side-by-side split, which halved the photograph on the devices with the
+   least room for it. Hover no longer changes the image at all -- with a
+   visible control saying which shot you are looking at, a picture that also
+   swapped itself under the cursor would contradict it. */
 @media (pointer: coarse) {
-  .card .media-toggle { display: flex; }
-  .card .shot.photo[data-shown='fried'] .raw { opacity: 0; }
-  .card .shot.photo[data-shown='fried'] .fried { opacity: 1; }
   .shot-state { grid-auto-flow: column; gap: .35rem; }
   .shot-state span { grid-area: auto; position: static; opacity: 1; }
   .shot-state .is-fried::before { content: '·'; margin-inline-end: .35rem; }
