@@ -1091,6 +1091,56 @@ footer .base {
 .nav-sheet a.active { color: var(--fg); font-weight: 650; }
 .chrome nav a.active { color: var(--fg); }
 
+/* The products entry and its catalogue types. Built on hover *and*
+   focus-within so the menu is reachable by keyboard without any state to
+   manage; this row only exists at 900px and up, where a pointer is present,
+   and the sheet below lists the types outright on touch.
+
+   The padding-block on the wrapper is what keeps the menu open while the
+   pointer crosses the gap between the link and the panel -- without it the
+   menu closes in the few pixels between them and cannot be reached. */
+.nav-has-menu { position: relative; display: inline-flex; }
+.nav-has-menu::after {
+  content: ''; position: absolute; inset-inline: 0;
+  inset-block-start: 100%; block-size: .6rem;
+}
+.nav-menu {
+  position: absolute; inset-block-start: calc(100% + .55rem); inset-inline-start: 0;
+  z-index: 60;
+  min-inline-size: 12rem;
+  display: grid; gap: .1rem;
+  padding: .3rem;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-2);
+  opacity: 0; visibility: hidden;
+  transform: translateY(-.25rem);
+  transition: opacity .18s var(--ease-out), transform .18s var(--ease-out), visibility .18s;
+}
+.nav-has-menu:hover .nav-menu,
+.nav-has-menu:focus-within .nav-menu {
+  opacity: 1; visibility: visible; transform: none;
+}
+.nav-menu a {
+  display: flex; align-items: center;
+  min-height: 40px; padding-inline: .6rem;
+  border-radius: var(--r-sm);
+  font-size: var(--t-caption); font-weight: 500;
+  color: var(--fg-2);
+  transition: background .18s var(--ease-out), color .18s var(--ease-out);
+}
+.nav-menu a:hover { background: var(--bg-2); color: var(--fg); }
+
+/* The same types in the phone sheet, indented under the products row rather
+   than hidden behind a disclosure. */
+.nav-sheet-sub {
+  padding-inline-start: 1.1rem;
+  font-size: var(--t-caption) !important;
+  color: var(--fg-3) !important;
+}
+.nav-sheet-sub:hover { color: var(--fg-2) !important; }
+
 /* ---------------- product catalogue ---------------- */
 .pgrid {
   display: grid; gap: 16px; margin-top: 2.5rem;
