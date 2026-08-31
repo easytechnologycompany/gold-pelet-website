@@ -33,22 +33,28 @@ export function News() {
           <div className="bento">
             {lead && (
               <Reveal as="article" className="cell w6 tint">
-                <span className="cap">{lead.date_label}</span>
-                <h3>{lead.title}</h3>
-                <p>{lead.description}</p>
                 {lead.image_url ? (
-                  <div className="shot-art">
+                  <div className="shot-top">
                     <img src={mediaURL(lead.image_url)} alt="" loading="lazy" decoding="async" />
                   </div>
                 ) : null}
+                <span className="cap">{lead.date_label}</span>
+                <h3>{lead.title}</h3>
+                <p>{lead.description}</p>
               </Reveal>
             )}
 
             {rest.map((n, i) => (
               <Reveal key={n.id} as="article" className="cell w3" delay={(i + 1) * 55}>
-                <span className="ico">
-                  <Icon id="i-check" />
-                </span>
+                {n.image_url ? (
+                  <div className="shot-top">
+                    <img src={mediaURL(n.image_url)} alt="" loading="lazy" decoding="async" />
+                  </div>
+                ) : (
+                  <span className="ico">
+                    <Icon id="i-check" />
+                  </span>
+                )}
                 <span className="cap">{n.date_label}</span>
                 <h3>{n.title}</h3>
                 <p>{n.description}</p>
