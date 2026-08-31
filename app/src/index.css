@@ -730,6 +730,7 @@ header.chrome .inner {
 .card {
   flex: 0 0 min(78vw, 20rem);
   scroll-snap-align: start;
+  position: relative;
   display: flex; flex-direction: column;
   border: 1px solid var(--hair); border-radius: var(--r-lg);
   background: var(--surface); overflow: hidden;
@@ -738,16 +739,26 @@ header.chrome .inner {
 .card:hover { box-shadow: var(--sh-2); }
 .card:active { transform: scale(.99); }
 .card .shot {
-  aspect-ratio: 1 / .95; display: grid; place-items: center;
+  aspect-ratio: 1 / 1; display: grid; place-items: center;
   background: radial-gradient(58% 56% at 50% 46%, color-mix(in srgb, var(--tone) 26%, transparent), transparent 72%), var(--bg-2);
   border-bottom: 1px solid var(--hair);
 }
 .card .shot svg { width: 56%; }
-.card .body { padding: .9rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+
+/* The card used to be one big <Link>, which left nowhere valid to put the
+   RAW/FRIED button: an anchor cannot contain one. The link now sits on the
+   title and stretches back over the whole card, so the card stays clickable
+   as a whole while the switch stays a real button beside it rather than
+   inside it. The toggle needs the z-index because the stretched ::after comes
+   later in the DOM and would otherwise cover it. */
+.card .card-link { color: inherit; text-decoration: none; }
+.card .card-link::after { content: ''; position: absolute; inset: 0; }
+.card .media-toggle { display: none; z-index: 1; }
+.card .body { padding: .7rem .9rem .9rem; display: flex; flex-direction: column; gap: .3rem; flex: 1; }
 .card .body .cut { font-size: var(--t-caption); font-weight: 600; letter-spacing: .04em; color: var(--fg-3); text-transform: uppercase; }
-.card .body p { font-size: .88rem; line-height: 1.5; color: var(--fg-2); }
+.card .body p { font-size: .85rem; line-height: 1.45; color: var(--fg-2); }
 .card .body .foot {
-  margin-top: auto; padding-top: .9rem; display: flex; align-items: center; gap: .8rem;
+  margin-top: auto; padding-top: .7rem; display: flex; align-items: center; gap: .8rem;
   font-size: var(--t-small); color: var(--fg-3); font-variant-numeric: tabular-nums;
 }
 .heat { display: inline-flex; gap: 3px; }
@@ -778,7 +789,7 @@ header.chrome .inner {
 }
 .card .shot.photo .fried { opacity: 0; }
 .card:hover .shot.photo .fried,
-.card:focus-visible .shot.photo .fried { opacity: 1; }
+.card:focus-within .shot.photo .fried { opacity: 1; }
 
 /* Names the state, so the cross-fade reads as deliberate rather than as a
    loading glitch. Sits inside the shot on a scrim, not over the copy. */
@@ -796,19 +807,21 @@ header.chrome .inner {
 .shot-state span { grid-area: 1 / 1; transition: opacity .5s var(--ease-out); }
 .shot-state .is-fried { opacity: 0; }
 .card:hover .shot-state .is-raw,
-.card:focus-visible .shot-state .is-raw { opacity: 0; }
+.card:focus-within .shot-state .is-raw { opacity: 0; }
 .card:hover .shot-state .is-fried,
-.card:focus-visible .shot-state .is-fried { opacity: 1; }
+.card:focus-within .shot-state .is-fried { opacity: 1; }
 
 /* Touch has no hover, so the fried state would simply be unreachable — half
    the catalogue photography lost on the devices most people browse from.
-   Both states show side by side instead, split by the same hairline the
-   cards already use so it reads as a deliberate before/after rather than as
-   an image failing to load. */
+   These cards used to answer that by showing both at once, side by side. That
+   made the photograph half as wide on exactly the devices with the least room
+   for it, which is the opposite of what the rail is for. The switch below
+   shows one picture at full width instead and lets you ask for the other,
+   matching what a pointer device gets from hover. */
 @media (pointer: coarse) {
-  .card .shot.photo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .card .shot.photo img { position: static; inset: auto; opacity: 1; height: 100%; }
-  .card .shot.photo .fried { opacity: 1; border-inline-start: 1px solid var(--hair); }
+  .card .media-toggle { display: flex; }
+  .card .shot.photo[data-shown='fried'] .raw { opacity: 0; }
+  .card .shot.photo[data-shown='fried'] .fried { opacity: 1; }
   .shot-state { grid-auto-flow: column; gap: .35rem; }
   .shot-state span { grid-area: auto; position: static; opacity: 1; }
   .shot-state .is-fried::before { content: '·'; margin-inline-end: .35rem; }
