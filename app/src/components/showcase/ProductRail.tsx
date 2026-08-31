@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { Reveal } from '@/components/motion/Reveal'
 import { mediaURL, type ApiProduct } from '@/lib/api'
@@ -66,8 +66,11 @@ const TONE_BY_CATEGORY: Record<string, string> = {
   corn: '#C2410C',
 }
 
+type MediaState = 'raw' | 'fried'
+
 function ProductCard({ product }: { product: ApiProduct }) {
-  const { cms } = useOverlay()
+  const { tk, cms } = useOverlay()
+  const [shown, setShown] = useState<MediaState>('raw')
   const category = useCms((s) => s.categories[product.category_id])
   const slug = category?.slug ?? ''
   const tone = TONE_BY_CATEGORY[slug] ?? 'var(--gold)'
@@ -76,18 +79,46 @@ function ProductCard({ product }: { product: ApiProduct }) {
   const raw = mediaURL(product.raw_image_url)
   const fried = mediaURL(product.fried_image_url)
   const hasPhoto = Boolean(raw || fried)
+  // Only offer the switch when both sides exist — the catalogue card takes the
+  // same line, and a dead toggle is worse than none.
+  const switchable = Boolean(raw && fried)
 
   const name = cms(overlayKey.productName(product.slug), product.name)
   const description = cms(overlayKey.productDescription(product.slug), product.description)
 
   return (
-    <Link className="card" to="/products" style={{ '--tone': tone } as CSSProperties}>
+    <article className="card" style={{ '--tone': tone } as CSSProperties}>
       {hasPhoto ? (
-        <div className="shot photo">
+        <div className="shot photo" data-shown={shown}>
           {/* Raw is the default state: the product sold is the pellet, and
               the fried shot shows what it becomes. */}
           {raw && <img className="raw" src={raw} alt={name} loading="lazy" decoding="async" />}
           {fried && <img className="fried" src={fried} alt={name} loading="lazy" decoding="async" />}
+
+          {switchable && (
+            /* Pointer devices cross-fade on hover. Touch has no hover, so the
+               fried shot needs a control of its own — the same one the
+               catalogue cards carry, so the gesture is learned once. State is
+               `raw`/`fried` rather than the translated label, so it behaves
+               identically under RTL. */
+            <div
+              className="media-toggle"
+              role="group"
+              aria-label={`${tk('product.raw')} / ${tk('product.fried')}`}
+            >
+              {(['raw', 'fried'] as const).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={shown === s ? 'is-active' : undefined}
+                  aria-pressed={shown === s}
+                  onClick={() => setShown(s)}
+                >
+                  {tk(`product.${s}`)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <div className="shot">
@@ -101,7 +132,14 @@ function ProductCard({ product }: { product: ApiProduct }) {
         {category && (
           <span className="cut">{cms(overlayKey.categoryName(category.slug), category.name)}</span>
         )}
-        <h3>{name}</h3>
+        {/* The card was one big <Link>. A button cannot live inside an anchor,
+            so the link now covers the card from here instead: one link, one
+            button, and the whole card still clickable. */}
+        <h3>
+          <Link className="card-link" to="/products">
+            {name}
+          </Link>
+        </h3>
         <p>{description}</p>
         {product.specs.length > 0 && (
           <span className="foot">
@@ -111,6 +149,6 @@ function ProductCard({ product }: { product: ApiProduct }) {
           </span>
         )}
       </div>
-    </Link>
+    </article>
   )
 }
