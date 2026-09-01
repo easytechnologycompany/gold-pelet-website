@@ -23,7 +23,8 @@ import type { Locale } from './i18n'
  * enhancement, never the other way round. Nothing here can blank a section —
  * if the API is unreachable the store simply stays empty and every consumer
  * falls back to the string or artwork it was designed with. That is what
- * makes the page safe to ship before the backend's CORS headers are in place.
+ * makes the page safe to ship against a backend that may not answer — a bad
+ * deploy, an origin nobody allowlisted, a visitor with no connection.
  */
 
 export type CmsStatus = 'idle' | 'loading' | 'ready' | 'unavailable'

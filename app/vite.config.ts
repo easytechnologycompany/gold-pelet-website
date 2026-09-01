@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
-// The Go API backend does not send `Access-Control-Allow-Origin`, so the
-// browser blocks a direct cross-origin call to it. Proxying in dev makes the
-// request same-origin from the page's point of view, which is what lets local
-// development run against the real API. Point this at a locally running
-// backend with VITE_BACKEND_ORIGIN=http://localhost:8090 if you have one.
+// Dev proxies /api and /uploads so the request is same-origin from the page's
+// point of view. Not a CORS workaround — production calls the backend directly
+// and is allowlisted there. This is what lets VITE_BACKEND_ORIGIN repoint local
+// development at a backend on localhost:8090 without touching that allowlist,
+// and it keeps dev working from whatever port Vite happens to pick.
 const BACKEND =
   process.env.VITE_BACKEND_ORIGIN || 'https://backend-production-cfda.up.railway.app'
 
