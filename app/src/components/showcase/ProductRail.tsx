@@ -4,7 +4,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { mediaURL, type ApiProduct } from '@/lib/api'
 import { useCms } from '@/lib/cms'
 import { useOverlay, overlayKey } from '@/lib/overlay'
-import { glyphFor, ownPhoto, sharedProductImages, toneFor } from '@/lib/asset-map'
+import { glyphFor, toneFor } from '@/lib/asset-map'
 
 /**
  * Scroll-snap carousel. The next card sits deliberately half-visible at the
@@ -20,7 +20,6 @@ import { glyphFor, ownPhoto, sharedProductImages, toneFor } from '@/lib/asset-ma
 export function ProductRail() {
   const { tk } = useOverlay()
   const products = useCms((s) => s.products)
-  const shared = sharedProductImages(products)
 
   if (!products.length) return null
 
@@ -41,7 +40,7 @@ export function ProductRail() {
       <div className="bay-wide" style={{ maxWidth: 1320, paddingInline: 0 }}>
         <div className="rail">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} shared={shared} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>
@@ -55,7 +54,7 @@ export function ProductRail() {
 
 type MediaState = 'raw' | 'fried'
 
-function ProductCard({ product, shared }: { product: ApiProduct; shared: Set<string> }) {
+function ProductCard({ product }: { product: ApiProduct }) {
   const { tk, cms } = useOverlay()
   const [shown, setShown] = useState<MediaState>('raw')
   const category = useCms((s) => s.categories[product.category_id])
@@ -63,11 +62,9 @@ function ProductCard({ product, shared }: { product: ApiProduct; shared: Set<str
   const tone = toneFor(slug)
   const glyph = glyphFor(product.slug, slug)
 
-  // Only a photograph this product does not share with another. Where the
-  // catalogue reuses one shot across a whole category, the card shows the
-  // product's own glyph instead of the same picture as its neighbours.
-  const raw = mediaURL(ownPhoto(product.raw_image_url, shared))
-  const fried = mediaURL(ownPhoto(product.fried_image_url, shared))
+  // The photographs as the CMS holds them, shared with other products or not.
+  const raw = mediaURL(product.raw_image_url)
+  const fried = mediaURL(product.fried_image_url)
   const hasPhoto = Boolean(raw || fried)
   // Only offer the switch when both sides exist — the catalogue card takes the
   // same line, and a dead toggle is worse than none.
@@ -82,18 +79,18 @@ function ProductCard({ product, shared }: { product: ApiProduct; shared: Set<str
         <div className="shot photo" data-shown={shown}>
           {/* Raw is the default state: the product sold is the pellet, and
               the fried shot shows what it becomes. */}
-          {switchable ? (
-            <>
-              <img className="raw" src={raw} alt={name} loading="lazy" decoding="async" />
-              <img className="fried" src={fried} alt={name} loading="lazy" decoding="async" />
-            </>
-          ) : (
-            /* A single photograph always takes the `raw` class, whichever side
-               it actually is. That class is the visible base layer — `.fried`
-               sits at opacity 0 waiting to be switched to, so a lone fried
-               shot rendered as `.fried` would be an invisible picture on a
-               card that believes it has one. */
-            <img className="raw" src={raw || fried} alt={name} loading="lazy" decoding="async" />
+          {raw && <img className="raw" src={raw} alt={name} loading="lazy" decoding="async" />}
+          {/* `.fried` sits at opacity 0 until data-shown says otherwise, so a
+              product with only a fried shot would render an invisible picture.
+              It takes the visible base layer in that case instead. */}
+          {fried && (
+            <img
+              className={raw ? 'fried' : 'raw'}
+              src={fried}
+              alt={name}
+              loading="lazy"
+              decoding="async"
+            />
           )}
 
           {switchable && (
