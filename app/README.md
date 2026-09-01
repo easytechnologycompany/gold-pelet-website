@@ -130,12 +130,9 @@ The image builds the bundle with Node and ships only the static output on
 `caddy:alpine`, so there is no Node in the runtime image. Caddy handles the
 SPA fallback that react-router needs — see the comments in `Caddyfile`.
 
-**A new deployment URL needs adding to the API's CORS allowlist**, or the app
-will run on its designed fallback content instead of live data:
-
-```bash
-railway variables --service backend --set "CORS_ORIGINS=<existing>,<new-origin>"
-```
+**A new deployment URL needs adding to the API's CORS allowlist**, or that
+deploy reads no live data at all — see [CORS](#cors) below for the current
+list and how to extend it.
 
 ## Backend connection
 
@@ -149,19 +146,45 @@ designed content is the baseline, live values overlay it, and an unreachable
 API is silent — every fetch in `src/lib/api.ts` resolves to `null` rather than
 throwing, so the page keeps exactly what it shipped with.
 
-### ⚠ CORS blocks this in production today
+### CORS
 
-The backend returns `Access-Control-Allow-Headers` and `-Allow-Methods` but
-**never `Access-Control-Allow-Origin`**, so browsers block every cross-origin
-call to it. `curl` does not enforce CORS, which is why the endpoints look
-reachable from a shell and are not from a page.
+Production reads live data. The backend reflects
+`Access-Control-Allow-Origin` for the origins listed in its `CORS_ORIGINS`
+variable and for no others, and every origin this app is served from is on
+that list:
 
-Dev works because Vite proxies `/api` and `/uploads`, making the request
-same-origin. Production has no proxy, so until the backend sends that header
-for the site's origin the app runs permanently on its designed fallback
-content. Nothing breaks — it just never shows live data.
+| Origin | What it is |
+|---|---|
+| `https://www.goldpeletcips.com` | production, canonical |
+| `https://goldpeletcips.com` | production, apex |
+| `https://gold-pelet-app-production.up.railway.app` | the Railway service URL |
+| `http://localhost:5173` | Vite dev |
+| `http://localhost:8123` | the old static site's port |
 
-Point dev at a local backend with:
+Anything else gets no `Access-Control-Allow-Origin` at all, which is the
+point — the same service holds the admin API. **So a new deployment origin
+(a review app, a renamed service, a second custom domain) reads no live data
+until it is added:**
+
+```bash
+railway variables --service backend --set "CORS_ORIGINS=<existing>,<new-origin>"
+```
+
+The list is the *whole* value, not an append — include the existing entries
+or you will cut production off. Check any origin without deploying anything:
+
+```bash
+curl -sI -H "Origin: https://example.com" https://backend-production-cfda.up.railway.app/api/v1/public/categories | grep -i allow-origin
+```
+
+Note that `curl` does not itself enforce CORS — a bare `curl` reaches these
+endpoints from anywhere and proves nothing about what a browser will do. It
+is the presence of that header in the reply that matters, which is why the
+command above greps for it rather than for the body.
+
+Dev never relies on any of this: Vite proxies `/api` and `/uploads`, so the
+request is same-origin. That is what lets a local backend be used without an
+allowlist entry:
 
 ```bash
 VITE_BACKEND_ORIGIN=http://localhost:8090 npm run dev --prefix app

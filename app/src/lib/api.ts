@@ -5,19 +5,21 @@
  *
  * CORS, and why dev and production resolve differently
  * ----------------------------------------------------
- * The backend replies with `Access-Control-Allow-Headers` and
- * `-Allow-Methods` but never `Access-Control-Allow-Origin`, so a browser
- * blocks any cross-origin call to it. (curl doesn't enforce CORS, which is
- * why the endpoints look reachable from a shell and are not from a page.)
+ * The backend reflects `Access-Control-Allow-Origin` for the origins named in
+ * its `CORS_ORIGINS` variable, and for nothing else. Production is on that
+ * list, so the direct cross-origin call works and the deployed app reads live
+ * data. A *new* deployment origin is not on it until someone adds it — see
+ * app/README.md, "Backend connection".
  *
- * In dev we therefore request a *relative* path and let Vite proxy it, which
- * makes the request same-origin and sidesteps CORS entirely. In production
- * there is no proxy, so the call goes direct and will keep failing until the
- * backend sends `Access-Control-Allow-Origin` for the site's origin.
+ * Dev is a different mechanism, not a workaround for a broken one: it asks
+ * for a *relative* path so Vite proxies it, making the request same-origin.
+ * That is what lets `VITE_BACKEND_ORIGIN` repoint local development at a
+ * backend running on localhost without touching an allowlist.
  *
- * That failure is survivable by design: every fetch here resolves to null
- * rather than throwing, and the UI keeps the static content it shipped with.
- * Same progressive-enhancement contract as the existing js/cms.js.
+ * Either way the failure is survivable by design: every fetch here resolves
+ * to null rather than throwing, so an unreachable API — or an origin nobody
+ * allowlisted — leaves the UI on the content it shipped with. Same
+ * progressive-enhancement contract as the existing js/cms.js.
  */
 
 const PROD_BACKEND_ORIGIN = 'https://backend-production-cfda.up.railway.app'
