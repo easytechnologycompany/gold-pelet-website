@@ -735,6 +735,28 @@ header.chrome .inner {
   overscroll-behavior-x: contain;
 }
 .rail::-webkit-scrollbar { display: none; }
+
+/* The product rail is a grid, not a carousel.
+   A modifier rather than a change to `.rail`, because the manufacturing story
+   strip below still scrolls: it has six steps in a deliberate order, where
+   the overhang telling you the row continues is the point. The catalogue has
+   sixteen products in no order the reader needs to follow, and hiding twelve
+   of them behind a sideways drag was costing more than the compactness bought.
+
+   Column counts match the rest of the page rather than being chosen fresh:
+   two on a phone like `.bento`, stepping to four where there is room. The
+   carousel properties on `.rail` are inert here -- a grid item ignores
+   `flex`, and a snap container with nothing overflowing has nothing to snap
+   -- but they are switched off explicitly so a wide card cannot bring the
+   sideways scroll back by accident. */
+.rail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow-x: visible;
+  scroll-snap-type: none;
+}
+@media (min-width: 760px)  { .rail-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1060px) { .rail-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .card {
   flex: 0 0 min(78vw, 20rem);
   scroll-snap-align: start;
