@@ -9,7 +9,7 @@ import {
   type ProductDraft,
 } from './admin'
 import type { ListStatus, Outcome } from './admin-store'
-import { toOutcome } from './admin-store'
+import { flagExpiry, toOutcome } from './admin-store'
 
 /**
  * Products admin state. Same shape and reasoning as admin-store.ts: a store
@@ -76,7 +76,7 @@ export const useAdminProducts = create<ProductsState>((set) => ({
       set({ products: await createProduct(draft) })
       return { ok: true }
     } catch (err) {
-      return toOutcome(err)
+      return flagExpiry(set, err)
     }
   },
 
@@ -85,7 +85,7 @@ export const useAdminProducts = create<ProductsState>((set) => ({
       set({ products: await updateProduct(id, draft) })
       return { ok: true }
     } catch (err) {
-      return toOutcome(err)
+      return flagExpiry(set, err)
     }
   },
 
@@ -94,7 +94,7 @@ export const useAdminProducts = create<ProductsState>((set) => ({
       set({ products: await deleteProduct(id) })
       return { ok: true }
     } catch (err) {
-      return toOutcome(err)
+      return flagExpiry(set, err)
     }
   },
 }))

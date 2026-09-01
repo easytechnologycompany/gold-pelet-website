@@ -53,6 +53,27 @@ export type AdminListApi<T, D> = {
   remove: (id: string) => Promise<T[]>
 }
 
+/**
+ * A mutation that fails on an expired token has to say so on the store, not
+ * only in its return value.
+ *
+ * Every admin screen already watches `expired` and sends the reader to the
+ * login page, but until now only `load` ever set it. A session that lapsed
+ * while the page was open therefore made every save, edit and delete do
+ * nothing at all: the caller is told the outcome is `expired` and stays quiet
+ * about it deliberately -- there is no point toasting "session expired" at
+ * someone who is about to be redirected -- and nothing performed the redirect.
+ * Silence is the worst of the three answers a click can give.
+ */
+export function flagExpiry(
+  set: (partial: { expired: true }) => void,
+  err: unknown,
+): Outcome {
+  const result = toOutcome(err)
+  if (!result.ok && result.expired) set({ expired: true })
+  return result
+}
+
 export function createAdminListStore<T, D>(api: AdminListApi<T, D>) {
   return create<AdminListState<T, D>>((set, get) => ({
     items: [],
@@ -92,7 +113,7 @@ export function createAdminListStore<T, D>(api: AdminListApi<T, D>) {
         set({ items: await api.create(draft) })
         return { ok: true }
       } catch (err) {
-        return toOutcome(err)
+        return flagExpiry(set, err)
       }
     },
 
@@ -101,7 +122,7 @@ export function createAdminListStore<T, D>(api: AdminListApi<T, D>) {
         set({ items: await api.update(id, draft) })
         return { ok: true }
       } catch (err) {
-        return toOutcome(err)
+        return flagExpiry(set, err)
       }
     },
 
@@ -110,7 +131,7 @@ export function createAdminListStore<T, D>(api: AdminListApi<T, D>) {
         set({ items: await api.remove(id) })
         return { ok: true }
       } catch (err) {
-        return toOutcome(err)
+        return flagExpiry(set, err)
       }
     },
   }))
