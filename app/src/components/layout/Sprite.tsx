@@ -286,6 +286,107 @@ export function Sprite() {
           </g>
         </symbol>
 
+        {/* Crinkle Smooth. The scalloped rim is the whole point: g-ridged is
+            an irregular blob that happens to carry ridges, while a crinkle cut
+            is round with a wavy perimeter, and the two must not be mistaken for
+            each other on a page that shows both. */}
+        <symbol id="g-crinkle" viewBox="0 0 200 200">
+          <path
+            d="M170.0,100.0 A15.7,15.7 0 0 1 164.7,126.8 A15.7,15.7 0 0 1 149.5,149.5 A15.7,15.7 0 0 1 126.8,164.7 A15.7,15.7 0 0 1 100.0,170.0 A15.7,15.7 0 0 1 73.2,164.7 A15.7,15.7 0 0 1 50.5,149.5 A15.7,15.7 0 0 1 35.3,126.8 A15.7,15.7 0 0 1 30.0,100.0 A15.7,15.7 0 0 1 35.3,73.2 A15.7,15.7 0 0 1 50.5,50.5 A15.7,15.7 0 0 1 73.2,35.3 A15.7,15.7 0 0 1 100.0,30.0 A15.7,15.7 0 0 1 126.8,35.3 A15.7,15.7 0 0 1 149.5,50.5 A15.7,15.7 0 0 1 164.7,73.2 A15.7,15.7 0 0 1 170.0,100.0 Z"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          {/* Chords cut to the scallop valleys rather than the outer radius, so
+              no ridge runs out past the rim it belongs to. */}
+          <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity=".45">
+            <path d="M54.3,66 L145.7,66" />
+            <path d="M45.6,83 L154.4,83" />
+            <path d="M43,100 L157,100" />
+            <path d="M45.6,117 L154.4,117" />
+            <path d="M54.3,134 L145.7,134" />
+          </g>
+        </symbol>
+
+        {/* Square Tube. Drawn as a box rather than a bar because the section is
+            what names it — g-pipe is the same object with a round bore, and
+            side-on they would be one drawing. */}
+        <symbol id="g-tube-square" viewBox="0 0 200 200">
+          <path
+            d="M50,86 L86,58 L142,58 L106,86 Z"
+            fill="currentColor"
+            fillOpacity=".18"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M106,86 L142,58 L142,114 L106,142 Z"
+            fill="currentColor"
+            fillOpacity=".18"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <rect
+            x="50"
+            y="86"
+            width="56"
+            height="56"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          {/* The bore. --bg-2 for the same reason as g-ring: a hole has to stay
+              a hole when the page goes dark. */}
+          <rect
+            x="64"
+            y="100"
+            width="28"
+            height="28"
+            fill="var(--bg-2)"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+        </symbol>
+
+        {/* Cones. Hollow, so the mouth is a --bg-2 ellipse rather than a filled
+            base — a solid triangle would read as a corn chip, which is a
+            different product. */}
+        <symbol id="g-cone" viewBox="0 0 200 200">
+          <path
+            d="M100,32 L148,140 A48,16 0 0 1 52,140 Z"
+            fill="currentColor"
+            fillOpacity=".3"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity=".45">
+            <path d="M100,44 L100,140" />
+            <path d="M92,46 L74,134" />
+            <path d="M108,46 L126,134" />
+          </g>
+          <ellipse
+            cx="100"
+            cy="140"
+            rx="48"
+            ry="16"
+            fill="var(--bg-2)"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+        </symbol>
+
+        {/* Flat Small. Two overlapping discs and no surface marks at all: the
+            product is defined by being plain and small, so the drawing carries
+            that by showing more than one piece and nothing on them. */}
+        <symbol id="g-flat-small" viewBox="0 0 200 200">
+          <g fill="currentColor" fillOpacity=".3" stroke="currentColor" strokeWidth="2">
+            <ellipse cx="74" cy="118" rx="46" ry="36" transform="rotate(-12 74 118)" />
+            <ellipse cx="126" cy="84" rx="46" ry="36" transform="rotate(10 126 84)" />
+          </g>
+        </symbol>
+
         <symbol id="g-flower" viewBox="0 0 200 200">
           <g
             fill="currentColor"
