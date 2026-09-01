@@ -696,6 +696,34 @@ header.chrome .inner {
 }
 .bento .art { margin-top: auto; align-self: center; width: min(66%, 11rem); color: var(--gold); }
 
+/* ---------------- factory map ---------------- */
+/* Framed like a bento cell so it reads as part of the contact block above it,
+   without being one: a cell pads its content and lifts on hover, and a map
+   wants neither -- once the pointer is over a map, the map owns it. */
+.map { margin-top: 14px; }
+
+.map-frame {
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  /* A height, not an aspect ratio. 16/9 of a 375px phone is 211px of map,
+     which is a picture of a map rather than one you can find a road on. This
+     floors a phone at 260 and lets a wide screen take more without the map
+     running away with the page. */
+  height: clamp(260px, 46vw, 440px);
+}
+
+.map-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+/* Deliberately unfiltered in dark mode. Inverting a map is the usual reflex
+   and it ruins the artefact: road casings, water and the halos behind labels
+   are all drawn for a light ground and come back illegible reversed. The site
+   already sets full-colour photographs on the dark theme untouched -- a map is
+   the same kind of object, and the border is what seats it on the page. */
+
+.map-directions { margin-top: .95rem; }
+
 /* ---------------- product rail: scroll-snap carousel ---------------- */
 .rail {
   display: flex; gap: 16px;

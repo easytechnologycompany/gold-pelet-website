@@ -7,7 +7,7 @@
  * translation columns on any table — so these keys are the overlay that turns
  * an English database record into Arabic, Kurdish or Turkish. See lib/overlay.ts.
  *
- * 4 locales, 255 keys each (en: 255, ar: 255, tr: 255, ku: 255).
+ * 4 locales, 257 keys each (en: 257, ar: 257, tr: 257, ku: 257).
  */
 
 export const TRANSLATIONS: Record<string, Record<string, string>> = {
@@ -41,7 +41,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "footer.link.calculator": "Load Calculator",
     "footer.copyright": "© 2026 Gold Pelet. All rights reserved.",
     "home.hero.eyebrow": "Pellet Snack Manufacturer · Est. 1998",
-    "home.hero.h1": "From Raw Grain to Ready to Fry Pellets.",
+    "home.hero.h1": "From raw grain to ready-to-fry pellets, engineered for scale.",
     "home.hero.lede": "Gold Pelet produces potato, corn and wheat snack pellets and semi-finished chips for food brands and co-packers worldwide, built on consistent raw materials, validated recipes, and a production line that runs to spec every batch.",
     "home.hero.cta.solutions": "Our Solutions",
     "home.products.eyebrow": "Product Range",
@@ -118,7 +118,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "home.cta.btn1": "Request a Quote",
     "home.cta.btn2": "Browse Catalog",
     "products.hero.eyebrow": "Product Catalog",
-    "products.hero.h1": "Five pellet lines, one material standard.",
+    "products.hero.h1": "Five pellet lines. One consistent raw-material standard.",
     "products.hero.p": "Every formulation below ships with a full spec sheet, moisture content, bulk density, expansion ratio and recommended fry parameters, so your production team can qualify it before the first container arrives.",
     "products.calc.eyebrow": "Plan Your Order",
     "products.calc.h2": "Container Load Calculator",
@@ -127,7 +127,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "products.cta.p": "We'll send moisture, density and fry-parameter data for any line above, plus a sample kit on request.",
     "products.cta.btn": "Request Samples",
     "services.hero.eyebrow": "Our Solutions",
-    "services.hero.h1": "The whole process line, made reliable.",
+    "services.hero.h1": "It's always better when the whole process line is reliable.",
     "services.hero.p": "A dependable process line, from raw material intake to a sealed, labeled pallet, is what separates a good pellet supplier from one you can actually build a product roadmap around.",
     "services.cta.h2": "Tell us what your line needs.",
     "services.cta.p": "Whether it's a formulation change, a new pack format, or a first-time order, start with a conversation, not a form.",
@@ -139,7 +139,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "about.cta.p": "We host qualified buyers for facility tours by appointment. Reach out to arrange a visit.",
     "about.cta.btn": "Contact Us",
     "news.hero.eyebrow": "Events & News",
-    "news.hero.h1": "Where to find us, and what's changed.",
+    "news.hero.h1": "Where to find us, and what's changed on the line.",
     "news.hero.p": "Trade show appearances, certification renewals and production milestones, kept current for buyers tracking our capacity and compliance status.",
     "news.cta.h2": "Meeting us at a trade show?",
     "news.cta.p": "Let us know in advance and we'll have samples and spec sheets ready for your specific product interest.",
@@ -230,6 +230,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "contact.info.sales": "Sales Inquiries",
     "contact.info.call": "Call Our Team",
     "contact.info.facility": "Facility",
+    "contact.map.title": "Map showing the factory location",
+    "contact.map.directions": "Get directions",
     "contact.form.required": "Fields marked * are required. We typically respond within 3 business days.",
     "contact.form.label.company": "Company Name",
     "contact.form.label.contactName": "Contact Name",
@@ -487,6 +489,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "contact.info.sales": "استفسارات المبيعات",
     "contact.info.call": "اتصل بفريقنا",
     "contact.info.facility": "المنشأة",
+    "contact.map.title": "خريطة تُظهر موقع المصنع",
+    "contact.map.directions": "احصل على الاتجاهات",
     "contact.form.required": "الحقول المُعلَّمة بـ * إلزامية. نستجيب عادة خلال 3 أيام عمل.",
     "contact.form.label.company": "اسم الشركة",
     "contact.form.label.contactName": "اسم جهة الاتصال",
@@ -744,6 +748,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "contact.info.sales": "Satış Talepleri",
     "contact.info.call": "Ekibimizi Arayın",
     "contact.info.facility": "Tesis",
+    "contact.map.title": "Fabrika konumunu gösteren harita",
+    "contact.map.directions": "Yol tarifi al",
     "contact.form.required": "* ile işaretli alanlar zorunludur. Genellikle 3 iş günü içinde yanıt veririz.",
     "contact.form.label.company": "Şirket Adı",
     "contact.form.label.contactName": "İletişim Adı",
@@ -1001,6 +1007,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "contact.info.sales": "پرسیاری فرۆشتن",
     "contact.info.call": "پەیوەندی بە تیمەکەمان",
     "contact.info.facility": "کارگە",
+    "contact.map.title": "نەخشەیەک کە شوێنی کارگە پیشان دەدات",
+    "contact.map.directions": "ڕێنمایی ڕێگا",
     "contact.form.required": "خانەکانی نیشانکراو بە * پێویستن. ئێمە بەگشتی لە ماوەی ٣ ڕۆژی کاردا وەڵام دەدەینەوە.",
     "contact.form.label.company": "ناوی کۆمپانیا",
     "contact.form.label.contactName": "ناوی پەیوەندیدار",

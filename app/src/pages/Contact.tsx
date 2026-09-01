@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { PageHero } from '@/components/layout/PageHero'
+import { FactoryMap } from '@/components/showcase/FactoryMap'
 import { Reveal } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/Button'
 import { API_BASE } from '@/lib/api'
@@ -13,7 +14,8 @@ import { useOverlay } from '@/lib/overlay'
  * `/public/enquiries` endpoint, so submissions land in the same admin inbox —
  * the field names below are the API contract and must not be renamed to suit
  * the component. Labels, options and status messages are `contact.*` keys;
- * the address, phone and email are `/public/content` records.
+ * the address, phone and email are `/public/content` records — the same
+ * address record the map under them is centred on.
  */
 
 const PRODUCTS = [
@@ -193,6 +195,8 @@ export function Contact() {
             </Reveal>
           )}
         </div>
+
+        <FactoryMap />
       </section>
 
       <section className="section bay" id="process">
