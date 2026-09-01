@@ -41,7 +41,7 @@ export function ManufacturingStory() {
 
   if (!steps.length) return null
 
-  const digits = locale === 'ar' || locale === 'ku' ? 'ar-EG' : locale
+  const digits = locale === 'ar' ? 'ar-EG' : locale
 
   return (
     <section className="section" id="story" style={{ paddingTop: 0 }}>

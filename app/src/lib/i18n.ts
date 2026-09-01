@@ -1,28 +1,29 @@
 import { create } from 'zustand'
 
-export type Locale = 'en' | 'ar' | 'ku' | 'tr'
+export type Locale = 'en' | 'ar' | 'tr'
 
-export const LOCALES: readonly Locale[] = ['en', 'ar', 'ku', 'tr']
+export const LOCALES: readonly Locale[] = ['en', 'ar', 'tr']
 
-/** Arabic script locales. Both are RTL and share the connected-script rules
- *  in index.css — `tr` is Latin and stays LTR. */
-export const RTL: ReadonlySet<Locale> = new Set<Locale>(['ar', 'ku'])
+/** Arabic script locales. RTL, with the connected-script rules in index.css —
+ *  `tr` is Latin and stays LTR. Kurdish was the other member until it was
+ *  withdrawn; the set is kept as a set because it is a property of the script,
+ *  not a count of how many locales happen to have it. */
+export const RTL: ReadonlySet<Locale> = new Set<Locale>(['ar'])
 
-export const LOCALE_CODE: Record<Locale, string> = { en: 'EN', ar: 'ع', ku: 'KU', tr: 'TR' }
+export const LOCALE_CODE: Record<Locale, string> = { en: 'EN', ar: 'ع', tr: 'TR' }
 export const LOCALE_NAME: Record<Locale, string> = {
   en: 'English',
   ar: 'العربية',
-  ku: 'کوردی',
   tr: 'Türkçe',
 }
 
 /**
  * A translatable string. Only `en` is required: a locale with no string for a
  * node falls back to English rather than rendering empty, which is the rule
- * the static page shipped with and the reason `ku`/`tr` could land
+ * the static page shipped with and the reason a locale could land
  * incrementally without blanking the page.
  */
-export type Str = { en: string; ar?: string; ku?: string; tr?: string }
+export type Str = { en: string; ar?: string; tr?: string }
 
 export const pick = (s: Str, locale: Locale): string => s[locale] ?? s.en
 

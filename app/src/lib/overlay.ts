@@ -107,7 +107,7 @@ export type Overlay = {
  *
  * Here English is admin-owned everywhere. The dashboard is meant to control
  * the site, and a CMS edit that cannot appear is a bug, not a feature. The
- * overlay therefore supplies ar/ku/tr only, and falls back to the real English
+ * overlay therefore supplies ar/tr only, and falls back to the real English
  * CMS value when a locale has no override — never to invented copy.
  */
 function resolveCms(locale: Locale, key: string | null | undefined, english: string): string {

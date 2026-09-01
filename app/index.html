@@ -31,7 +31,7 @@
         var t = localStorage.getItem('gp-theme-2')
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
         var l = localStorage.getItem('gp-lang')
-        if (l === 'ar' || l === 'ku' || l === 'tr') {
+        if (l === 'ar' || l === 'tr') {
           document.documentElement.lang = l
           document.documentElement.dir = l === 'tr' ? 'ltr' : 'rtl'
         }

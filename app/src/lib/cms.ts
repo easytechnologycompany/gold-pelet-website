@@ -159,6 +159,6 @@ export const useCms = create<CmsState>((set, get) => ({
  * for it, so `t/day` stays as authored.
  */
 export const formatStat = (stat: Stat, locale: Locale): string => {
-  const digitLocale = locale === 'ar' || locale === 'ku' ? 'ar-EG' : locale
+  const digitLocale = locale === 'ar' ? 'ar-EG' : locale
   return `${new Intl.NumberFormat(digitLocale).format(stat.value_number)}${stat.unit_suffix}`
 }

@@ -38,7 +38,18 @@ function extractLiteral(text, declaration) {
 
 const table = new Function(`return ${extractLiteral(src, 'const TRANSLATIONS = {')}`)()
 
-const locales = Object.keys(table)
+/**
+ * The locales this app ships, which are no longer all of the ones the old
+ * site's dictionary holds. Kurdish was withdrawn from the React site; its
+ * strings stay in js/i18n.js because that file is the legacy site's own
+ * dictionary and not ours to prune. Filtering here rather than deleting there
+ * is what stops the next sync quietly putting it back.
+ */
+const SHIPPED = ['en', 'ar', 'tr']
+
+const locales = Object.keys(table).filter((l) => SHIPPED.includes(l))
+const dropped = Object.keys(table).filter((l) => !SHIPPED.includes(l))
+if (dropped.length) console.log(`  (not shipped, left in the source: ${dropped.join(', ')})`)
 const counts = locales.map((l) => `${l}: ${Object.keys(table[l]).length}`).join(', ')
 
 // Every locale must carry every key. The old site falls back to English and
@@ -64,8 +75,13 @@ const banner = `/**
  */
 `
 
+// Serialise the shipped locales only. Writing `table` here emits every locale
+// the source holds regardless of the filter above — which is exactly how a
+// withdrawn language stayed in the bundle after being removed everywhere else.
+const shipped = Object.fromEntries(locales.map((l) => [l, table[l]]))
+
 const body = `export const TRANSLATIONS: Record<string, Record<string, string>> = ${JSON.stringify(
-  table,
+  shipped,
   null,
   2,
 )} as const\n`
