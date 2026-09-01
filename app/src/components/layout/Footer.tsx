@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useCms } from '@/lib/cms'
 import { useOverlay } from '@/lib/overlay'
 import { useT } from '@/lib/i18n'
+import { useProductTypes } from '@/lib/product-types'
 import { copy } from '@/lib/content'
 import { EasyTechCredit } from '@/components/ui/EasyTechCredit'
 
@@ -23,17 +24,16 @@ const COMPANY = [
   { to: '/contact', key: 'nav.contact' },
 ] as const
 
-/** Products column. The anchors match the category slugs on /products. */
-const PRODUCTS = [
-  { to: '/products#wheat', key: 'footer.link.wheat' },
-  { to: '/products#potato', key: 'footer.link.potato' },
-  { to: '/products#corn', key: 'footer.link.corn' },
-  { to: '/products#load-calculator', key: 'footer.link.calculator' },
-] as const
+/* The Products column's three category links are no longer written here. They
+   come from useProductTypes, the same list the header menu reads, so a line
+   retired in the admin stops being advertised in the footer instead of leaving
+   an anchor to a section /products has stopped rendering. The calculator is
+   not a category and stays. */
 
 export function Footer() {
   const { tk, content } = useOverlay()
   const cms = useCms((s) => s.content)
+  const productTypes = useProductTypes()
 
   // `footer.blurb` is prose, so the overlay translates it; the contact values
   // below are facts and deliberately are not translated — an address and a
@@ -59,11 +59,14 @@ export function Footer() {
         <div>
           <h4>{tk('footer.heading.products')}</h4>
           <ul>
-            {PRODUCTS.map((l) => (
-              <li key={l.to}>
-                <Link to={l.to}>{tk(l.key)}</Link>
+            {productTypes.map((type) => (
+              <li key={type.slug}>
+                <Link to={type.to}>{type.label}</Link>
               </li>
             ))}
+            <li>
+              <Link to="/products#load-calculator">{tk('footer.link.calculator')}</Link>
+            </li>
           </ul>
         </div>
 

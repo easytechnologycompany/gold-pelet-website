@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { API_BASE } from '@/lib/api'
 import { useCms } from '@/lib/cms'
 import { useOverlay } from '@/lib/overlay'
+import { useProductTypes } from '@/lib/product-types'
 
 /**
  * Contact / RFQ.
@@ -18,13 +19,12 @@ import { useOverlay } from '@/lib/overlay'
  * address record the map under them is centred on.
  */
 
-const PRODUCTS = [
-  { value: '', key: 'contact.form.option.selectProduct' },
-  { value: 'wheat', key: 'contact.form.option.wheat' },
-  { value: 'potato', key: 'contact.form.option.potato' },
-  { value: 'corn', key: 'contact.form.option.corn' },
-  { value: 'other', key: 'contact.form.option.other' },
-] as const
+/* The three product lines are no longer listed here. They come from
+   useProductTypes, so the form offers a quote on what the catalogue actually
+   carries: retire a line in the admin and it stops being offered, add one and
+   it appears. The submitted value stays the category slug, which is what the
+   old hard-coded options sent too, so nothing changes for the enquiries the
+   admin inbox already holds. "Other" is not a category and stays. */
 
 const VOLUMES = [
   { value: '', key: 'contact.form.option.selectVolume' },
@@ -40,6 +40,7 @@ type SendState = 'idle' | 'sending' | 'ok' | 'fail' | 'unreachable'
 
 export function Contact() {
   const { tk } = useOverlay()
+  const productTypes = useProductTypes()
   const content = useCms((s) => s.content)
   const [state, setState] = useState<SendState>('idle')
 
@@ -129,11 +130,15 @@ export function Contact() {
           <div className="field">
             <label htmlFor="product">{tk('contact.form.label.product')} *</label>
             <select id="product" name="product" required defaultValue="">
-              {PRODUCTS.map((o) => (
-                <option key={o.key} value={o.value} disabled={o.value === ''}>
-                  {tk(o.key)}
+              <option value="" disabled>
+                {tk('contact.form.option.selectProduct')}
+              </option>
+              {productTypes.map((type) => (
+                <option key={type.slug} value={type.slug}>
+                  {type.label}
                 </option>
               ))}
+              <option value="other">{tk('contact.form.option.other')}</option>
             </select>
           </div>
           <div className="field">
