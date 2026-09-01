@@ -7,9 +7,13 @@ import { useOverlay, overlayKey } from '@/lib/overlay'
 import { glyphFor, toneFor } from '@/lib/asset-map'
 
 /**
- * Scroll-snap carousel. The next card sits deliberately half-visible at the
- * right edge — that overhang is the affordance telling you the row continues,
- * so the section needs no arrows or dots.
+ * The catalogue as a grid, every product visible at once.
+ *
+ * It was a scroll-snap carousel, which showed two cards and asked for a
+ * sideways drag to reach the rest. That suits a sequence — the manufacturing
+ * story strip below still works that way — but a catalogue is a set the
+ * reader scans, and burying most of it behind a gesture is a poor trade for
+ * the vertical space it saves.
  *
  * Every card is a real `/public/products` record. The six designed flavours
  * that used to stand in when the API was unreachable are gone: they described
@@ -38,7 +42,7 @@ export function ProductRail() {
       </div>
 
       <div className="bay-wide" style={{ maxWidth: 1320, paddingInline: 0 }}>
-        <div className="rail">
+        <div className="rail rail-grid">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
