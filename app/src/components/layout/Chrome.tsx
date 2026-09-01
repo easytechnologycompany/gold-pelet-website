@@ -7,7 +7,8 @@ import { useCms } from '@/lib/cms'
 import { mediaURL } from '@/lib/api'
 import { copy } from '@/lib/content'
 import { useScrollLinked } from '@/components/motion/useScrollLinked'
-import { useOverlay, overlayKey } from '@/lib/overlay'
+import { useOverlay } from '@/lib/overlay'
+import { useProductTypes } from '@/lib/product-types'
 import { cn } from '@/lib/utils'
 
 /**
@@ -15,25 +16,6 @@ import { cn } from '@/lib/utils'
  * translation keys rather than a parallel set invented here — so a label the
  * live site already ships in four languages is the same label on this one.
  */
-/** The catalogue's own sections, reached from the products entry the way the
- *  live site reaches them. Not a second list of hard-coded types: these are
- *  the CMS categories, so a category added or renamed in the dashboard shows
- *  up here without a deploy, and an empty one is simply not linked. */
-function useProductTypes() {
-  const { cms } = useOverlay()
-  const categories = useCms((s) => s.categories)
-  const products = useCms((s) => s.products)
-  return Object.values(categories)
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .filter((c) => products.some((p) => p.category_id === c.id))
-    .map((c) => ({
-      slug: c.slug,
-      // Same anchors the catalogue page already renders as section ids.
-      to: `/products#${c.slug}`,
-      label: cms(overlayKey.categoryName(c.slug), c.name),
-    }))
-}
-
 const NAV = [
   { to: '/', key: 'nav.home' },
   { to: '/products', key: 'nav.products' },
