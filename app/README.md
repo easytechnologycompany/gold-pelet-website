@@ -61,7 +61,7 @@ src/
     api.ts      CMS client: origin resolution, safe fetch, response types
     cms.ts      zustand store hydrated from the API + formatStat()
     i18n.ts     locale store + Str type + useT()
-    content.ts  every user-facing string, keyed, four locales
+    content.ts  every user-facing string, keyed, three locales
     products.ts bento / product / spec data (the designed fallback)
     theme.ts    three-state theme store
     utils.ts    cn()
@@ -81,10 +81,13 @@ src/
   `ThemeProvider.tsx`.
 - **Size-specific tracking.** No global `letter-spacing`. The per-size table
   from the design docs is reproduced verbatim in `index.css`.
-- **Arabic is first-class.** All four locales (en / ar / ku / tr) ship, `ar`
-  and `ku` are RTL with the Arabic-script font and `letter-spacing: normal`,
-  and every measured per-locale leading override is carried across. Layout uses
-  logical properties throughout — no `left` / `right`.
+- **Arabic is first-class.** Three locales ship (en / ar / tr), `ar` is RTL
+  with the Arabic-script font and `letter-spacing: normal`, and every measured
+  per-locale leading override is carried across. Layout uses logical properties
+  throughout — no `left` / `right`. Kurdish shipped until it was withdrawn at
+  the client's request; `js/i18n.js` still holds its strings, and
+  `scripts/sync-translations.mjs` filters them out rather than deleting them
+  from a file the live site also reads.
 - **Motion.** Press feedback at 100ms, the hero pack scroll-linked 1:1 on
   `requestAnimationFrame` writing only `transform`, reduced motion degrading to
   a cross-fade rather than to nothing.
@@ -224,7 +227,7 @@ Not code problems — things to fix in the admin dashboard.
   the fried state.
 - **Products are English-only.** There is no translation column, so product
   names, descriptions and category labels stay English while the rest of the
-  page switches through all four locales.
+  page switches through all three locales.
 - **Images are single full-size originals** (1200×900, ~105 KB each) with no
   thumbnail or `srcset` variants, displayed as small as 145 px. Total is under
   1 MB and everything is lazy-loaded, so this is a sharpness/bandwidth nicety
@@ -281,8 +284,8 @@ labels, the rail hint and the two 404 strings.
 
 ### Translations
 
-The backend stores **English only** — no `name_ar`, no `description_ku`, no
-translation table. The finished site produces four languages with a client-side
+The backend stores **English only** — no `name_ar`, no `name_tr`, no
+translation table. The site produces three languages with a client-side
 overlay, and `src/lib/overlay.ts` is that same rule expressed as a function:
 
     API record (English) -> derived key -> TRANSLATIONS[locale] -> text
@@ -295,7 +298,7 @@ the generated one. Re-run the sync after changing any copy over there.
 One deliberate difference from the live site: there, `applyTranslations()` runs
 for English too, so a `products.<slug>.name` override outranks the database and
 renaming a product in the admin dashboard never shows. Here English is
-admin-owned everywhere and the overlay supplies `ar`/`ku`/`tr` only.
+admin-owned everywhere and the overlay supplies `ar`/`tr` only.
 
 Records with no override — certifications, milestones, news — read in English
 in every locale, exactly as they do on the live site. Fixing that means adding
@@ -307,7 +310,7 @@ Three pieces, and they have to agree with each other:
 
 - **`src/lib/seo.ts`** — the page list, and the `seo.<page>.title` /
   `seo.<page>.description` keys. Those keys live in `js/i18n.js` like all the
-  others, so titles and descriptions exist in all four locales; the live site
+  others, so titles and descriptions exist in all three locales; the live site
   had them hardcoded in each HTML file in English only.
 - **`src/components/layout/Seo.tsx`** — keeps the head correct once React takes
   over: on client-side navigation, and when the visitor switches language.
@@ -338,7 +341,7 @@ index the wrong host. The prerender script reads the same variable.
 
 hreflang annotates *distinct URLs* for the same content in different languages.
 This site has none: locale is a stored preference, not part of the path, so
-`/about` serves all four languages. Emitting hreflang for it would be a lie.
+`/about` serves all three languages. Emitting hreflang for it would be a lie.
 
 That also means only the English copy is indexable. Fixing it properly needs
 locale-prefixed routes (`/ar/about`) with a shell per locale per page — a
