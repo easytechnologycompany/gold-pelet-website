@@ -2,7 +2,6 @@ import { PageHero } from '@/components/layout/PageHero'
 import { Reveal } from '@/components/motion/Reveal'
 import { LoadCalculator } from '@/components/showcase/LoadCalculator'
 import { ProductCard } from '@/components/showcase/ProductCard'
-import { sharedProductImages } from '@/lib/asset-map'
 import { ButtonRoute } from '@/components/ui/Button'
 import { useCms } from '@/lib/cms'
 import { useOverlay, overlayKey } from '@/lib/overlay'
@@ -27,9 +26,6 @@ const EYEBROW_BY_SLUG: Record<string, string> = {
 export function Products() {
   const { tk, cms } = useOverlay()
   const products = useCms((s) => s.products)
-  // Computed once for the whole catalogue rather than per card: a photograph
-  // is only "shared" relative to every other product, not to its own section.
-  const shared = sharedProductImages(products)
   const categories = useCms((s) => s.categories)
 
   const ordered = Object.values(categories).sort((a, b) => a.sort_order - b.sort_order)
@@ -67,7 +63,6 @@ export function Products() {
                   key={product.id}
                   product={product}
                   category={category}
-                  shared={shared}
                   delay={Math.min(i, 5) * 55}
                 />
               ))}

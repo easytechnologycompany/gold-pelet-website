@@ -1,4 +1,3 @@
-import type { ApiProduct } from '@/lib/api'
 import type { GlyphId } from '@/lib/sprite-ids'
 
 /**
@@ -72,36 +71,4 @@ export function toneFor(categorySlug: string): string {
 
 export function glyphFor(slug: string, categorySlug: string): GlyphId {
   return GLYPH_BY_PRODUCT[slug] ?? GLYPH_BY_CATEGORY[categorySlug] ?? 'g-classic'
-}
-
-/**
- * Every photograph URL that more than one product points at.
- *
- * Derived from the live catalogue rather than hard-coded, so it stays correct
- * as photography is added: upload a picture for one wheat product and that
- * product starts showing it, while the six still sharing the old one keep
- * their glyphs. Raw and fried are pooled deliberately — a picture used as one
- * product's raw shot and another's fried shot is still the same picture
- * appearing twice.
- */
-export function sharedProductImages(products: ApiProduct[]): Set<string> {
-  const seen = new Map<string, number>()
-  for (const p of products) {
-    for (const url of [p.raw_image_url, p.fried_image_url]) {
-      if (!url) continue
-      seen.set(url, (seen.get(url) ?? 0) + 1)
-    }
-  }
-  const shared = new Set<string>()
-  for (const [url, count] of seen) if (count > 1) shared.add(url)
-  return shared
-}
-
-/** A photograph this product does not share with any other, or null. */
-export function ownPhoto(
-  url: string | null | undefined,
-  shared: Set<string>,
-): string | null {
-  if (!url || shared.has(url)) return null
-  return url
 }
