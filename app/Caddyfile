@@ -4,6 +4,66 @@
 	root * /srv
 	encode gzip zstd
 
+	# ---- The site this domain used to serve ----
+	#
+	# goldpeletcips.com ran a Turkish CodeIgniter site with 33 live URLs, none
+	# of which exist here: a page per product, four separate company pages, and
+	# galleries. Pointing the domain at this app without these turns every one
+	# of them into a 404, taking its inbound links and search results with it.
+	# Its own sitemap.xml returns a PHP parse error rather than XML, so this
+	# list was crawled from its home page and may not be the whole of it.
+	#
+	# `redir` runs ahead of `try_files` in Caddy's directive order, so these are
+	# answered before the SPA fallback ever sees the path.
+	#
+	# 301 where the destination genuinely replaces the old page, so the ranking
+	# moves with it. 302 further down where it does not.
+
+	# The catalogue: a page per product becomes the section its product sits in.
+	# The anchors are the category slugs /products already renders as section
+	# ids, so each lands on its own line rather than the top of the page.
+	redir /bugday-cipsi /products#wheat  301
+	redir /renkli-bugday-cipsi /products#wheat  301
+	redir /pencere-bugday /products#wheat  301
+	redir /kare-bugday-tirtikli /products#wheat  301
+	redir /bugday-boru /products#wheat  301
+	redir /bugday-halka---kucuk /products#wheat  301
+	redir /bugday-halka---buyuk /products#wheat  301
+	redir /cicek-bugday /products#wheat  301
+	redir /patates-cipsi /products#potato 301
+	redir /burgu-patates /products#potato 301
+	redir /kabuk-patates /products#potato 301
+	redir /sade-patates /products#potato 301
+	redir /misir-cipsi /products#corn   301
+	redir /misir-3d-balik /products#corn   301
+	redir /misir-3d-top /products#corn   301
+	redir /urunlerimiz /products 301
+
+	# Four company pages became one. Nothing is lost -- the corporate, mission
+	# and vision copy is what /about is made of.
+	redir /hakkimizda /about 301
+	redir /kurumsal /about 301
+	redir /misyonumuz /about 301
+	redir /vizyonumuz /about 301
+	redir /iletisim /contact 301
+	redir /haberler /news 301
+
+	# Nearest match, not a replacement, so 302: these pages have no equivalent
+	# here and may get a real one later, and a permanent redirect is cached hard
+	# enough that changing it afterwards is slow. Sending them somewhere beats a
+	# 404 for a visitor, but search engines will read them as soft 404s and that
+	# is the honest outcome until the content exists.
+	redir /e-katalog /products 302 # no catalogue page here yet
+	redir /insan-kaynaklari /contact 302 # no careers page here yet
+	redir /foto-galeri /about 302 # no gallery here; /about carries the photography
+	redir /video-galeri /about 302
+	redir /galeri /about 302
+
+	# The old site's language switcher, which had a URL per locale. Locale here
+	# is a stored preference rather than a path, so there is nothing to carry
+	# over and the home page is the only truthful destination.
+	redir /languagechange/* / 302
+
 	# Client-side routing: react-router owns every path, so anything that
 	# isn't a real file still has to return a document rather than a bare 404 —
 	# otherwise a deep link or a refresh on any route but / breaks.
