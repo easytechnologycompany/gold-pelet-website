@@ -38,8 +38,8 @@ export function FactoryMap() {
       <Reveal className="map-frame" delay={165}>
         <iframe
           // `hl` puts the map's own labels in the page's language. Google
-          // ignores a code it does not carry, which is the right outcome for
-          // ku — the map falls back to its default rather than erroring.
+          // ignores a code it does not carry, so an unsupported locale falls
+          // back to the map's default rather than erroring.
           src={`https://www.google.com/maps?q=${query}&z=15&hl=${locale}&output=embed`}
           title={tk('contact.map.title')}
           // Lazy so the embed costs nothing — no request to Google, no script,

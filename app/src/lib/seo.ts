@@ -44,14 +44,10 @@ export const seoKeys = (page: PageKey) => ({
   description: `seo.${page}.description`,
 })
 
-/**
- * `og:locale` wants language_TERRITORY. Kurdish Sorani is `ckb`, which is what
- * the site's own `ku` code means here — see the font work in index.css.
- */
+/** `og:locale` wants language_TERRITORY. */
 export const OG_LOCALE: Record<Locale, string> = {
   en: 'en_US',
   ar: 'ar_AR',
-  ku: 'ckb_IQ',
   tr: 'tr_TR',
 }
 

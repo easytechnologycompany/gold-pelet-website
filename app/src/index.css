@@ -1883,33 +1883,20 @@ html[lang="tr"] h1,
 html[lang="tr"] h2 { line-height: 1.12; }
 
 /* ---------------- Arabic ---------------- */
-html[lang="ar"], html[lang="ku"] { --font: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
-html[lang="ar"] *,
-html[lang="ku"] * { letter-spacing: normal !important; }
+html[lang="ar"] { --font: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
+html[lang="ar"] * { letter-spacing: normal !important; }
 /* Arabic leading is measured, not guessed. Rendering all 92 data-ar strings
    to a canvas and reading real ink extent gives a worst case of 1.554em at
    400 weight and 1.679em at 700/800 — the Arabic-Indic numerals in the spec
    table run deepest. The Latin values below those collided: the hero gradient
    span overflowed its line by 3.1px, bento copy by 0.6px, spec values by
    1.7px. These clear the measured need with headroom. */
-html[lang="ar"] h1,
-html[lang="ku"] h1 { line-height: 1.45; }
-html[lang="ar"] h2,
-html[lang="ku"] h2 { line-height: 1.35; }
+html[lang="ar"] h1 { line-height: 1.45; }
+html[lang="ar"] h2 { line-height: 1.35; }
 /* h3 was the one heading without an Arabic override, so it kept the Latin
    1.2 — too tight for a script whose ink runs ~1.23em at this size, and it
    collided by a pixel. Same reasoning as h1/h2 above. */
-html[lang="ar"] h3,
-html[lang="ku"] h3 { line-height: 1.45; }
-/* Sorani needs more than Arabic here, and only here. ڵ ڕ ۆ ژ stack taller
-   than anything in the Arabic copy — "گوڵەبەڕۆژە" measures 1.641em at 700
-   weight against the 1.45 above. Kept off the shared rule so the Arabic
-   headings keep the tighter value they were tuned to. */
-html[lang="ku"] h3 { line-height: 1.7; }
-html[lang="ku"] p,
-html[lang="ku"] dt,
-html[lang="ku"] dd,
-html[lang="ku"] li,
+html[lang="ar"] h3 { line-height: 1.45; }
 html[lang="ar"] p,
 html[lang="ar"] dt,
 html[lang="ar"] dd,
@@ -1917,13 +1904,9 @@ html[lang="ar"] li { line-height: 1.7; }
 /* These two component rules carry their own line-height and out-specify the
    element selectors above (.bento .cell p is 2 classes + 1 element, versus
    1 attribute + 2 elements), so Arabic needs them named explicitly. */
-html[lang="ku"] .bento .cell p,
-html[lang="ku"] .card .body p,
 html[lang="ar"] .bento .cell p,
 html[lang="ar"] .card .body p { line-height: 1.7; }
-html[lang="ar"] .statement .mega,
-html[lang="ku"] .statement .mega { line-height: 1.2; }
-html[lang="ar"] .card .body .cut,
-html[lang="ku"] .card .body .cut { text-transform: none; }
+html[lang="ar"] .statement .mega { line-height: 1.2; }
+html[lang="ar"] .card .body .cut { text-transform: none; }
 [dir="rtl"] .flip { transform: scaleX(-1); }
 [dir="rtl"] .chev:hover svg { transform: scaleX(-1) translateX(3px); }
