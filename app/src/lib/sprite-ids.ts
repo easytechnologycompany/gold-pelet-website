@@ -23,6 +23,10 @@ export type GlyphId =
   | 'g-pipe'
   | 'g-ring-large'
   | 'g-flower'
+  | 'g-crinkle'
+  | 'g-tube-square'
+  | 'g-cone'
+  | 'g-flat-small'
 
 /** UI icon symbols. */
 export type IconId = 'i-chev' | 'i-check' | 'i-cert' | 'i-leaf' | 'i-scan' | 'i-truck'

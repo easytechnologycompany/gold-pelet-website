@@ -39,6 +39,14 @@ export const GLYPH_BY_PRODUCT: Record<string, GlyphId> = {
   'wheat-ring-small': 'g-ring',
   'wheat-ring-large': 'g-ring-large',
   'flower-wheat': 'g-flower',
+  // The shapes the factory actually shows on its sample shelf. Added
+  // ahead of their CMS records so a new product renders as itself from
+  // the moment it is created, rather than borrowing the category glyph
+  // off a product that already has it.
+  'crinkle-smooth': 'g-crinkle',
+  'square-tube': 'g-tube-square',
+  'cones': 'g-cone',
+  'flat-small': 'g-flat-small',
 }
 
 /** Used for a product the map has not been told about yet — a new record in
