@@ -82,8 +82,19 @@ function ProductCard({ product, shared }: { product: ApiProduct; shared: Set<str
         <div className="shot photo" data-shown={shown}>
           {/* Raw is the default state: the product sold is the pellet, and
               the fried shot shows what it becomes. */}
-          {raw && <img className="raw" src={raw} alt={name} loading="lazy" decoding="async" />}
-          {fried && <img className="fried" src={fried} alt={name} loading="lazy" decoding="async" />}
+          {switchable ? (
+            <>
+              <img className="raw" src={raw} alt={name} loading="lazy" decoding="async" />
+              <img className="fried" src={fried} alt={name} loading="lazy" decoding="async" />
+            </>
+          ) : (
+            /* A single photograph always takes the `raw` class, whichever side
+               it actually is. That class is the visible base layer — `.fried`
+               sits at opacity 0 waiting to be switched to, so a lone fried
+               shot rendered as `.fried` would be an invisible picture on a
+               card that believes it has one. */
+            <img className="raw" src={raw || fried} alt={name} loading="lazy" decoding="async" />
+          )}
 
           {switchable && (
             /* Pointer devices cross-fade on hover. Touch has no hover, so the

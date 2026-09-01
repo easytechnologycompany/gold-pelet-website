@@ -36,15 +36,21 @@ export function ProductCard({
   // as seven products, so a shared shot gives way to the product's own glyph.
   const raw = mediaURL(ownPhoto(product.raw_image_url, shared))
   const fried = mediaURL(ownPhoto(product.fried_image_url, shared))
-  const shown = state === 'raw' ? raw : fried
   const glyph = glyphFor(product.slug, category?.slug ?? '')
-
-  const name = cms(overlayKey.productName(product.slug), product.name)
-  const description = cms(overlayKey.productDescription(product.slug), product.description)
 
   // Only offer the switch when there is actually something on both sides of
   // it — one photo and a dead toggle is worse than no toggle.
   const switchable = Boolean(raw && fried)
+
+  // With both sides photographed the switch decides. With only one, that one
+  // shows whichever side it is: the alternative is a card that keeps its glyph
+  // until both shots exist, so the first photograph of a product changes
+  // nothing on screen and looks like it failed to upload. There is no toggle
+  // in that state, so nothing can claim the picture is the other side.
+  const shown = switchable ? (state === 'raw' ? raw : fried) : raw || fried
+
+  const name = cms(overlayKey.productName(product.slug), product.name)
+  const description = cms(overlayKey.productDescription(product.slug), product.description)
 
   return (
     <Reveal as="article" className="pcard" delay={delay}>
