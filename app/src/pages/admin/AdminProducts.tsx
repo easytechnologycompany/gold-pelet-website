@@ -163,6 +163,113 @@ export function AdminProducts() {
     setFormError(result.message)
   }
 
+  /**
+   * Hide/show and reorder without opening the form.
+   *
+   * Both go through the same `update` the modal uses, so they are verified
+   * writes like every other mutation on this page rather than a faster path
+   * that trusts the response. `productDraftFrom` rebuilds the whole record
+   * before the one field changes, because the endpoint is a PUT: sending a
+   * partial body would blank every field left out of it.
+   */
+  const [rowBusy, setRowBusy] = useState<string | null>(null)
+
+  const toggleActive = async (p: ApiProduct) => {
+    if (rowBusy) return
+    setRowBusy(p.id)
+    const result = await update(p.id, { ...productDraftFrom(p), is_active: !p.is_active })
+    setRowBusy(null)
+    if (result.ok) {
+      setToast({
+        kind: 'success',
+        message: t(p.is_active ? 'crud.nowHidden' : 'crud.nowVisible', { item: `"${p.name}"` }),
+      })
+      return
+    }
+    if (!result.expired) setToast({ kind: 'error', message: result.message })
+  }
+
+  /**
+   * Move a product one place within its own category.
+   *
+   * Ordering is per category, not global — the live data runs 1..7 for wheat
+   * and 1..3 for potato — and /products renders each category as its own
+   * section, so a product's neighbours are its siblings and nobody else.
+   * Swapping the two sort_order values is what "move" means here; writing a
+   * new absolute position would renumber rows nobody asked to touch.
+   */
+  const move = async (p: ApiProduct, dir: -1 | 1) => {
+    if (rowBusy) return
+    const siblings = products
+      .filter((x) => x.category_id === p.category_id)
+      .sort((a, b) => a.sort_order - b.sort_order)
+    const i = siblings.findIndex((x) => x.id === p.id)
+    const other = siblings[i + dir]
+    if (!other) return
+
+    setRowBusy(p.id)
+    // Sequential, not parallel: the two writes swap values with each other, and
+    // the store replaces its whole list from each response, so racing them
+    // would let the slower reply overwrite the faster one's result.
+    const a = await update(p.id, { ...productDraftFrom(p), sort_order: other.sort_order })
+    const b = a.ok
+      ? await update(other.id, { ...productDraftFrom(other), sort_order: p.sort_order })
+      : a
+    setRowBusy(null)
+
+    if (b.ok) {
+      setToast({ kind: 'success', message: t('crud.updated', { item: `"${p.name}"` }) })
+      return
+    }
+    if (!b.expired) setToast({ kind: 'error', message: b.message })
+  }
+
+  /** Edit, hide/show and reorder, shared by the table and the card list so the
+   *  two cannot drift apart. */
+  const rowActions = (p: ApiProduct) => {
+    const siblings = products
+      .filter((x) => x.category_id === p.category_id)
+      .sort((a, b) => a.sort_order - b.sort_order)
+    const i = siblings.findIndex((x) => x.id === p.id)
+    const busy = rowBusy !== null
+    return (
+      <div className="admin-row-actions">
+        <Button variant="ghost" onClick={() => openEdit(p)} disabled={busy}>
+          {t('crud.edit')}
+        </Button>
+        <Button variant="ghost" onClick={() => void toggleActive(p)} disabled={busy}>
+          {t(p.is_active ? 'crud.hide' : 'crud.show')}
+        </Button>
+        <Button
+          variant="ghost"
+          aria-label={`${t('crud.moveUp')} — ${p.name}`}
+          title={t('crud.moveUp')}
+          onClick={() => void move(p, -1)}
+          disabled={busy || i <= 0}
+        >
+          ↑
+        </Button>
+        <Button
+          variant="ghost"
+          aria-label={`${t('crud.moveDown')} — ${p.name}`}
+          title={t('crud.moveDown')}
+          onClick={() => void move(p, 1)}
+          disabled={busy || i < 0 || i >= siblings.length - 1}
+        >
+          ↓
+        </Button>
+        <Button
+          variant="ghost"
+          className="admin-danger"
+          onClick={() => setConfirming(p)}
+          disabled={busy}
+        >
+          {t('crud.delete')}
+        </Button>
+      </div>
+    )
+  }
+
   const onDelete = async () => {
     if (!confirming || deleting) return
     setDeleting(true)
@@ -265,16 +372,7 @@ export function AdminProducts() {
                   <td>
                     <StatusBadge active={p.is_active} t={t} />
                   </td>
-                  <td className="admin-col-actions">
-                    <div className="admin-row-actions">
-                      <Button variant="ghost" onClick={() => openEdit(p)}>
-                        {t('crud.edit')}
-                      </Button>
-                      <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(p)}>
-                        {t('crud.delete')}
-                      </Button>
-                    </div>
-                  </td>
+                  <td className="admin-col-actions">{rowActions(p)}</td>
                 </tr>
               ))}
             </tbody>
@@ -306,14 +404,7 @@ export function AdminProducts() {
                     </div>
                   )}
                 </dl>
-                <div className="admin-row-actions">
-                  <Button variant="ghost" onClick={() => openEdit(p)}>
-                    {t('crud.edit')}
-                  </Button>
-                  <Button variant="ghost" className="admin-danger" onClick={() => setConfirming(p)}>
-                    {t('crud.delete')}
-                  </Button>
-                </div>
+                {rowActions(p)}
               </li>
             ))}
           </ul>

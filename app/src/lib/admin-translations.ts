@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 235, tr: 235).
+ * 2 locales (en: 242, tr: 242).
  * 0 key(s) fall back to English.
  */
 
@@ -98,6 +98,13 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "crud.empty": "Nothing here yet — add the first one.",
     "crud.actions": "Actions",
     "crud.edit": "Edit",
+    "crud.hide": "Hide",
+    "crud.nowHidden": "{item} hidden from the site.",
+    "crud.nowVisible": "{item} is visible on the site.",
+    "crud.show": "Show",
+    "crud.moveUp": "Move up",
+    "crud.moveDown": "Move down",
+    "crud.reordering": "Reordering…",
     "crud.delete": "Delete",
     "crud.cancel": "Cancel",
     "crud.save": "Save",
@@ -335,6 +342,13 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "crud.empty": "Henüz bir şey yok — ilkini ekleyin.",
     "crud.actions": "İşlemler",
     "crud.edit": "Düzenle",
+    "crud.hide": "Gizle",
+    "crud.nowHidden": "{item} sitede gizlendi.",
+    "crud.nowVisible": "{item} sitede görünür.",
+    "crud.show": "Göster",
+    "crud.moveUp": "Yukarı taşı",
+    "crud.moveDown": "Aşağı taşı",
+    "crud.reordering": "Sıralanıyor…",
     "crud.delete": "Sil",
     "crud.cancel": "İptal",
     "crud.save": "Kaydet",
