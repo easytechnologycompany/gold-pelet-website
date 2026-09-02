@@ -21,11 +21,52 @@ import { glyphFor, toneFor } from '@/lib/asset-map'
  * competing catalogues meant the page could show a plausible fiction whenever
  * the backend hiccuped. With nothing to show, the section does not render.
  */
+/** How many products the home page shows before deferring to the catalogue. */
+const SHOWN = 8
+
+/**
+ * The `SHOWN` products to put on the home page, taken across the ranges rather
+ * than off the top of the list.
+ *
+ * The store orders by category and then by each product's own order, so the
+ * first eight are whatever the largest category happens to hold — with this
+ * catalogue, seven wheat and one potato, and no corn at all. The section's own
+ * lede says "three core lines, wheat, potato and Egyptian 3D corn", so a
+ * straight slice would have the page contradicting its own copy.
+ *
+ * Taking one from each line in turn keeps every range represented and keeps
+ * each line's own order intact. A category with fewer products simply drops
+ * out of later rounds instead of holding a place.
+ */
+function acrossRanges(products: ApiProduct[], limit: number): ApiProduct[] {
+  const byCategory = new Map<string, ApiProduct[]>()
+  for (const p of products) {
+    const bucket = byCategory.get(p.category_id)
+    if (bucket) bucket.push(p)
+    else byCategory.set(p.category_id, [p])
+  }
+
+  const queues = [...byCategory.values()]
+  const picked: ApiProduct[] = []
+  for (let round = 0; picked.length < limit; round++) {
+    const before = picked.length
+    for (const queue of queues) {
+      if (picked.length >= limit) break
+      if (queue[round]) picked.push(queue[round])
+    }
+    // Every queue is exhausted; the catalogue is smaller than the limit.
+    if (picked.length === before) break
+  }
+  return picked
+}
+
 export function ProductRail() {
   const { tk } = useOverlay()
   const products = useCms((s) => s.products)
 
   if (!products.length) return null
+
+  const shown = acrossRanges(products, SHOWN)
 
   return (
     <section className="section" id="range" style={{ background: 'var(--bg-2)' }}>
@@ -43,7 +84,7 @@ export function ProductRail() {
 
       <div className="bay-wide" style={{ maxWidth: 1320, paddingInline: 0 }}>
         <div className="rail rail-grid">
-          {products.map((product) => (
+          {shown.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
