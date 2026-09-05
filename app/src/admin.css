@@ -924,6 +924,7 @@
   font-weight: 800; letter-spacing: -0.01em;
 }
 .admin-theme-preview-icon { width: 18px; height: 18px; flex-shrink: 0; }
+.admin-theme-preview-btn-icon { width: 16px; height: 16px; flex-shrink: 0; }
 .admin-theme-preview-section { padding: 1.25rem; display: grid; gap: .8rem; }
 .admin-theme-preview-eyebrow {
   font-size: var(--t-caption); font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
