@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 294, tr: 294).
+ * 2 locales (en: 301, tr: 301).
  * 0 key(s) fall back to English.
  */
 
@@ -257,6 +257,13 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "theme.livePreview": "Live preview",
     "theme.resetDefaults": "Reset to defaults",
     "theme.save": "Save Theme",
+    "theme.presetsTitle": "Ready-made themes",
+    "theme.presetsDesc": "Pick a starting palette — backgrounds, text and buttons all matched together. Applies to both light and dark mode; still needs Save.",
+    "theme.preset.goldClassic": "Gold Classic",
+    "theme.preset.midnightBlue": "Midnight Blue",
+    "theme.preset.charcoalMono": "Charcoal Mono",
+    "theme.preset.warmTerracotta": "Warm Terracotta",
+    "theme.preset.forestGreen": "Forest Green",
     "theme.token.bg": "Page background",
     "theme.token.bg_2": "Section background",
     "theme.token.surface": "Card / surface background",
@@ -553,6 +560,13 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "theme.livePreview": "Canlı önizleme",
     "theme.resetDefaults": "Varsayılanlara sıfırla",
     "theme.save": "Temayı Kaydet",
+    "theme.presetsTitle": "Hazır Temalar",
+    "theme.presetsDesc": "Bir başlangıç paleti seçin — arka planlar, metin ve butonlar birbiriyle uyumlu. Hem açık hem koyu moda uygulanır; yine de Kaydet gerekir.",
+    "theme.preset.goldClassic": "Klasik Altın",
+    "theme.preset.midnightBlue": "Gece Mavisi",
+    "theme.preset.charcoalMono": "Antrasit Mono",
+    "theme.preset.warmTerracotta": "Sıcak Toprak",
+    "theme.preset.forestGreen": "Orman Yeşili",
     "theme.token.bg": "Sayfa arka planı",
     "theme.token.bg_2": "Bölüm arka planı",
     "theme.token.surface": "Kart / yüzey arka planı",
