@@ -28,6 +28,7 @@ const NAV: readonly NavGroup[] = [
     label: 'nav.group.visuals',
     items: [
       { to: '/admin/branding', key: 'nav.branding' },
+      { to: '/admin/theme', key: 'nav.theme' },
       { to: '/admin/heroes', key: 'nav.heroes' },
       { to: '/admin/images', key: 'nav.siteImages' },
     ],

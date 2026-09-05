@@ -455,7 +455,7 @@
 @media (prefers-reduced-motion: reduce) { .admin-toast { animation: none; } }
 
 .admin-toast--success { background: var(--fg); color: var(--bg); }
-.admin-toast--error { background: #DC2626; color: #fff; }
+.admin-toast--error { background: var(--state-danger); color: #fff; }
 .admin-toast button {
   display: grid; place-items: center; flex-shrink: 0;
   width: 24px; height: 24px; border: 0; border-radius: 50%;
@@ -852,6 +852,47 @@
    event, so it must not be announced as something that just happened. */
 .admin-group > .admin-field-warning { margin-block: -.35rem .2rem; }
 
+/* ---------------- theme ---------------- */
+
+/* Segmented light/dark switch for which palette the pickers below edit —
+   deliberately not ThemeToggle, which is the *operator's own* appearance
+   preference and a different concept from which palette is being drafted. */
+.admin-theme-mode {
+  display: inline-flex; gap: .25rem;
+  padding: .25rem; margin-bottom: 1.1rem;
+  border: 1px solid var(--hair); border-radius: 999px;
+  background: var(--bg-2);
+}
+.admin-theme-mode button {
+  min-height: 38px; padding-inline: 1.1rem;
+  border: 0; border-radius: 999px;
+  font-family: var(--font); font-size: var(--t-small); font-weight: 700;
+  color: var(--fg-2); background: transparent; cursor: pointer;
+  transition: background-color .15s var(--ease-out), color .15s var(--ease-out);
+}
+.admin-theme-mode button.is-active { background: var(--surface); color: var(--fg); box-shadow: var(--sh-1); }
+@media (pointer: coarse) { .admin-theme-mode button { min-height: 44px; } }
+
+/* The live-preview card. Its own background/text colours are set from the
+   *draft* tokens via inline style (see AdminTheme.tsx) — everything below
+   that top-level style reads the same `--token` custom properties the real
+   public site consumes, so this is a true preview of the saved CSS, not a
+   hand-styled mockup. */
+.admin-theme-preview { margin-bottom: 1.5rem; }
+.admin-theme-preview-surface {
+  display: grid; gap: .7rem; margin-top: .6rem;
+  padding: 1.5rem; border-radius: var(--r-lg);
+}
+.admin-theme-preview-surface h3 { margin: 0; }
+.admin-theme-preview-surface p { margin: 0; max-width: 42ch; }
+.admin-theme-preview-surface a { font-weight: 600; text-decoration: underline; width: fit-content; }
+.admin-theme-preview-row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.admin-theme-preview-badge {
+  display: inline-flex; align-items: center;
+  padding: .3rem .7rem; border: 1px solid; border-radius: 999px;
+  font-size: var(--t-caption); font-weight: 700;
+}
+
 /* ---------------- enquiries ---------------- */
 
 /* The filter sits where other screens put their Add button. */
@@ -866,14 +907,14 @@
   border-color: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 .admin-status--contacted {
-  color: color-mix(in srgb, #0B4363 70%, var(--fg));
-  background: color-mix(in srgb, #0B4363 12%, transparent);
-  border-color: color-mix(in srgb, #0B4363 30%, transparent);
+  color: color-mix(in srgb, var(--state-info) 70%, var(--fg));
+  background: color-mix(in srgb, var(--state-info) 12%, transparent);
+  border-color: color-mix(in srgb, var(--state-info) 30%, transparent);
 }
 .admin-status--won {
-  color: color-mix(in srgb, #15803D 78%, var(--fg));
-  background: color-mix(in srgb, #15803D 12%, transparent);
-  border-color: color-mix(in srgb, #15803D 30%, transparent);
+  color: color-mix(in srgb, var(--state-success) 78%, var(--fg));
+  background: color-mix(in srgb, var(--state-success) 12%, transparent);
+  border-color: color-mix(in srgb, var(--state-success) 30%, transparent);
 }
 .admin-status--lost { color: var(--fg-3); background: var(--bg-2); border-color: var(--hair-2); }
 

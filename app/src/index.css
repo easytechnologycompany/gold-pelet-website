@@ -107,6 +107,38 @@
   /* critically damped by default; bounce only after a real gesture */
   --spring:   cubic-bezier(.32, .72, 0, 1);
   --ease-out: cubic-bezier(.22, .61, .36, 1);
+
+  /* ---------------- admin-editable theme tokens ----------------
+     The closed registry Admin -> Theme writes to (site_theme). Every one
+     defaults to an existing token so shipping this changed zero pixels;
+     App.tsx's LiveTheme wrapper overrides these with the saved values on
+     the public site only — this block is what the admin dashboard itself,
+     and a first paint before that fetch resolves, fall back to. */
+  --header-bg:    var(--bg);
+  --footer-bg:    var(--bg);
+  --heading-color:        var(--fg);
+  --body-text-color:      var(--fg);
+  --secondary-text-color: var(--fg-2);
+  --muted-text-color:     var(--fg-3);
+  --link-color: var(--accent);
+  --icon-color: var(--accent);
+
+  --btn-fill-bg:        var(--accent);
+  --btn-fill-bg-hover:  var(--accent-2);
+  --btn-fill-bg-active: #7A480D;
+  --btn-fill-text:      var(--on-accent);
+  --btn-fill-border:    var(--btn-fill-bg);
+  --btn-ghost-text:          var(--fg);
+  --btn-ghost-border:        var(--hair-2);
+  --btn-ghost-border-hover:  var(--fg-3);
+  --btn-disabled-bg:     var(--hair);
+  --btn-disabled-text:   var(--fg-3);
+  --btn-disabled-border: var(--hair);
+
+  --state-success: #15803D;
+  --state-warning: #B45309;
+  --state-danger:  #DC2626;
+  --state-info:    #0B4363;
 }
 
 :root[data-theme="dark"] {
@@ -152,6 +184,32 @@
 
   --sh-1: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px -4px rgba(0,0,0,.5);
   --sh-2: 0 2px 8px rgba(0,0,0,.5), 0 28px 56px -22px rgba(0,0,0,.75);
+
+  --header-bg:    var(--bg);
+  --footer-bg:    var(--bg);
+  --heading-color:        var(--fg);
+  --body-text-color:      var(--fg);
+  --secondary-text-color: var(--fg-2);
+  --muted-text-color:     var(--fg-3);
+  --link-color: var(--accent);
+  --icon-color: var(--accent);
+
+  --btn-fill-bg:        var(--accent);
+  --btn-fill-bg-hover:  var(--accent-2);
+  --btn-fill-bg-active: #EDB512;
+  --btn-fill-text:      var(--on-accent);
+  --btn-fill-border:    var(--btn-fill-bg);
+  --btn-ghost-text:          var(--fg);
+  --btn-ghost-border:        var(--hair-2);
+  --btn-ghost-border-hover:  var(--fg-3);
+  --btn-disabled-bg:     var(--hair);
+  --btn-disabled-text:   var(--fg-3);
+  --btn-disabled-border: var(--hair);
+
+  --state-success: #22C55E;
+  --state-warning: #F59E0B;
+  --state-danger:  #F87171;
+  --state-info:    #38BDF8;
 }
 
 /* Expose the token layer as Tailwind utilities (bg-bg, text-fg-2,
@@ -204,7 +262,7 @@ html { scroll-padding-top: var(--chrome-h); }
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--fg);
+  color: var(--body-text-color);
   font-family: var(--font);
   font-size: var(--t-body);
   line-height: 1.5;
@@ -214,7 +272,7 @@ body {
 }
 
 /* Tracking tightens as type grows; leading tightens with it. */
-h1, h2, h3, h4 { margin: 0; font-weight: 800; text-wrap: balance; }
+h1, h2, h3, h4 { margin: 0; font-weight: 800; text-wrap: balance; color: var(--heading-color); }
 h1 { font-size: var(--t-h1); line-height: 1.04; letter-spacing: -0.035em; }
 h2 { font-size: var(--t-h2); line-height: 1.06; letter-spacing: -0.03em; }
 h3 { font-size: var(--t-h3); line-height: 1.2;  letter-spacing: -0.018em; font-weight: 700; }
@@ -250,13 +308,13 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--t-small);
   font-weight: 700;
   letter-spacing: 0.02em;       /* small text gets a touch of positive tracking */
-  color: var(--accent);
+  color: var(--link-color);
 }
 .lead {
   font-size: var(--t-lead);
   line-height: 1.45;
   letter-spacing: -0.01em;
-  color: var(--fg-2);
+  color: var(--secondary-text-color);
   max-width: 34ch;
 }
 .center { text-align: center; }
@@ -265,7 +323,7 @@ a { color: inherit; text-decoration: none; }
 .chev {
   display: inline-flex; align-items: center; gap: .3rem;
   font-size: var(--t-lead); font-weight: 500; letter-spacing: -0.01em;
-  color: var(--accent);
+  color: var(--link-color);
   transition: opacity .2s var(--ease-out);
 }
 .chev:hover { opacity: .72; }
@@ -285,10 +343,16 @@ a { color: inherit; text-decoration: none; }
 }
 /* Feedback lives on the press, and it is instant. */
 .btn:active { transform: scale(.97); }
-.btn-fill { background: var(--accent); color: var(--on-accent); }
-.btn-fill:hover { background: var(--accent-2); }
-.btn-ghost { border-color: var(--hair-2); color: var(--fg); }
-.btn-ghost:hover { border-color: var(--fg-3); }
+.btn-fill { background: var(--btn-fill-bg); color: var(--btn-fill-text); border-color: var(--btn-fill-border); }
+.btn-fill:hover { background: var(--btn-fill-bg-hover); }
+.btn-fill:active { background: var(--btn-fill-bg-active); }
+.btn-ghost { border-color: var(--btn-ghost-border); color: var(--btn-ghost-text); }
+.btn-ghost:hover { border-color: var(--btn-ghost-border-hover); }
+.btn:disabled {
+  cursor: not-allowed;
+  background: var(--btn-disabled-bg); color: var(--btn-disabled-text); border-color: var(--btn-disabled-border);
+}
+.btn:disabled:hover, .btn:disabled:active { background: var(--btn-disabled-bg); transform: none; }
 
 /* ---------------- reveal — cross-fade + short rise, no overshoot ------- */
 .reveal {
@@ -317,7 +381,7 @@ a { color: inherit; text-decoration: none; }
 header.chrome {
   position: fixed; inset-inline: 0; top: 0; z-index: 100;
   height: var(--chrome-h);
-  background: var(--chrome);
+  background: color-mix(in srgb, var(--header-bg) 72%, transparent);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid transparent;
@@ -690,7 +754,7 @@ header.chrome .inner {
 
 .bento .cap { font-size: var(--t-small); font-weight: 600; letter-spacing: .01em; color: var(--fg-3); }
 .bento .cell p { font-size: .95rem; line-height: 1.5; color: var(--fg-2); }
-.bento .cell .ico { color: var(--accent); }
+.bento .cell .ico { color: var(--icon-color); }
 .bento .cell.tint {
   background: linear-gradient(150deg, color-mix(in srgb, var(--gold) 16%, var(--surface)), var(--surface) 62%);
 }
@@ -943,7 +1007,7 @@ header.chrome .inner {
 .cta { background: var(--bg-2); text-align: center; }
 .cta .row { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
 
-footer { border-top: 1px solid var(--hair); font-size: var(--t-caption); color: var(--fg-3); }
+footer { background: var(--footer-bg); border-top: 1px solid var(--hair); font-size: var(--t-caption); color: var(--muted-text-color); }
 footer .cols {
   display: grid; gap: 2rem; padding-block: 2.75rem 2rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
