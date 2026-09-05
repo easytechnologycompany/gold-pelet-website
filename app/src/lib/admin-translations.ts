@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 303, tr: 303).
+ * 2 locales (en: 305, tr: 305).
  * 0 key(s) fall back to English.
  */
 
@@ -255,6 +255,8 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "theme.modeLight": "Light mode",
     "theme.modeDark": "Dark mode",
     "theme.livePreview": "Live preview",
+    "theme.previewSmaller": "Shrink preview",
+    "theme.previewBigger": "Enlarge preview",
     "theme.resetDefaults": "Reset to defaults",
     "theme.save": "Save Theme",
     "theme.presetsTitle": "Ready-made themes",
@@ -560,6 +562,8 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "theme.modeLight": "Açık mod",
     "theme.modeDark": "Koyu mod",
     "theme.livePreview": "Canlı önizleme",
+    "theme.previewSmaller": "Önizlemeyi küçült",
+    "theme.previewBigger": "Önizlemeyi büyüt",
     "theme.resetDefaults": "Varsayılanlara sıfırla",
     "theme.save": "Temayı Kaydet",
     "theme.presetsTitle": "Hazır Temalar",

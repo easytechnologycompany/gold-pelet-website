@@ -42,6 +42,9 @@ export function AdminTheme() {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
   const [toast, setToast] = useState<ToastState>(null)
+  // A per-viewer display preference, not part of the theme itself — reset on
+  // reload is fine, so plain state rather than anything persisted.
+  const [previewZoom, setPreviewZoom] = useState(1)
 
   // Same sync-during-render pattern as AdminBranding: covers the initial
   // load and every successful save in one comparison.
@@ -169,7 +172,13 @@ export function AdminTheme() {
             </button>
           </div>
 
-          <ThemePreview tokens={draft[mode]} label={t('theme.livePreview')} t={t} />
+          <ThemePreview
+            tokens={draft[mode]}
+            label={t('theme.livePreview')}
+            t={t}
+            zoom={previewZoom}
+            onZoom={setPreviewZoom}
+          />
 
           <div className="admin-groups">
             {THEME_TOKEN_GROUPS.map((group) => (
@@ -238,20 +247,53 @@ export function AdminTheme() {
  * real buttons, so hovering or pressing the preview buttons shows them
  * live, the same as the actual site.
  */
+const PREVIEW_ZOOM_MIN = 0.7
+const PREVIEW_ZOOM_MAX = 1.6
+const PREVIEW_ZOOM_STEP = 0.15
+
 function ThemePreview({
   tokens,
   label,
   t,
+  zoom,
+  onZoom,
 }: {
   tokens: ThemeDraft['light']
   label: string
   t: (key: string) => string
+  zoom: number
+  onZoom: (next: number) => void
 }) {
   const vars = tokensToCSSVars(tokens)
+  const zoomPct = Math.round(zoom * 100)
   return (
     <section className="admin-panel admin-theme-preview" style={vars as CSSProperties}>
-      <span className="admin-field-hint">{label}</span>
-      <div className="admin-theme-preview-mock" style={{ background: 'var(--bg)' }}>
+      <div className="admin-theme-preview-toolbar">
+        <span className="admin-field-hint">{label}</span>
+        <div className="admin-theme-preview-zoom">
+          <button
+            type="button"
+            aria-label={t('theme.previewSmaller')}
+            disabled={zoom <= PREVIEW_ZOOM_MIN}
+            onClick={() => onZoom(Math.max(PREVIEW_ZOOM_MIN, Math.round((zoom - PREVIEW_ZOOM_STEP) * 100) / 100))}
+          >
+            −
+          </button>
+          <span className="admin-theme-preview-zoom-value">{zoomPct}%</span>
+          <button
+            type="button"
+            aria-label={t('theme.previewBigger')}
+            disabled={zoom >= PREVIEW_ZOOM_MAX}
+            onClick={() => onZoom(Math.min(PREVIEW_ZOOM_MAX, Math.round((zoom + PREVIEW_ZOOM_STEP) * 100) / 100))}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div
+        className="admin-theme-preview-mock"
+        style={{ background: 'var(--bg)', zoom } as CSSProperties}
+      >
         <div className="admin-theme-preview-header" style={{ background: 'var(--header-bg)' }}>
           <svg
             className="admin-theme-preview-icon"
