@@ -247,7 +247,7 @@ export function AdminTheme() {
  * real buttons, so hovering or pressing the preview buttons shows them
  * live, the same as the actual site.
  */
-const PREVIEW_ZOOM_MIN = 0.7
+const PREVIEW_ZOOM_MIN = 0.4
 const PREVIEW_ZOOM_MAX = 1.6
 const PREVIEW_ZOOM_STEP = 0.15
 
@@ -323,6 +323,25 @@ function ThemePreview({
                 {t('theme.preview.btnFill')}
               </button>
               <button type="button" className="btn btn-ghost">
+                {/* icon_color lives in the same group as the buttons, but the
+                    header icon above is easy to miss as belonging to them —
+                    this one sits directly on a button so the connection is
+                    obvious. */}
+                <svg
+                  className="admin-theme-preview-btn-icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  style={{ color: 'var(--icon-color)' }}
+                >
+                  <path
+                    d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
                 {t('theme.preview.btnGhost')}
               </button>
               <button type="button" className="btn btn-fill" disabled>
