@@ -887,8 +887,28 @@
 @media (min-width: 1024px) {
   .admin-theme-preview { position: sticky; top: 1.5rem; z-index: 2; }
 }
+/* The mock page: header band, a coloured section, the card, a footer band —
+   one distinct element per background token, so bg/bg_2/header_bg/footer_bg
+   each have somewhere to show up instead of only the thin margin around the
+   card that the single-surface preview used to leave for `bg`. */
+.admin-theme-preview-mock {
+  margin-top: .6rem; border: 1px solid var(--hair); border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.admin-theme-preview-header {
+  display: flex; align-items: center; gap: .55rem;
+  padding: .85rem 1.1rem;
+  font-weight: 800; letter-spacing: -0.01em;
+}
+.admin-theme-preview-icon { width: 18px; height: 18px; flex-shrink: 0; }
+.admin-theme-preview-section { padding: 1.25rem; display: grid; gap: .8rem; }
+.admin-theme-preview-eyebrow {
+  font-size: var(--t-caption); font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+}
+.admin-theme-preview-footer { padding: .6rem 1.1rem; text-align: center; font-size: var(--t-caption); }
+
 .admin-theme-preview-surface {
-  display: grid; gap: .7rem; margin-top: .6rem;
+  display: grid; gap: .7rem;
   padding: 1.5rem; border-radius: var(--r-lg);
 }
 .admin-theme-preview-surface h3 { margin: 0; }

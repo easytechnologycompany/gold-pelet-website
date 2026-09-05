@@ -313,6 +313,8 @@ const ADMIN_TRANSLATIONS = {
     'theme.preview.badgeWarning': 'Warning',
     'theme.preview.badgeDanger': 'Error',
     'theme.preview.badgeInfo': 'Info',
+    'theme.preview.sectionLabel': 'Section',
+    'theme.preview.footerText': '© Gold Pelet',
 
     'heroes.pageLabel': 'Page',
     'heroes.pageOption.home': 'Home',
@@ -636,6 +638,8 @@ const ADMIN_TRANSLATIONS = {
     'theme.preview.badgeWarning': 'Uyarı',
     'theme.preview.badgeDanger': 'Hata',
     'theme.preview.badgeInfo': 'Bilgi',
+    'theme.preview.sectionLabel': 'Bölüm',
+    'theme.preview.footerText': '© Gold Pelet',
 
     'heroes.pageLabel': 'Sayfa',
     'heroes.pageOption.home': 'Ana Sayfa',
