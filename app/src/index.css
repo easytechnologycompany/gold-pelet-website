@@ -45,19 +45,6 @@
   --gold:      #D4A017;
   --gold-lo:   #B4790C;
 
-  /* Heading gradient stops, kept separate from --gold/--accent-2 because those
-     are also UI colours (button hover, icons) that must not shift.
-
-     On this near-white ground the display golds above measure 3.54:1, 2.27:1
-     and 6.56:1 against the background. The middle one is the highlight, and it
-     sat at less than half the 4.5:1 AA asks for, so the centre of every
-     heading was its hardest part to read. These keep the same shape -- medium,
-     highlight at 46%, deep bronze -- with the highlight pulled down to the
-     lightest value that still clears 4.5:1. Measured: 5.67, 4.53, 8.09. */
-  --head-a:    #8A5A0B;
-  --head-b:    #9C690A;
-  --head-c:    #6F4310;
-
   --on-accent: #FFFFFF;
 
   --chrome:    rgba(250, 250, 249, .72);
@@ -116,7 +103,13 @@
      and a first paint before that fetch resolves, fall back to. */
   --header-bg:    var(--bg);
   --footer-bg:    var(--bg);
-  --heading-color:        var(--fg);
+  /* Was `var(--fg)`. The h1/h2/h3 rule below paints its gradient from this
+     token now (it used to read three separate, fixed --head-a/b/c stops
+     that the admin's colour picker had no way to reach), so the default has
+     to actually equal the gradient's original highlight stop -- otherwise
+     "Headings" would default to near-black and every heading would flip
+     dark the moment this shipped. */
+  --heading-color:        #9C690A;
   --body-text-color:      var(--fg);
   --secondary-text-color: var(--fg-2);
   --muted-text-color:     var(--fg-3);
@@ -171,11 +164,6 @@
   --accent-2: #FBBF24;
   --gold:     #F0B429;
   --gold-lo:  #B4790C;
-  /* Unchanged: on #050F15 these measure 5.23, 10.38 and 11.59, against
-     5.36, 10.62 and 11.86 on the black they replaced. */
-  --head-a:   #B4790C;
-  --head-b:   #F0B429;
-  --head-c:   #FBBF24;
 
   --on-accent: #0B171D;
 
@@ -187,7 +175,10 @@
 
   --header-bg:    var(--bg);
   --footer-bg:    var(--bg);
-  --heading-color:        var(--fg);
+  /* See the light block's comment — this is the dark mode's former
+     --head-b, now the literal default so the picker has something real to
+     start from. */
+  --heading-color:        #F0B429;
   --body-text-color:      var(--fg);
   --secondary-text-color: var(--fg-2);
   --muted-text-color:     var(--fg-3);
@@ -1694,14 +1685,29 @@ footer .base {
    Links inside a heading (the mailto and tel on /contact) need nothing: the
    global `a { color: inherit }` hands them the transparent fill, and the
    heading's clipped background paints straight through their glyphs. */
+/* The three gradient stops used to be fixed --head-a/b/c custom properties,
+   invisible to (and un-overridable from) the admin's colour picker: an
+   editor could set --heading-color to anything and every real heading would
+   still show the same hardcoded gold, because the gradient painted through
+   the clipped, transparent glyphs regardless of the `color` fallback below.
+   Deriving all three stops from --heading-color at render time is what
+   makes "Headings" in Admin > Theme actually control what a visitor sees —
+   picking a colour shifts the whole gradient's hue instead of doing
+   nothing. The shape (lighter → the chosen colour at 46% → darker) is the
+   same one the fixed stops used; only the source colour is now variable. */
 h1,
 h2,
 h3 {
-  background: linear-gradient(96deg, var(--head-a), var(--head-b) 46%, var(--head-c));
+  background: linear-gradient(
+    96deg,
+    color-mix(in srgb, var(--heading-color) 78%, white),
+    var(--heading-color) 46%,
+    color-mix(in srgb, var(--heading-color) 68%, black)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: var(--heading-color);
   width: max-content;
   max-width: 100%;
 }
