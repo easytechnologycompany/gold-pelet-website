@@ -893,6 +893,32 @@
   font-size: var(--t-caption); font-weight: 700;
 }
 
+/* Ready-made presets — each card shows the preset's own colours (not the
+   editor's ambient tokens), so the swatch previews light+dark side by side
+   regardless of which mode tab is currently open. */
+.admin-theme-presets-panel { margin-bottom: 1.5rem; }
+.admin-theme-presets {
+  display: grid; gap: .8rem; margin-top: .8rem;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+}
+.admin-theme-preset-card {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: .7rem; border: 1px solid var(--hair); border-radius: var(--r-md);
+  background: var(--surface); cursor: pointer; text-align: start;
+  font-family: var(--font);
+  transition: border-color .15s var(--ease-out), transform .1s var(--ease-out);
+}
+.admin-theme-preset-card:hover { border-color: var(--accent); }
+.admin-theme-preset-card:active { transform: scale(.98); }
+.admin-theme-preset-swatch { display: flex; gap: .35rem; }
+.admin-theme-preset-swatch > span {
+  flex: 1; display: flex; align-items: flex-end; gap: .25rem;
+  height: 2.75rem; padding: .35rem; border-radius: var(--r-sm);
+  border: 1px solid var(--hair);
+}
+.admin-theme-preset-swatch > span > span { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.admin-theme-preset-label { font-size: var(--t-small); font-weight: 700; color: var(--fg); }
+
 /* ---------------- enquiries ---------------- */
 
 /* The filter sits where other screens put their Add button. */

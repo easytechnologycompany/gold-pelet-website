@@ -7,6 +7,7 @@ import { DEFAULT_THEME_TOKENS, tokensToCSSVars, type ThemeTokenKey } from '@/lib
 import { THEME_TOKEN_GROUPS, getToken, themeDraftFrom, type ThemeDraft } from '@/lib/admin'
 import { useAdminTheme } from '@/lib/admin-theme-store'
 import { useAdminT } from '@/lib/admin-i18n'
+import { THEME_PRESETS } from '@/lib/theme-presets'
 
 /**
  * Theme & Colours — every colour token the public site's CSS custom-property
@@ -78,6 +79,12 @@ export function AdminTheme() {
 
   const onReset = () => setDraft((d) => ({ ...d, [mode]: DEFAULT_THEME_TOKENS[mode] }))
 
+  // A preset fills both modes at once — it's a full palette, not a single
+  // swatch — but only the draft: it still has to be saved like any manual
+  // edit, same as every other change on this page.
+  const onApplyPreset = (light: ThemeDraft['light'], dark: ThemeDraft['dark']) =>
+    setDraft({ light, dark })
+
   const onSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (saving || !dirty) return
@@ -110,6 +117,37 @@ export function AdminTheme() {
 
       {status === 'ready' && (
         <form onSubmit={onSave} noValidate>
+          <section className="admin-panel admin-group admin-theme-presets-panel">
+            <header className="admin-group-head">
+              <div>
+                <h2>{t('theme.presetsTitle')}</h2>
+                <p>{t('theme.presetsDesc')}</p>
+              </div>
+            </header>
+            <div className="admin-theme-presets">
+              {THEME_PRESETS.map((preset) => (
+                <button
+                  type="button"
+                  key={preset.key}
+                  className="admin-theme-preset-card"
+                  onClick={() => onApplyPreset(preset.light, preset.dark)}
+                >
+                  <span className="admin-theme-preset-swatch" aria-hidden="true">
+                    <span style={{ background: preset.light.bg }}>
+                      <span style={{ background: preset.light.heading_color }} />
+                      <span style={{ background: preset.light.btn_fill_bg }} />
+                    </span>
+                    <span style={{ background: preset.dark.bg }}>
+                      <span style={{ background: preset.dark.heading_color }} />
+                      <span style={{ background: preset.dark.btn_fill_bg }} />
+                    </span>
+                  </span>
+                  <span className="admin-theme-preset-label">{t(preset.labelKey)}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+
           <div className="admin-theme-mode" role="tablist" aria-label={t('page.theme.title')}>
             <button
               type="button"
