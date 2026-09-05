@@ -879,6 +879,14 @@
    public site consumes, so this is a true preview of the saved CSS, not a
    hand-styled mockup. */
 .admin-theme-preview { margin-bottom: 1.5rem; }
+/* Sticks while the colour groups below scroll past, so a pick and its effect
+   stay on screen together instead of a scroll-up-to-check loop. Gated to the
+   same breakpoint as .admin-sidebar's own sticky behaviour: below it the
+   picker fields need the full viewport height, and a topbar already occupies
+   the top of the screen there. */
+@media (min-width: 1024px) {
+  .admin-theme-preview { position: sticky; top: 1.5rem; z-index: 2; }
+}
 .admin-theme-preview-surface {
   display: grid; gap: .7rem; margin-top: .6rem;
   padding: 1.5rem; border-radius: var(--r-lg);
