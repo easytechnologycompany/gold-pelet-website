@@ -1,6 +1,9 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, type CSSProperties, type ReactNode } from 'react'
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { useCms } from '@/lib/cms'
+import { tokensToCSSVars } from '@/lib/api'
+import { useSiteTheme } from '@/lib/theme-tokens'
+import { useTheme } from '@/lib/theme'
 import { Chrome } from '@/components/layout/Chrome'
 import { Footer } from '@/components/layout/Footer'
 import { LocaleProvider } from '@/components/layout/LocaleProvider'
@@ -56,6 +59,7 @@ const AdminImages = lazy(() =>
 const AdminBranding = lazy(() =>
   import('@/pages/admin/AdminBranding').then((m) => ({ default: m.AdminBranding })),
 )
+const AdminTheme = lazy(() => import('@/pages/admin/AdminTheme').then((m) => ({ default: m.AdminTheme })))
 const AdminEnquiries = lazy(() =>
   import('@/pages/admin/AdminEnquiries').then((m) => ({ default: m.AdminEnquiries })),
 )
@@ -72,9 +76,27 @@ const AdminOverview = lazy(() =>
  * actually misbehave: Seo maps an unrouted path to the 404 title, and Lenis
  * keeps scrolling the page underneath an open dialog.
  */
+/**
+ * The admin-editable palette is applied here, and only here — as inline CSS
+ * custom properties on a wrapper around the public layout, not on `:root`.
+ * Custom properties set inline cascade to every descendant regardless of
+ * `position: fixed` (the header) or portal-free absolute positioning, so
+ * this one div is enough to theme the header, footer and every page. It also
+ * means `/admin/*`, which renders through a completely different route
+ * branch below and is never inside this wrapper, keeps the fixed default
+ * palette — a bad colour choice in the editor can never make the dashboard
+ * that fixes it unreadable.
+ */
+function LiveTheme({ children }: { children: ReactNode }) {
+  const modes = useSiteTheme((s) => s.modes)
+  const isDark = useTheme((s) => s.isDark)
+  const vars = tokensToCSSVars(isDark ? modes.dark : modes.light)
+  return <div style={vars as CSSProperties}>{children}</div>
+}
+
 function PublicLayout() {
   return (
-    <>
+    <LiveTheme>
       <SmoothScroll />
       {/* Head metadata for the active route and locale, and the
           Organization block built from the CMS's contact record. */}
@@ -83,7 +105,7 @@ function PublicLayout() {
       <Chrome />
       <Outlet />
       <Footer />
-    </>
+    </LiveTheme>
   )
 }
 
@@ -102,13 +124,15 @@ function AdminChunk() {
 
 export default function App() {
   const hydrate = useCms((s) => s.hydrate)
+  const hydrateTheme = useSiteTheme((s) => s.hydrate)
 
   // Fire and forget. The page renders its designed content immediately and
   // live values swap in only if the API answers — nothing below waits on it,
   // and a failure is silent by design.
   useEffect(() => {
     void hydrate()
-  }, [hydrate])
+    void hydrateTheme()
+  }, [hydrate, hydrateTheme])
 
   return (
     <ThemeProvider>
@@ -145,6 +169,7 @@ export default function App() {
             <Route path="/admin/content" element={<AdminContent />} />
             <Route path="/admin/images" element={<AdminImages />} />
             <Route path="/admin/branding" element={<AdminBranding />} />
+            <Route path="/admin/theme" element={<AdminTheme />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
             <Route path="/admin/overview" element={<AdminOverview />} />
           </Route>

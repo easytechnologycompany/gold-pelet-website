@@ -1,4 +1,4 @@
-import { API_BASE } from './api'
+import { API_BASE, DEFAULT_THEME_TOKENS, THEME_TOKEN_KEYS, themeModesFrom, themeModesTo } from './api'
 import type {
   ApiProduct,
   Branding,
@@ -11,7 +11,10 @@ import type {
   NewsItem,
   PageHero,
   SiteImage,
+  SiteTheme,
   Stat,
+  ThemeTokenKey,
+  ThemeTokens,
 } from './api'
 
 /**
@@ -1007,6 +1010,69 @@ export async function updateBranding(draft: BrandingDraft): Promise<Branding> {
   const mismatch =
     BRANDING_COLOURS.some((key) => (stored[key] ?? '') !== draft[key]) ||
     (stored.logo_url ?? '') !== draft.logo_url
+  if (mismatch) {
+    throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
+  }
+  return stored
+}
+
+// ---------------- theme ----------------
+
+/** The editor's working state: both palettes at once, so switching the
+ * light/dark toggle never drops an unsaved edit to the other mode. */
+export type ThemeDraft = { light: ThemeTokens; dark: ThemeTokens }
+
+/** The four categories the request asked for, in editor order. */
+export const THEME_TOKEN_GROUPS: { label: string; keys: readonly ThemeTokenKey[] }[] = [
+  {
+    label: 'theme.group.backgrounds',
+    keys: ['bg', 'bg_2', 'surface', 'header_bg', 'footer_bg'],
+  },
+  {
+    label: 'theme.group.typography',
+    keys: ['heading_color', 'body_text_color', 'secondary_text_color', 'muted_text_color', 'link_color'],
+  },
+  {
+    label: 'theme.group.buttons',
+    keys: [
+      'icon_color',
+      'btn_fill_bg',
+      'btn_fill_bg_hover',
+      'btn_fill_bg_active',
+      'btn_fill_text',
+      'btn_fill_border',
+      'btn_ghost_text',
+      'btn_ghost_border',
+      'btn_ghost_border_hover',
+      'btn_disabled_bg',
+      'btn_disabled_text',
+      'btn_disabled_border',
+    ],
+  },
+  {
+    label: 'theme.group.state',
+    keys: ['state_success', 'state_warning', 'state_danger', 'state_info'],
+  },
+]
+
+export const themeDraftFrom = (theme: SiteTheme | null | undefined): ThemeDraft =>
+  theme ? themeModesFrom(theme) : DEFAULT_THEME_TOKENS
+
+export const getThemeTokens = (signal?: AbortSignal) => adminFetch<SiteTheme>('/admin/theme', { signal })
+
+/**
+ * PUT the whole record, then re-read and confirm — same shape as
+ * `updateBranding`: the endpoint takes the full flat record, so both modes
+ * are always sent together.
+ */
+export async function updateThemeTokens(draft: ThemeDraft): Promise<SiteTheme> {
+  await adminFetch<SiteTheme>('/admin/theme', { method: 'PUT', body: themeModesTo(draft) })
+  const stored = await getThemeTokens()
+  if (!stored) throw new AdminError('The theme record disappeared after saving. Reload and check.')
+  const storedModes = themeModesFrom(stored)
+  const mismatch = THEME_TOKEN_KEYS.some(
+    (key) => storedModes.light[key] !== draft.light[key] || storedModes.dark[key] !== draft.dark[key],
+  )
   if (mismatch) {
     throw new AdminError('The server accepted the change but did not save it. Nothing was updated.')
   }

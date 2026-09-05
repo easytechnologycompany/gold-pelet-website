@@ -195,3 +195,151 @@ export type Branding = {
   accent_navy_hex: string
   logo_url: string
 }
+
+// ---- theme tokens ----
+
+/**
+ * The closed set of colour tokens the site's CSS custom-property layer
+ * reads (see index.css). One value per token per mode — this is the base
+ * name; the stored/wire record below suffixes each with `_light`/`_dark`.
+ */
+export const THEME_TOKEN_KEYS = [
+  'bg',
+  'bg_2',
+  'surface',
+  'header_bg',
+  'footer_bg',
+  'heading_color',
+  'body_text_color',
+  'secondary_text_color',
+  'muted_text_color',
+  'link_color',
+  'icon_color',
+  'btn_fill_bg',
+  'btn_fill_bg_hover',
+  'btn_fill_bg_active',
+  'btn_fill_text',
+  'btn_fill_border',
+  'btn_ghost_text',
+  'btn_ghost_border',
+  'btn_ghost_border_hover',
+  'btn_disabled_bg',
+  'btn_disabled_text',
+  'btn_disabled_border',
+  'state_success',
+  'state_warning',
+  'state_danger',
+  'state_info',
+] as const
+
+export type ThemeTokenKey = (typeof THEME_TOKEN_KEYS)[number]
+
+/** One mode's worth of tokens, keyed by base name. */
+export type ThemeTokens = Record<ThemeTokenKey, string>
+
+/** The wire/DB shape: one `_light` and one `_dark` column per token. */
+export type SiteTheme = { id: number; updated_at: string } & {
+  [K in ThemeTokenKey as `${K}_light`]: string
+} & { [K in ThemeTokenKey as `${K}_dark`]: string }
+
+/** Splits the flat wire record into the two per-mode token maps components read. */
+export function themeModesFrom(theme: SiteTheme): { light: ThemeTokens; dark: ThemeTokens } {
+  const light = {} as ThemeTokens
+  const dark = {} as ThemeTokens
+  for (const key of THEME_TOKEN_KEYS) {
+    light[key] = theme[`${key}_light`]
+    dark[key] = theme[`${key}_dark`]
+  }
+  return { light, dark }
+}
+
+/** Recombines two per-mode token maps into the flat shape the API expects. */
+export function themeModesTo(modes: { light: ThemeTokens; dark: ThemeTokens }): Omit<
+  SiteTheme,
+  'id' | 'updated_at'
+> {
+  const out = {} as Omit<SiteTheme, 'id' | 'updated_at'>
+  for (const key of THEME_TOKEN_KEYS) {
+    ;(out as Record<string, string>)[`${key}_light`] = modes.light[key]
+    ;(out as Record<string, string>)[`${key}_dark`] = modes.dark[key]
+  }
+  return out
+}
+
+/**
+ * A verbatim transcription of index.css's hardcoded values — the baseline
+ * every visitor sees until an admin edits a colour, and what "Reset to
+ * defaults" restores in the editor.
+ *
+ * The dark values are this repo's own brand-blue dark palette (hue 202,
+ * sampled from the logo mark), not a neutral near-black — kept distinct
+ * from the sibling gold-pelet-website-v2 codebase, whose dark mode never
+ * shipped that redesign.
+ */
+export const DEFAULT_THEME_TOKENS: { light: ThemeTokens; dark: ThemeTokens } = {
+  light: {
+    bg: '#FAFAF9',
+    bg_2: '#F5F5F7',
+    surface: '#FFFFFF',
+    header_bg: '#FAFAF9',
+    footer_bg: '#FAFAF9',
+    heading_color: '#0C0A09',
+    body_text_color: '#0C0A09',
+    secondary_text_color: '#44403C',
+    muted_text_color: '#78716C',
+    link_color: '#A16207',
+    icon_color: '#A16207',
+    btn_fill_bg: '#A16207',
+    btn_fill_bg_hover: '#854D0E',
+    btn_fill_bg_active: '#7A480D',
+    btn_fill_text: '#FFFFFF',
+    btn_fill_border: '#A16207',
+    btn_ghost_text: '#0C0A09',
+    btn_ghost_border: '#D6D3D1',
+    btn_ghost_border_hover: '#78716C',
+    btn_disabled_bg: '#E7E5E4',
+    btn_disabled_text: '#78716C',
+    btn_disabled_border: '#E7E5E4',
+    state_success: '#15803D',
+    state_warning: '#B45309',
+    state_danger: '#DC2626',
+    state_info: '#0B4363',
+  },
+  dark: {
+    bg: '#050F15',
+    bg_2: '#09161E',
+    surface: '#0C1C25',
+    header_bg: '#050F15',
+    footer_bg: '#050F15',
+    heading_color: '#F3F5F7',
+    body_text_color: '#F3F5F7',
+    secondary_text_color: '#97A5AE',
+    muted_text_color: '#73838C',
+    link_color: '#E3A008',
+    icon_color: '#E3A008',
+    btn_fill_bg: '#E3A008',
+    btn_fill_bg_hover: '#FBBF24',
+    btn_fill_bg_active: '#EDB512',
+    btn_fill_text: '#0B171D',
+    btn_fill_border: '#E3A008',
+    btn_ghost_text: '#F3F5F7',
+    btn_ghost_border: '#223D4C',
+    btn_ghost_border_hover: '#73838C',
+    btn_disabled_bg: '#162B36',
+    btn_disabled_text: '#73838C',
+    btn_disabled_border: '#162B36',
+    state_success: '#22C55E',
+    state_warning: '#F59E0B',
+    state_danger: '#F87171',
+    state_info: '#38BDF8',
+  },
+}
+
+/** `{ bg: '#FAFAF9', ... }` -> `{ '--bg': '#FAFAF9', ... }` for inline style. */
+export function tokensToCSSVars(tokens: ThemeTokens): Record<string, string> {
+  const vars: Record<string, string> = {}
+  for (const key of THEME_TOKEN_KEYS) {
+    vars[`--${key.replace(/_/g, '-')}`] = tokens[key]
+  }
+  return vars
+}
