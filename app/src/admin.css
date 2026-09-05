@@ -887,6 +887,29 @@
 @media (min-width: 1024px) {
   .admin-theme-preview { position: sticky; top: 1.5rem; z-index: 2; }
 }
+.admin-theme-preview-toolbar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.admin-theme-preview-zoom {
+  display: inline-flex; align-items: center; gap: .1rem;
+  border: 1px solid var(--hair); border-radius: 999px; padding: .15rem;
+}
+.admin-theme-preview-zoom button {
+  display: grid; place-items: center;
+  width: 26px; height: 26px; flex-shrink: 0;
+  border: 0; border-radius: 50%; background: transparent;
+  font: inherit; font-size: .95rem; font-weight: 700; line-height: 1;
+  color: var(--fg-2); cursor: pointer;
+  transition: background-color .15s var(--ease-out), color .15s var(--ease-out);
+}
+.admin-theme-preview-zoom button:hover:not(:disabled) { background: var(--bg-2); color: var(--fg); }
+.admin-theme-preview-zoom button:disabled { color: var(--hair-2); cursor: not-allowed; }
+.admin-theme-preview-zoom-value {
+  min-width: 2.6rem; text-align: center;
+  font-size: var(--t-caption); font-weight: 700; color: var(--fg-3); font-variant-numeric: tabular-nums;
+}
+/* `zoom` (applied inline, see AdminTheme.tsx) scales layout, not just paint —
+   unlike `transform: scale()` it needs no manual height/overlap correction,
+   which is exactly what a "make it bigger/smaller" control wants here. */
+.admin-theme-preview-mock { transition: zoom .1s var(--ease-out); }
 /* The mock page: header band, a coloured section, the card, a footer band —
    one distinct element per background token, so bg/bg_2/header_bg/footer_bg
    each have somewhere to show up instead of only the thin margin around the
