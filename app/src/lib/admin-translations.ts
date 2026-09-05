@@ -6,7 +6,7 @@
  * remains the source of truth. Separate from lib/translations.ts: these are
  * admin-only strings, and the admin ships two locales rather than four.
  *
- * 2 locales (en: 301, tr: 301).
+ * 2 locales (en: 303, tr: 303).
  * 0 key(s) fall back to English.
  */
 
@@ -301,6 +301,8 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "theme.preview.badgeWarning": "Warning",
     "theme.preview.badgeDanger": "Error",
     "theme.preview.badgeInfo": "Info",
+    "theme.preview.sectionLabel": "Section",
+    "theme.preview.footerText": "© Gold Pelet",
     "heroes.pageLabel": "Page",
     "heroes.pageOption.home": "Home",
     "heroes.pageOption.products": "Products",
@@ -604,6 +606,8 @@ export const ADMIN_TRANSLATIONS: Record<AdminLocale, Record<string, string>> = {
     "theme.preview.badgeWarning": "Uyarı",
     "theme.preview.badgeDanger": "Hata",
     "theme.preview.badgeInfo": "Bilgi",
+    "theme.preview.sectionLabel": "Bölüm",
+    "theme.preview.footerText": "© Gold Pelet",
     "heroes.pageLabel": "Sayfa",
     "heroes.pageOption.home": "Ana Sayfa",
     "heroes.pageOption.products": "Ürünler",

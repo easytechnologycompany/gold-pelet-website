@@ -223,11 +223,20 @@ export function AdminTheme() {
 }
 
 /**
- * A small mock of real site components — heading, body/secondary text, a
- * link, both button variants (incl. disabled), and the four state colours —
- * rendered inside a div carrying the *draft* (unsaved) tokens as inline CSS
- * custom properties. Every picker above therefore updates this instantly,
- * before Save, the same mechanism `App.tsx` uses for the live site.
+ * A small mock of a real page — header, a section band, a card, and a
+ * footer — rendered inside a div carrying the *draft* (unsaved) tokens as
+ * inline CSS custom properties. Every picker above therefore updates this
+ * instantly, before Save, the same mechanism `App.tsx` uses for the live
+ * site.
+ *
+ * Every one of the 26 tokens gets a distinct visible element here on
+ * purpose. Earlier this preview only showed `bg` as a thin margin around
+ * the card and had nothing at all for `bg_2`, `header_bg`, `footer_bg`,
+ * `muted_text_color` or `icon_color` — so editing any of those looked like
+ * it did nothing. `btn_fill_bg_hover`/`_active` and `btn_ghost_border_hover`
+ * still have no static swatch here: they're real `:hover`/`:active` CSS on
+ * real buttons, so hovering or pressing the preview buttons shows them
+ * live, the same as the actual site.
  */
 function ThemePreview({
   tokens,
@@ -240,50 +249,71 @@ function ThemePreview({
 }) {
   const vars = tokensToCSSVars(tokens)
   return (
-    <section
-      className="admin-panel admin-theme-preview"
-      style={{ ...vars, background: 'var(--bg)', color: 'var(--body-text-color)' } as CSSProperties}
-    >
+    <section className="admin-panel admin-theme-preview" style={vars as CSSProperties}>
       <span className="admin-field-hint">{label}</span>
-      <div className="admin-theme-preview-surface" style={{ background: 'var(--surface)' }}>
-        <h3 style={{ color: 'var(--heading-color)' }}>{t('theme.preview.heading')}</h3>
-        <p style={{ color: 'var(--body-text-color)' }}>{t('theme.preview.body')}</p>
-        <p style={{ color: 'var(--secondary-text-color)' }}>{t('theme.preview.secondary')}</p>
-        <a href="#" onClick={(e) => e.preventDefault()} style={{ color: 'var(--link-color)' }}>
-          {t('theme.preview.link')}
-        </a>
-        <div className="admin-theme-preview-row">
-          <button type="button" className="btn btn-fill">
-            {t('theme.preview.btnFill')}
-          </button>
-          <button type="button" className="btn btn-ghost">
-            {t('theme.preview.btnGhost')}
-          </button>
-          <button type="button" className="btn btn-fill" disabled>
-            {t('theme.preview.btnDisabled')}
-          </button>
+      <div className="admin-theme-preview-mock" style={{ background: 'var(--bg)' }}>
+        <div className="admin-theme-preview-header" style={{ background: 'var(--header-bg)' }}>
+          <svg
+            className="admin-theme-preview-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            style={{ color: 'var(--icon-color)' }}
+          >
+            <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
+          </svg>
+          <span style={{ color: 'var(--heading-color)' }}>{t('theme.preview.heading')}</span>
         </div>
-        <div className="admin-theme-preview-row">
-          {(
-            [
-              ['state_success', 'theme.preview.badgeSuccess'],
-              ['state_warning', 'theme.preview.badgeWarning'],
-              ['state_danger', 'theme.preview.badgeDanger'],
-              ['state_info', 'theme.preview.badgeInfo'],
-            ] as const
-          ).map(([key, labelKey]) => (
-            <span
-              key={key}
-              className="admin-theme-preview-badge"
-              style={{
-                color: tokens[key],
-                borderColor: tokens[key],
-                background: `color-mix(in srgb, ${tokens[key]} 14%, transparent)`,
-              }}
-            >
-              {t(labelKey)}
-            </span>
-          ))}
+
+        <div className="admin-theme-preview-section" style={{ background: 'var(--bg-2)' }}>
+          <span className="admin-theme-preview-eyebrow" style={{ color: 'var(--muted-text-color)' }}>
+            {t('theme.preview.sectionLabel')}
+          </span>
+
+          <div className="admin-theme-preview-surface" style={{ background: 'var(--surface)' }}>
+            <h3 style={{ color: 'var(--heading-color)' }}>{t('theme.preview.heading')}</h3>
+            <p style={{ color: 'var(--body-text-color)' }}>{t('theme.preview.body')}</p>
+            <p style={{ color: 'var(--secondary-text-color)' }}>{t('theme.preview.secondary')}</p>
+            <a href="#" onClick={(e) => e.preventDefault()} style={{ color: 'var(--link-color)' }}>
+              {t('theme.preview.link')}
+            </a>
+            <div className="admin-theme-preview-row">
+              <button type="button" className="btn btn-fill">
+                {t('theme.preview.btnFill')}
+              </button>
+              <button type="button" className="btn btn-ghost">
+                {t('theme.preview.btnGhost')}
+              </button>
+              <button type="button" className="btn btn-fill" disabled>
+                {t('theme.preview.btnDisabled')}
+              </button>
+            </div>
+            <div className="admin-theme-preview-row">
+              {(
+                [
+                  ['state_success', 'theme.preview.badgeSuccess'],
+                  ['state_warning', 'theme.preview.badgeWarning'],
+                  ['state_danger', 'theme.preview.badgeDanger'],
+                  ['state_info', 'theme.preview.badgeInfo'],
+                ] as const
+              ).map(([key, labelKey]) => (
+                <span
+                  key={key}
+                  className="admin-theme-preview-badge"
+                  style={{
+                    color: tokens[key],
+                    borderColor: tokens[key],
+                    background: `color-mix(in srgb, ${tokens[key]} 14%, transparent)`,
+                  }}
+                >
+                  {t(labelKey)}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="admin-theme-preview-footer" style={{ background: 'var(--footer-bg)' }}>
+          <span style={{ color: 'var(--muted-text-color)' }}>{t('theme.preview.footerText')}</span>
         </div>
       </div>
     </section>
